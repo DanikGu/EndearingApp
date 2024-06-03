@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.1.3" />
+  
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="CliWrap" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Ardalis.HttpClientTestExtensions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\EndearingApp.Web\EndearingApp.Web.csproj" />
+    <ProjectReference Include="..\EndearingApp.UnitTests\EndearingApp.UnitTests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SqlForSchemaGenerator.Core">
+      <HintPath>..\..\..\SqlForSchemaGenerator\SqlForSchemaGenrator.Postgres\bin\Debug\net8.0\SqlForSchemaGenerator.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SqlForSchemaGenrator.Postgres">
+      <HintPath>..\..\..\SqlForSchemaGenerator\SqlForSchemaGenrator.Postgres\bin\Debug\net8.0\SqlForSchemaGenrator.Postgres.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

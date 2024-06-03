@@ -1,0 +1,1 @@
+A Base App To Create Tables And Relationships and manage this data bia Odata Api, and some generic frontend in the future

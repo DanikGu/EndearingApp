@@ -1,0 +1,817 @@
+2024-05-29 21:51:52.408 +03:00 [INF] Registered 7 endpoints in 1 272 milliseconds.
+2024-05-29 21:51:52.526 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-05-29 21:51:52.627 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 21:51:52.637 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 21:51:52.648 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 21:51:52.656 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 21:51:52.656 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 21:51:52.664 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-05-29 21:51:52.795 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-05-29 21:51:52.795 +03:00 [INF] Hosting environment: Development
+2024-05-29 21:51:52.795 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-05-29 21:51:52.823 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-05-29 21:51:53.446 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-05-29 21:51:53.474 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 656.4589ms
+2024-05-29 21:51:53.477 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-05-29 21:52:55.281 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/$metadata - null null
+2024-05-29 21:52:55.289 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/$metadata'
+2024-05-29 21:52:55.394 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/$metadata'
+2024-05-29 21:52:55.399 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/$metadata - 200 null application/xhtml+xml 117.4184ms
+2024-05-29 21:53:01.942 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 21:53:01.943 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 21:53:02.011 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 21:53:02.012 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+System.IO.FileNotFoundException: Could not load file or assembly 'Microsoft.OData.Core, Version=7.7.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'. The system cannot find the file specified.
+File name: 'Microsoft.OData.Core, Version=7.7.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'
+   at DynamicODataToSQL.ODataToSqlConverter.BuildSqlKataQueryFromOdataParameters(Query query, String modelName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates)
+   at DynamicODataToSQL.ODataToSqlConverter.BuildSqlKataQuery(String tableName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates)
+   at DynamicODataToSQL.ODataToSqlConverter.ConvertToSQL(String tableName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates)
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.PostgresCustomDataAccessGenerator.GetSqlQuery(String tableName, Dictionary`2 queryParams) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\PostgresCustomDataAccessGenerator.cs:line 50
+   at EndearingApp.Web.Endpoints.OdataApi.List.HandleAsync(ListOdataRequest request, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Web\Endpoints\OdataApi\List.cs:line 27
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-05-29 21:53:02.029 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 500 null text/plain; charset=utf-8 87.4036ms
+2024-05-29 21:53:37.065 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 21:53:37.065 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 21:53:37.083 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 21:53:37.084 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+System.IO.FileNotFoundException: Could not load file or assembly 'Microsoft.OData.Core, Version=7.7.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'. The system cannot find the file specified.
+File name: 'Microsoft.OData.Core, Version=7.7.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'
+   at DynamicODataToSQL.ODataToSqlConverter.BuildSqlKataQueryFromOdataParameters(Query query, String modelName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates)
+   at DynamicODataToSQL.ODataToSqlConverter.BuildSqlKataQuery(String tableName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates)
+   at DynamicODataToSQL.ODataToSqlConverter.ConvertToSQL(String tableName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates)
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.PostgresCustomDataAccessGenerator.GetSqlQuery(String tableName, Dictionary`2 queryParams) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\PostgresCustomDataAccessGenerator.cs:line 50
+   at EndearingApp.Web.Endpoints.OdataApi.List.HandleAsync(ListOdataRequest request, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Web\Endpoints\OdataApi\List.cs:line 27
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-05-29 21:53:37.085 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 500 null text/plain; charset=utf-8 20.4378ms
+2024-05-29 21:54:07.232 +03:00 [INF] Registered 7 endpoints in 1 308 milliseconds.
+2024-05-29 21:54:07.326 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-05-29 21:54:07.407 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 21:54:07.417 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 21:54:07.426 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 21:54:07.432 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 21:54:07.433 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 21:54:07.440 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-05-29 21:54:07.523 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-05-29 21:54:07.523 +03:00 [INF] Hosting environment: Development
+2024-05-29 21:54:07.523 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-05-29 21:54:07.541 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-05-29 21:54:07.616 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-05-29 21:54:07.637 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 98.9216ms
+2024-05-29 21:54:07.640 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-05-29 21:54:17.365 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 21:54:17.368 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 21:54:26.980 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 21:54:26.987 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+System.IO.FileNotFoundException: Could not load file or assembly 'Microsoft.OData.Core, Version=7.7.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'. The system cannot find the file specified.
+File name: 'Microsoft.OData.Core, Version=7.7.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'
+   at DynamicODataToSQL.ODataToSqlConverter.BuildSqlKataQueryFromOdataParameters(Query query, String modelName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates)
+   at DynamicODataToSQL.ODataToSqlConverter.BuildSqlKataQuery(String tableName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates) in E:\Source E\DynamicODataToSQL\Source\DynamicODataToSQL\ODataToSqlConverter.cs:line 104
+   at DynamicODataToSQL.ODataToSqlConverter.ConvertToSQL(String tableName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates) in E:\Source E\DynamicODataToSQL\Source\DynamicODataToSQL\ODataToSqlConverter.cs:line 43
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.PostgresCustomDataAccessGenerator.GetSqlQuery(String tableName, Dictionary`2 queryParams) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\PostgresCustomDataAccessGenerator.cs:line 50
+   at EndearingApp.Web.Endpoints.OdataApi.List.HandleAsync(ListOdataRequest request, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Web\Endpoints\OdataApi\List.cs:line 27
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-05-29 21:54:32.606 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 500 null text/plain; charset=utf-8 15241.3242ms
+2024-05-29 21:56:02.816 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 21:56:02.818 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 21:56:08.725 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 21:56:08.731 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+System.IO.FileNotFoundException: Could not load file or assembly 'Microsoft.OData.Core, Version=7.7.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'. The system cannot find the file specified.
+File name: 'Microsoft.OData.Core, Version=7.7.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'
+   at DynamicODataToSQL.ODataToSqlConverter.BuildSqlKataQueryFromOdataParameters(Query query, String modelName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates)
+   at DynamicODataToSQL.ODataToSqlConverter.BuildSqlKataQuery(String tableName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates) in E:\Source E\DynamicODataToSQL\Source\DynamicODataToSQL\ODataToSqlConverter.cs:line 104
+   at DynamicODataToSQL.ODataToSqlConverter.ConvertToSQL(String tableName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates) in E:\Source E\DynamicODataToSQL\Source\DynamicODataToSQL\ODataToSqlConverter.cs:line 43
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.PostgresCustomDataAccessGenerator.GetSqlQuery(String tableName, Dictionary`2 queryParams) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\PostgresCustomDataAccessGenerator.cs:line 50
+   at EndearingApp.Web.Endpoints.OdataApi.List.HandleAsync(ListOdataRequest request, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Web\Endpoints\OdataApi\List.cs:line 27
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-05-29 21:56:12.163 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 500 null text/plain; charset=utf-8 9348.2579ms
+2024-05-29 21:56:16.666 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 21:56:16.666 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 21:56:37.363 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 21:56:37.364 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+System.IO.FileNotFoundException: Could not load file or assembly 'Microsoft.OData.Core, Version=7.7.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'. The system cannot find the file specified.
+File name: 'Microsoft.OData.Core, Version=7.7.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'
+   at DynamicODataToSQL.ODataToSqlConverter.BuildSqlKataQueryFromOdataParameters(Query query, String modelName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates)
+   at DynamicODataToSQL.ODataToSqlConverter.BuildSqlKataQuery(String tableName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates) in E:\Source E\DynamicODataToSQL\Source\DynamicODataToSQL\ODataToSqlConverter.cs:line 104
+   at DynamicODataToSQL.ODataToSqlConverter.ConvertToSQL(String tableName, IDictionary`2 odataQuery, Boolean count, Boolean tryToParseDates) in E:\Source E\DynamicODataToSQL\Source\DynamicODataToSQL\ODataToSqlConverter.cs:line 43
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.PostgresCustomDataAccessGenerator.GetSqlQuery(String tableName, Dictionary`2 queryParams) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\PostgresCustomDataAccessGenerator.cs:line 50
+   at EndearingApp.Web.Endpoints.OdataApi.List.HandleAsync(ListOdataRequest request, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Web\Endpoints\OdataApi\List.cs:line 27
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-05-29 21:56:37.365 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 500 null text/plain; charset=utf-8 20699.981ms
+2024-05-29 21:58:28.093 +03:00 [INF] Registered 7 endpoints in 1 249 milliseconds.
+2024-05-29 21:58:28.191 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-05-29 21:58:28.274 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 21:58:28.282 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 21:58:28.292 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 21:58:28.300 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 21:58:28.301 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 21:58:28.309 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-05-29 21:58:28.395 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-05-29 21:58:28.395 +03:00 [INF] Hosting environment: Development
+2024-05-29 21:58:28.395 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-05-29 21:58:28.413 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-05-29 21:58:28.487 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-05-29 21:58:28.510 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 100.6384ms
+2024-05-29 21:58:28.512 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-05-29 21:58:32.235 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 21:58:32.239 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:00:04.387 +03:00 [INF] Registered 7 endpoints in 1 219 milliseconds.
+2024-05-29 22:00:04.481 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-05-29 22:00:04.564 +03:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:00:04.573 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:00:04.582 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:00:04.589 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:00:04.589 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:00:04.596 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-05-29 22:00:04.679 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-05-29 22:00:04.679 +03:00 [INF] Hosting environment: Development
+2024-05-29 22:00:04.679 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-05-29 22:00:04.698 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-05-29 22:00:04.771 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-05-29 22:00:04.791 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 96.2976ms
+2024-05-29 22:00:04.793 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-05-29 22:00:07.805 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 22:00:07.808 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:00:37.079 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:00:37.084 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 200 null application/json 29279.5274ms
+2024-05-29 22:01:48.325 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 22:01:48.330 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:01:48.344 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:01:48.345 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 200 null application/json 19.5916ms
+2024-05-29 22:02:06.033 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 22:02:06.033 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:03:00.666 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:03:00.666 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 200 null application/json 54633.5421ms
+2024-05-29 22:04:28.252 +03:00 [INF] Registered 7 endpoints in 1 342 milliseconds.
+2024-05-29 22:04:28.360 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-05-29 22:04:28.455 +03:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:04:28.464 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:04:28.475 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:04:28.482 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:04:28.483 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:04:28.491 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-05-29 22:04:28.577 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-05-29 22:04:28.577 +03:00 [INF] Hosting environment: Development
+2024-05-29 22:04:28.577 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-05-29 22:04:28.598 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-05-29 22:04:28.675 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-05-29 22:04:28.699 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 103.8983ms
+2024-05-29 22:04:28.701 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-05-29 22:04:37.367 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 22:04:37.371 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:04:37.510 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:04:37.515 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 200 null application/json 147.9633ms
+2024-05-29 22:04:39.123 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 22:04:39.124 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:04:39.131 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:04:39.131 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 200 null application/json 8.2589ms
+2024-05-29 22:04:50.494 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 22:04:50.495 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:05:19.235 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:05:19.239 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 200 null application/json 28744.4067ms
+2024-05-29 22:05:36.375 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 22:05:36.375 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:08:18.914 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:08:18.919 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+Npgsql.NpgsqlOperationInProgressException (0x80004005): A command is already in progress: SELECT * FROM "Test"
+   at Npgsql.ThrowHelper.ThrowNpgsqlOperationInProgressException(NpgsqlCommand command)
+   at Npgsql.Internal.NpgsqlConnector.<StartUserAction>g__DoStartUserAction|279_0(ConnectorState newState, NpgsqlCommand command, CancellationToken cancellationToken, Boolean attemptPgCancellation)
+   at Npgsql.Internal.NpgsqlConnector.StartUserAction(ConnectorState newState, NpgsqlCommand command, CancellationToken cancellationToken, Boolean attemptPgCancellation)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryAsync[T](IDbConnection cnn, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 434
+   at EndearingApp.Infrastructure.Data.DapperSqlExecutor.List[T](DbCommand command) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\DapperSqlExecutor.cs:line 46
+   at EndearingApp.Web.Endpoints.OdataApi.List.HandleAsync(ListOdataRequest request, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Web\Endpoints\OdataApi\List.cs:line 29
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-05-29 22:08:22.876 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 500 null text/plain; charset=utf-8 166501.0479ms
+2024-05-29 22:08:26.038 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 22:08:26.038 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:08:30.896 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:08:30.900 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 200 null application/json 4862.3529ms
+2024-05-29 22:08:34.136 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 22:08:34.137 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:08:34.141 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:08:34.141 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 200 null application/json 4.8644ms
+2024-05-29 22:10:03.325 +03:00 [INF] Registered 7 endpoints in 1 214 milliseconds.
+2024-05-29 22:10:03.416 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-05-29 22:10:03.508 +03:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:10:03.517 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:10:03.527 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:10:03.533 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:10:03.534 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:10:03.541 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-05-29 22:10:03.626 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-05-29 22:10:03.626 +03:00 [INF] Hosting environment: Development
+2024-05-29 22:10:03.626 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-05-29 22:10:03.644 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-05-29 22:10:03.716 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-05-29 22:10:03.738 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 97.2513ms
+2024-05-29 22:10:03.740 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-05-29 22:10:08.147 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 22:10:08.150 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:10:08.299 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:10:08.301 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Data.DataException: Error parsing column 0 (Id=fde65ff9-4ca4-4419-8586-4c01132f8543 - Object)
+ ---> System.InvalidCastException: Object must implement IConvertible.
+   at System.Convert.ChangeType(Object value, Type conversionType, IFormatProvider provider)
+   at Deserialize2fb2d8ac-2817-4fb5-b9a9-2b8b73d1297c(DbDataReader)
+   --- End of inner exception stack trace ---
+   at Dapper.SqlMapper.ThrowDataException(Exception ex, Int32 index, IDataReader reader, Object value) in /_/Dapper/SqlMapper.cs:line 3928
+   at Deserialize2fb2d8ac-2817-4fb5-b9a9-2b8b73d1297c(DbDataReader)
+   at Dapper.SqlMapper.QueryAsync[T](IDbConnection cnn, Type effectiveType, CommandDefinition command)
+   at EndearingApp.Infrastructure.Data.DapperSqlExecutor.List[T](DbCommand command)
+   at EndearingApp.Web.Endpoints.OdataApi.List.HandleAsync(ListOdataRequest request, CancellationToken cancellationToken)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-05-29 22:10:08.329 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 500 null text/plain; charset=utf-8 182.362ms
+2024-05-29 22:10:37.129 +03:00 [INF] Registered 7 endpoints in 1 297 milliseconds.
+2024-05-29 22:10:37.241 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-05-29 22:10:37.333 +03:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:10:37.342 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:10:37.352 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:10:37.359 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:10:37.360 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:10:37.368 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-05-29 22:10:37.459 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-05-29 22:10:37.460 +03:00 [INF] Hosting environment: Development
+2024-05-29 22:10:37.460 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-05-29 22:10:37.480 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 22:10:37.480 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-05-29 22:10:37.523 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-05-29 22:10:37.561 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:10:37.572 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 96.437ms
+2024-05-29 22:10:37.574 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-05-29 22:10:37.751 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:10:37.753 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+System.Data.DataException: Error parsing column 0 (Id=fde65ff9-4ca4-4419-8586-4c01132f8543 - Object)
+ ---> System.InvalidCastException: Object must implement IConvertible.
+   at System.Convert.ChangeType(Object value, Type conversionType, IFormatProvider provider)
+   at Deserialize0472d52a-4778-4ba5-aa07-93b747fe2168(DbDataReader)
+   --- End of inner exception stack trace ---
+   at Dapper.SqlMapper.ThrowDataException(Exception ex, Int32 index, IDataReader reader, Object value) in /_/Dapper/SqlMapper.cs:line 3928
+   at Deserialize0472d52a-4778-4ba5-aa07-93b747fe2168(DbDataReader)
+   at Dapper.SqlMapper.QueryAsync[T](IDbConnection cnn, Type effectiveType, CommandDefinition command)
+   at EndearingApp.Infrastructure.Data.DapperSqlExecutor.List[T](DbCommand command)
+   at EndearingApp.Web.Endpoints.OdataApi.List.HandleAsync(ListOdataRequest request, CancellationToken cancellationToken)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-05-29 22:10:37.789 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 500 null text/plain; charset=utf-8 314.2995ms
+2024-05-29 22:10:54.243 +03:00 [INF] Registered 7 endpoints in 1 220 milliseconds.
+2024-05-29 22:10:54.339 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-05-29 22:10:54.424 +03:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:10:54.434 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:10:54.443 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:10:54.450 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:10:54.451 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:10:54.458 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-05-29 22:10:54.541 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-05-29 22:10:54.541 +03:00 [INF] Hosting environment: Development
+2024-05-29 22:10:54.541 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-05-29 22:10:54.560 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-05-29 22:10:54.637 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-05-29 22:10:54.658 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 101.6107ms
+2024-05-29 22:10:54.660 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-05-29 22:11:00.323 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 22:11:00.327 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:11:00.453 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:11:00.459 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 200 null application/json 135.2931ms
+2024-05-29 22:11:51.738 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:11:51.739 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:11:51.755 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:11:51.757 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - 200 null application/json 18.9611ms
+2024-05-29 22:11:54.488 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:11:54.489 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:11:54.492 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:11:54.493 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - 200 null application/json 4.7955ms
+2024-05-29 22:11:57.770 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:11:57.770 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:11:57.775 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:11:57.775 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - 200 null application/json 5.4599ms
+2024-05-29 22:11:58.415 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:11:58.416 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:11:58.418 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:11:58.419 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - 200 null application/json 3.7783ms
+2024-05-29 22:11:58.949 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:11:58.949 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:11:58.953 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:11:58.953 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - 200 null application/json 4.7727ms
+2024-05-29 22:11:59.401 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:11:59.401 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:11:59.404 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:11:59.405 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - 200 null application/json 4.1702ms
+2024-05-29 22:12:00.017 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:12:00.017 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:12:00.022 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:12:00.023 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - 200 null application/json 5.6893ms
+2024-05-29 22:12:00.573 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:12:00.574 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:12:00.576 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:12:00.577 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - 200 null application/json 3.8716ms
+2024-05-29 22:12:07.535 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:12:07.536 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:12:46.354 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:12:47.257 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - 200 null application/json 39721.4872ms
+2024-05-29 22:40:09.853 +03:00 [INF] Registered 7 endpoints in 1 304 milliseconds.
+2024-05-29 22:40:09.953 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-05-29 22:40:10.041 +03:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:40:10.051 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:40:10.061 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:40:10.068 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:40:10.068 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:40:10.076 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-05-29 22:40:10.180 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-05-29 22:40:10.180 +03:00 [INF] Hosting environment: Development
+2024-05-29 22:40:10.180 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-05-29 22:40:10.198 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-05-29 22:40:10.270 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-05-29 22:40:10.294 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 100.3581ms
+2024-05-29 22:40:10.296 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-05-29 22:40:13.103 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:40:13.106 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:40:40.521 +03:00 [INF] Registered 7 endpoints in 1 273 milliseconds.
+2024-05-29 22:40:40.615 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-05-29 22:40:40.719 +03:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:40:40.731 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:40:40.746 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:40:40.755 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:40:40.756 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:40:40.765 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-05-29 22:40:40.868 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-05-29 22:40:40.868 +03:00 [INF] Hosting environment: Development
+2024-05-29 22:40:40.868 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-05-29 22:40:40.887 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-05-29 22:40:40.970 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-05-29 22:40:40.994 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 111.0112ms
+2024-05-29 22:40:40.997 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-05-29 22:40:43.248 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:40:43.252 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:40:55.834 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:40:55.841 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - 200 null application/json 12592.2264ms
+2024-05-29 22:41:11.963 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:41:11.965 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:42:44.206 +03:00 [INF] Registered 7 endpoints in 1 282 milliseconds.
+2024-05-29 22:42:44.297 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-05-29 22:42:44.378 +03:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:42:44.387 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:42:44.397 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:42:44.404 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:42:44.405 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:42:44.412 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-05-29 22:42:44.492 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-05-29 22:42:44.493 +03:00 [INF] Hosting environment: Development
+2024-05-29 22:42:44.497 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-05-29 22:42:44.512 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-05-29 22:42:44.586 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-05-29 22:42:44.607 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 98.731ms
+2024-05-29 22:42:44.609 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-05-29 22:42:47.858 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:42:47.861 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:42:57.122 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:42:57.127 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - 200 null application/json 9269.1403ms
+2024-05-29 22:43:00.364 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:43:00.365 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:43:20.394 +03:00 [INF] Registered 7 endpoints in 1 231 milliseconds.
+2024-05-29 22:43:20.487 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-05-29 22:43:20.570 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:43:20.579 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:43:20.589 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:43:20.595 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:43:20.596 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:43:20.606 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-05-29 22:43:20.697 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-05-29 22:43:20.697 +03:00 [INF] Hosting environment: Development
+2024-05-29 22:43:20.697 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-05-29 22:43:20.715 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-05-29 22:43:20.798 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-05-29 22:43:20.830 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 118.2827ms
+2024-05-29 22:43:20.833 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-05-29 22:43:22.809 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:43:22.812 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:43:33.559 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:43:33.564 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - 200 null application/json 10755.3297ms
+2024-05-29 22:44:53.038 +03:00 [INF] Registered 7 endpoints in 1 303 milliseconds.
+2024-05-29 22:44:53.144 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-05-29 22:44:53.235 +03:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:44:53.246 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:44:53.257 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:44:53.265 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-05-29 22:44:53.266 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-05-29 22:44:53.274 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-05-29 22:44:53.372 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-05-29 22:44:53.372 +03:00 [INF] Hosting environment: Development
+2024-05-29 22:44:53.372 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-05-29 22:44:53.391 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-05-29 22:44:53.480 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-05-29 22:44:53.504 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 116.3191ms
+2024-05-29 22:44:53.506 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-05-29 22:44:55.281 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - null null
+2024-05-29 22:44:55.284 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:45:05.439 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:45:05.444 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name - 200 null application/json 10162.7476ms
+2024-05-29 22:45:15.246 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name,Description - null null
+2024-05-29 22:45:15.247 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:45:18.582 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:45:18.582 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name,Description - 200 null application/json 3336.9433ms
+2024-05-29 22:45:27.668 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 22:45:27.669 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:45:27.683 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:45:27.684 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 200 null application/json 16.0866ms
+2024-05-29 22:45:32.684 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name,Description - null null
+2024-05-29 22:45:32.685 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:45:32.688 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:45:32.689 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test?$select=Name,Description - 200 null application/json 4.5625ms
+2024-05-29 22:54:09.833 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test - null null
+2024-05-29 22:54:09.835 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:54:09.844 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:54:09.846 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test - 200 null application/json 13.4675ms
+2024-05-29 22:54:17.488 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/api/Test(fde65ff9-4ca4-4419-8586-4c01132f8543) - null null
+2024-05-29 22:54:17.488 +03:00 [INF] Executing endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:54:17.557 +03:00 [INF] Executed endpoint 'HTTP: GET odata/api/{EntityName}'
+2024-05-29 22:54:17.558 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+Npgsql.PostgresException (0x80004005): 42P01: relation "Test(fde65ff9-4ca4-4419-8586-4c01132f8543)" does not exist
+
+POSITION: 15
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryAsync[T](IDbConnection cnn, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 434
+   at EndearingApp.Infrastructure.Data.DapperSqlExecutor.List[T](DbCommand command) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\DapperSqlExecutor.cs:line 46
+   at EndearingApp.Web.Endpoints.OdataApi.List.HandleAsync(ListOdataRequest request, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Web\Endpoints\OdataApi\List.cs:line 40
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42P01
+    MessageText: relation "Test(fde65ff9-4ca4-4419-8586-4c01132f8543)" does not exist
+    Position: 15
+    File: parse_relation.c
+    Line: 1392
+    Routine: parserOpenTable
+2024-05-29 22:54:17.583 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/api/Test(fde65ff9-4ca4-4419-8586-4c01132f8543) - 500 null text/plain; charset=utf-8 96.1531ms

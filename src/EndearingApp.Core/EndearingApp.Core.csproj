@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.1.3" />
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ardalis.GuardClauses" />
+    <PackageReference Include="Ardalis.Result" />
+    <PackageReference Include="Ardalis.SmartEnum" />
+    <PackageReference Include="Ardalis.Specification" />
+    <PackageReference Include="Autofac" />
+    <PackageReference Include="Mapster" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.OData.Edm" />
+    <PackageReference Include="Microsoft.OData.ModelBuilder" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EndearingApp.SharedKernel\EndearingApp.SharedKernel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="EdmModelBuilder">
+      <HintPath>..\..\..\EdmModelBuilder\bin\Debug\net8.0\EdmModelBuilder.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\NugetRepo\newtonsoft.json\13.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SqlForSchemaGenerator.Core">
+      <HintPath>..\..\..\SqlForSchemaGenerator\SqlForSchemaGenrator.Postgres\bin\Debug\net8.0\SqlForSchemaGenerator.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
