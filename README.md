@@ -1,7 +1,6 @@
 Base App
 
 A base application to create tables and relationships and manage this data via OData API, with plans for some generic frontend capabilities in the future.
-Dependencies
 
 Overview
 
