@@ -3,11 +3,6 @@ Base App
 A base application to create tables and relationships and manage this data via OData API, with plans for some generic frontend capabilities in the future.
 Dependencies
 
-This project depends on the following libraries:
-
-    SqlForSchemaGenerator
-    EdmModelBuilder
-
 Overview
 
 The Base App provides a foundational structure for managing database tables and relationships through an API. This setup will facilitate seamless data management and retrieval, and future updates aim to include a generic frontend for more accessible interaction.
