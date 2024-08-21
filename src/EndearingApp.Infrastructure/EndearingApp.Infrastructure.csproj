@@ -11,12 +11,11 @@
     <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" />
     <PackageReference Include="Autofac" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+    <PackageReference Include="CliWrap" />
     <PackageReference Include="Dapper" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" PrivateAssets="all" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
-    <PackageReference Include="Microsoft.OData.Core" />
     <PackageReference Include="Npgsql" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="SQLite" />
@@ -25,21 +24,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\OdataToSqlConvertor\OdataToSqlConvertor.csproj" />
     <ProjectReference Include="..\EndearingApp.Core\EndearingApp.Core.csproj" />
     <ProjectReference Include="..\EndearingApp.SharedKernel\EndearingApp.SharedKernel.csproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Reference Include="EdmModelBuilder">
-      <HintPath>..\..\..\EdmModelBuilder\bin\Debug\net8.0\EdmModelBuilder.dll</HintPath>
-    </Reference>
-    <Reference Include="SqlForSchemaGenerator.Core">
-      <HintPath>..\..\..\SqlForSchemaGenerator\SqlForSchemaGenrator.Postgres\bin\Debug\net8.0\SqlForSchemaGenerator.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SqlForSchemaGenrator.Postgres">
-      <HintPath>..\..\..\SqlForSchemaGenerator\SqlForSchemaGenrator.Postgres\bin\Debug\net8.0\SqlForSchemaGenrator.Postgres.dll</HintPath>
-    </Reference>
   </ItemGroup>
   
   <ItemGroup>

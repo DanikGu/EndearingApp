@@ -1,5 +1,4 @@
-﻿using Azure;
-using FastEndpoints;
+﻿using FastEndpoints;
 using Mapster;
 using EndearingApp.Core.CustomEntityAggregate;
 using EndearingApp.SharedKernel.Interfaces;

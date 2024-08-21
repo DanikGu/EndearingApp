@@ -35,7 +35,7 @@ public class Update : Endpoint<UpdateRequest, EmptyResponse>
             await SendAsync(new EmptyResponse(), 400);
             return;
         }
-        var edmModel = _manager.GetModel();
+        var edmModel = new EdmModel();//_manager.GetModel();
         var edmNamespace = edmModel.DeclaredNamespaces.FirstOrDefault();
         var key = (
             edmModel.FindDeclaredType(edmNamespace + "." + request.TableName) as EdmEntityType

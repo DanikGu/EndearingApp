@@ -4,7 +4,6 @@ using Autofac;
 using Autofac.Core;
 using MediatR;
 using MediatR.Pipeline;
-using Microsoft.Data.SqlClient;
 using Npgsql;
 using EndearingApp.Core;
 using EndearingApp.Core.CustomDataAccsess.Interfaces;
@@ -12,9 +11,8 @@ using EndearingApp.Infrastructure.Data;
 using EndearingApp.Infrastructure.Data.CustomDataAccess;
 using EndearingApp.SharedKernel;
 using EndearingApp.SharedKernel.Interfaces;
-using SqlForSchemaGenerator.Core.Interfaces;
-using SqlForSchemaGenrator.Postgres;
 using Module = Autofac.Module;
+using EndearingApp.Core.CustomEntityAggregate.Interfaces;
 
 namespace EndearingApp.Infrastructure;
 
@@ -72,32 +70,23 @@ public class DefaultInfrastructureModule : Module
             .RegisterType<DomainEventDispatcher>()
             .As<IDomainEventDispatcher>()
             .InstancePerLifetimeScope();
-        builder.RegisterType<PostgresSqlGenerator>().As<ISqlGenerator>().InstancePerLifetimeScope();
-
         builder
-            .RegisterType<PostgresSqlTypeConvertor>()
-            .As<ISqlTypesConverter>()
-            .InstancePerLifetimeScope();
-        builder
-            .RegisterType<PostgresDbStructureBuilderWrapper>()
-            .As<IDbStructureBuilder>()
-            .InstancePerLifetimeScope();
-        builder
-            .RegisterType<PostgresDbStructureBuilderWrapper>()
-            .As<IDbStructureCache>()
+            .RegisterType<DatabaseStructureUpdater>()
+            .As<IDatabaseStructureUpdater>()
             .InstancePerLifetimeScope();
 
         builder.RegisterType<DapperSqlExecutor>().As<ISqlExecutor>().InstancePerLifetimeScope();
 
         builder
-            .RegisterType<DefaultEdmModelMnager>()
+            .RegisterType<DefaultEdmModelManager>()
             .As<IEdmModelManager>()
             .InstancePerLifetimeScope();
 
         builder
-            .RegisterType<PostgresCustomDataAccessGenerator>()
-            .As<ICustomDataAccessSqlGenerator>()
+            .RegisterType<CustomEntityDataProvider>()
+            .As<ICustomEntityQueryDataProvider>()
             .InstancePerLifetimeScope();
+
         //builder.Register<ServiceFactory>(context =>
         //{
         //  var c = context.Resolve<IComponentContext>();

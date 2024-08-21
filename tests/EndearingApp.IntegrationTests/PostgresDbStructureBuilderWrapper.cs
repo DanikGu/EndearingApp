@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SqlForSchemaGenerator.Core.Interfaces;
 using SqlForSchemaGenerator.Core.Models;
 using SqlForSchemaGenrator.Postgres;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace EndearingApp.Infrastructure.Data;
 

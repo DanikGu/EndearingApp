@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using EndearingApp.Core.CustomEntityAggregate.Events;
 using EndearingApp.SharedKernel;
 using EndearingApp.SharedKernel.Interfaces;

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
-using SqlForSchemaGenerator.Core.Models;
+using EndearingApp.Core.CustomEntityAggregate.DbStructureModels;
 
 namespace EndearingApp.Core.CustomEntityAggregate;
 [DataContract]

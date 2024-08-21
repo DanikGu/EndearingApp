@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Data.Common;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using EndearingApp.SharedKernel.Interfaces;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using System.Collections;
 
 namespace EndearingApp.Infrastructure.Data;
 

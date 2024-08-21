@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EndearingApp.IntegrationTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EndearingApp.UnitTests", "tests\EndearingApp.UnitTests\EndearingApp.UnitTests.csproj", "{580145B9-B70F-4300-A0D1-ADA68C417A68}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OdataToSqlConvertor", "src\OdataToSqlConvertor\OdataToSqlConvertor.csproj", "{43232AD6-9961-43F3-BDD0-D4375EBB37C8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,10 +51,6 @@ Global
 		{580145B9-B70F-4300-A0D1-ADA68C417A68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{580145B9-B70F-4300-A0D1-ADA68C417A68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{580145B9-B70F-4300-A0D1-ADA68C417A68}.Release|Any CPU.Build.0 = Release|Any CPU
-		{43232AD6-9961-43F3-BDD0-D4375EBB37C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43232AD6-9961-43F3-BDD0-D4375EBB37C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43232AD6-9961-43F3-BDD0-D4375EBB37C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43232AD6-9961-43F3-BDD0-D4375EBB37C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

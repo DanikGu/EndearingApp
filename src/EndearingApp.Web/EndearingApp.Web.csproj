@@ -35,4 +35,10 @@
     <ProjectReference Include="..\EndearingApp.Infrastructure\EndearingApp.Infrastructure.csproj" />
   </ItemGroup>
   
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.OData">
+      <HintPath>..\..\..\AspNetCoreOData\bin\AnyCPU\Debug\netcoreapp3.1\Microsoft.AspNetCore.OData.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  
 </Project>

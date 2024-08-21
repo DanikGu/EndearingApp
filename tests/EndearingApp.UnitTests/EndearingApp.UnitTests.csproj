@@ -43,6 +43,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\EndearingApp.Core\EndearingApp.Core.csproj" />
+    <ProjectReference Include="..\..\src\EndearingApp.Infrastructure\EndearingApp.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

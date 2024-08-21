@@ -18,6 +18,11 @@ using EndearingApp.Web;
 using EndearingApp.Web.Config;
 using EndearingApp.Web.Endpoints.CustomEntityEndpoints;
 using EndearingApp.Web.Exstensions;
+using Microsoft.AspNetCore.OData;
+using EndearingApp.Core.CustomDataAccsess.Interfaces;
+using EndearingApp.Core.CustomEntityAggregate.Interfaces;
+using EndearingApp.Core.CustomEntityAggregate.Events;
+using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +37,6 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 });
 
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
 builder.Services.AddDbContext<AppDbContext>(
     options =>
         options.UseNpgsql(
@@ -51,7 +55,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddMapster();
 
-// add list services for diagnostic purposes - see https://github.com/ardalis/AspNetCoreStartupServices
+
 builder.Services.Configure<ServiceConfig>(config =>
 {
     config.Services = new List<ServiceDescriptor>(builder.Services);
@@ -67,7 +71,8 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         new DefaultInfrastructureModule(builder.Environment.EnvironmentName == "Development")
     );
 });
-
+builder.Services.AddControllers()
+            .AddOData(opt => opt.Count().Filter().Expand().Select().OrderBy().SetMaxTop(null));
 //builder.Logging.AddAzureWebAppDiagnostics(); add this if deploying to Azure
 
 var app = builder.Build();
@@ -115,6 +120,9 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<AppDbContext>();
         context.Database.Migrate();
+        var midiator = services.GetRequiredService<IMediator>();
+        midiator.Publish(new CustomDbStructureChangedEvent()).GetAwaiter().GetResult();
+
         //context.Database.EnsureCreated();
         //SeedData.Initialize(services);
     }

@@ -27,7 +27,7 @@ public class Metadata : Endpoint<EmptyRequest, string>
         CancellationToken cancellationToken
     )
     {
-        string metadata = _manager.GetXmlModel();
+        string metadata = "";//_manager.GetXmlModel();
         await SendStringAsync(metadata, contentType: "application/xhtml+xml");
     }
 }

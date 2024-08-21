@@ -1,39 +1,72 @@
-﻿using MediatR;
-using EndearingApp.Core.CustomEntityAggregate.Events;
-using EndearingApp.Core.CustomEntityAggregate.Specifications;
+﻿using System.Text;
+using System.Xml;
+using Microsoft.OData.Edm;
+using Microsoft.OData.Edm.Csdl;
+using Microsoft.OData.Edm.Validation;
+using EndearingApp.Core.CustomDataAccsess.Interfaces;
+using EndearingApp.Core.CustomEntityAggregate;
 using EndearingApp.SharedKernel.Interfaces;
-using EndearingApp.Core.CustomEntityAggregate.Interfaces;
+using EndearingApp.Core.CustomEntityAggregate.Specifications;
 using EndearingApp.Core.CustomEntityAggregate.DbStructureModels;
 
-namespace EndearingApp.Core.CustomEntityAggregate.Handlers;
+namespace EndearingApp.Infrastructure.Data.CustomDataAccess;
 
-public class CustomeDbStructureChangedHandler : INotificationHandler<CustomDbStructureChangedEvent>
+public class DefaultEdmModelManager : IEdmModelManager
 {
-  private readonly IRepository<CustomEntity> _customEntityRepository;
-  private readonly IDatabaseStructureUpdater _databaseStructureUpdater;
-
-  public CustomeDbStructureChangedHandler(
-        IRepository<CustomEntity> customEntityRepository,
-        IDatabaseStructureUpdater databaseStructureUpdater
-    )
+    public DefaultEdmModelManager(IRepository<CustomEntity> _customEntityRepository)
     {
-    _customEntityRepository = customEntityRepository;
-    _databaseStructureUpdater = databaseStructureUpdater;
-  }
-
-    public async Task Handle(
-        CustomDbStructureChangedEvent notification,
-        CancellationToken cancellationToken)
-    {
-        var customeEntities = await _customEntityRepository.ListAsync(new GetAllSpec());
-        var targetStructure = MapCustomEntitiesToDbStructure(customeEntities);
-        await _databaseStructureUpdater.UpdateDbStructure(targetStructure);           
+        this._customEntityRepository = _customEntityRepository;
     }
 
+    private static IEdmModel? _edmModel;
+    private readonly IRepository<CustomEntity> _customEntityRepository;
+
+    public IEdmModel Build()
+    {
+        BuildCurrent();
+        return _edmModel!;
+    }
+
+    public IEdmModel GetModel()
+    {
+        if (_edmModel is null)
+        {
+            BuildCurrent();
+        }
+        return _edmModel!;
+    }
+
+    public string GetXmlModel()
+    {
+        if (_edmModel is null)
+        {
+            BuildCurrent();
+        }
+        return WriteModelToCsdl(_edmModel!);
+    }
+
+    private void BuildCurrent()
+    {
+        var customeEntities = _customEntityRepository.ListAsync(new GetAllSpec()).
+            GetAwaiter().GetResult();
+        var structure = MapCustomEntitiesToDbStructure(customeEntities);
+        var builder = new EdmModelBuilderDbStructure(structure!);
+        _edmModel = builder.Model;
+    }
+
+    private static string WriteModelToCsdl(IEdmModel model)
+    {
+        var result = new StringBuilder();
+        using (var writer = XmlWriter.Create(result))
+        {
+            IEnumerable<EdmError> errors;
+            CsdlWriter.TryWriteCsdl(model, writer, CsdlTarget.OData, out errors);
+            return result.ToString();
+        }
+    }
     private DbStructure MapCustomEntitiesToDbStructure(
-        List<CustomEntity> customEntities,
-        bool mapToDbTypes = true
-    )
+       List<CustomEntity> customEntities,
+       bool mapToDbTypes = true)
     {
         var dbStructure = new DbStructure();
         var tables = new List<Table>();

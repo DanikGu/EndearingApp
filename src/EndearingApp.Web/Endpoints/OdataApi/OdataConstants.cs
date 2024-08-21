@@ -2,5 +2,5 @@
 
 public class OdataConstants
 {
-    public const string OdataRoute = "odata/api/";
+    public const string OdataRoute = "odata/";
 }
