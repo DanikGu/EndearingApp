@@ -84,7 +84,7 @@ public class DefaultInfrastructureModule : Module
 
         builder
             .RegisterType<CustomEntityDataProvider>()
-            .As<ICustomEntityQueryDataProvider>()
+            .As<ICustomEntityDataProvider>()
             .InstancePerLifetimeScope();
 
         //builder.Register<ServiceFactory>(context =>

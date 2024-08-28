@@ -1,11 +1,13 @@
 ﻿
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
 namespace EndearingApp.Core.CustomDataAccsess.Interfaces;
-public interface ICustomEntityQueryDataProvider
+public interface ICustomEntityDataProvider
 {
-    DbContext GetDbContext(string entityName);
+    DbContext GetDbContext();
     IQueryable GetDbSet(string entityName);
+    object? GetByKey(string entityName, string key);
     void ReloadDbContextAsseblies();
     void FreePreviousAssembly();
 }

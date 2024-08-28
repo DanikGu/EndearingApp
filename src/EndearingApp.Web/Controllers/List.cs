@@ -1,42 +1,36 @@
-﻿using EndearingApp.Core.CustomDataAccsess.Interfaces;
+﻿using System.Linq.Expressions;
+using EndearingApp.Core.CustomDataAccsess.Interfaces;
 using EndearingApp.Core.CustomDataAccsess.Services;
 using EndearingApp.Web.Endpoints.OdataApi;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Extensions;
 using Microsoft.AspNetCore.OData.Query;
-using Microsoft.OData.UriParser;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 namespace EndearingApp.Web.Controllers;
-public class List : Controller
+public class List : ODataController
 {
-    private readonly ICustomEntityQueryDataProvider _customEntityQueryableProvider;
-    private readonly IEdmModelManager _edmModelManager;
+    private readonly ICustomEntityDataProvider _customEntityQueryableProvider;
 
-    public List(ICustomEntityQueryDataProvider customEntityQueryableProvider, IEdmModelManager edmModelManager)
+    public List(ICustomEntityDataProvider customEntityQueryableProvider, IEdmModelManager edmModelManager)
     {
         _customEntityQueryableProvider = customEntityQueryableProvider;
-        _edmModelManager = edmModelManager;
     }
     [EnableQuery]
-    [HttpGet("odata/{*any}")]
-    public IActionResult Get()
+    public IActionResult Get(string entityset)
     {
-        var fullUrl = HttpContext.Request.GetDisplayUrl();
-        var relativeUrlStartIndex =
-            fullUrl.IndexOf(OdataConstants.OdataRoute) + OdataConstants.OdataRoute.Length;
-        var relativeUri = new Uri(fullUrl.Substring(relativeUrlStartIndex), UriKind.Relative);
-        var parser = GetParser(relativeUri);
-
-        var paths = parser.ParsePath().ToList();
-        var entitySetSegment = paths.FirstOrDefault(x => x is EntitySetSegment);
-        var dbSet = _customEntityQueryableProvider.GetDbSet(entitySetSegment!.Identifier);
-        
+        var dbSet = _customEntityQueryableProvider.GetDbSet(entityset);
         return Ok(dbSet);
     }
-    private ODataUriParser GetParser(Uri relativeUri)
+    public IActionResult Get(string entityset, string key)
     {
-        var parser = new ODataUriParser(_edmModelManager.GetModel(), relativeUri);
-        parser.Resolver.EnableCaseInsensitive = true;
-        parser.Resolver.EnableNoDollarQueryOptions = true;
-        return parser;
+        var expand = Request.ODataFeature().SelectExpandClause;
+        var obj = _customEntityQueryableProvider.GetByKey(entityset, key);
+        if (obj is null) 
+        {
+            return NotFound();
+        }
+        return Ok(obj);
     }
+
 }

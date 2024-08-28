@@ -8,18 +8,22 @@ using EndearingApp.Core.CustomEntityAggregate;
 using EndearingApp.SharedKernel.Interfaces;
 using EndearingApp.Core.CustomEntityAggregate.Specifications;
 using EndearingApp.Core.CustomEntityAggregate.DbStructureModels;
+using Microsoft.OData.ModelBuilder;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Linq;
+using System.Reflection;
 
 namespace EndearingApp.Infrastructure.Data.CustomDataAccess;
 
 public class DefaultEdmModelManager : IEdmModelManager
 {
-    public DefaultEdmModelManager(IRepository<CustomEntity> _customEntityRepository)
+    public DefaultEdmModelManager(ICustomEntityDataProvider entityQueryDataProvider)
     {
-        this._customEntityRepository = _customEntityRepository;
+        _entityQueryDataProvider = entityQueryDataProvider;
     }
 
     private static IEdmModel? _edmModel;
-    private readonly IRepository<CustomEntity> _customEntityRepository;
+    private readonly ICustomEntityDataProvider _entityQueryDataProvider;
 
     public IEdmModel Build()
     {
@@ -47,13 +51,41 @@ public class DefaultEdmModelManager : IEdmModelManager
 
     private void BuildCurrent()
     {
-        var customeEntities = _customEntityRepository.ListAsync(new GetAllSpec()).
-            GetAwaiter().GetResult();
-        var structure = MapCustomEntitiesToDbStructure(customeEntities);
-        var builder = new EdmModelBuilderDbStructure(structure!);
-        _edmModel = builder.Model;
+        var modelBuilder = new ODataConventionModelBuilder();
+        var types = GetDbContextTypes();
+        if (types is null) 
+        {
+            throw new ArgumentNullException(nameof(types));
+        }
+        foreach (var type in types) 
+        {
+            var name = GetTableName(type);
+            MethodInfo method = typeof(ODataConventionModelBuilder).
+                GetMethod(nameof(ODataConventionModelBuilder.EntitySet))!;
+            MethodInfo generic = method.MakeGenericMethod(type);
+            generic.Invoke(modelBuilder,new object[] { name });
+        }
+        _edmModel = modelBuilder.GetEdmModel();
     }
-
+    private string GetTableName(Type tableType) 
+    {
+        return (tableType.GetCustomAttributes(typeof(TableAttribute), true).
+            FirstOrDefault() as TableAttribute)?.Name ?? 
+            throw new ArgumentException("Table type without name");
+    }
+    private Type[]? GetDbContextTypes()    
+    {
+        var types = new List<Type>();
+        foreach (var prop in _entityQueryDataProvider?.GetDbContext()?.GetType()?.GetProperties()! ) 
+        {
+            if (prop.PropertyType.FullName?.Contains("DbSet") ?? false) 
+            {
+                var generic = prop.PropertyType.GetGenericArguments().First();
+                types.Add(generic);
+            }
+        }
+        return types.ToArray();
+    } 
     private static string WriteModelToCsdl(IEdmModel model)
     {
         var result = new StringBuilder();

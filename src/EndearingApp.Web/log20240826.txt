@@ -1,0 +1,9 @@
+2024-08-26 14:51:27.049 +03:00 [INF] Registered 9 endpoints in 1 069 milliseconds.
+2024-08-26 14:51:27.215 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-26 14:51:27.487 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-26 14:51:27.487 +03:00 [INF] Hosting environment: Development
+2024-08-26 14:51:27.487 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-08-26 14:51:27.513 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-26 14:51:28.127 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-26 14:51:28.156 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 647.1119ms
+2024-08-26 14:51:28.160 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404

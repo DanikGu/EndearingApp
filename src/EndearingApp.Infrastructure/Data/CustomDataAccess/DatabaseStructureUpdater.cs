@@ -11,10 +11,10 @@ namespace EndearingApp.Infrastructure.Data.CustomDataAccess;
 public class DatabaseStructureUpdater : IDatabaseStructureUpdater
 {
     private readonly AppDbContext _appDbContext;
-    private readonly ICustomEntityQueryDataProvider _customEntityQueryDataProvider;
+    private readonly ICustomEntityDataProvider _customEntityQueryDataProvider;
     private readonly ILogger? _logger;
 
-    public DatabaseStructureUpdater(AppDbContext appDbContext, ICustomEntityQueryDataProvider customEntityQueryDataProvider)
+    public DatabaseStructureUpdater(AppDbContext appDbContext, ICustomEntityDataProvider customEntityQueryDataProvider)
     {
         _appDbContext = appDbContext;
         _customEntityQueryDataProvider = customEntityQueryDataProvider;
@@ -133,6 +133,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         result.AppendLine("using System.Reflection;");
         result.AppendLine("using System;");
         result.AppendLine("using Microsoft.OData.ModelBuilder;");
+        result.AppendLine("using System.Linq;");
 
 
         result.Append("namespace ").Append(ns).Append(";\n");
@@ -172,10 +173,10 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
     {
         var result = new StringBuilder();
 
-        result.AppendLine("[Select(SelectType = SelectExpandType.Automatic)]");
+        result.AppendLine("[Select(SelectType = SelectExpandType.Allowed)]");
         result.AppendLine("[Filter]");
         result.AppendLine("[Count]");
-        result.AppendLine("[Expand(ExpandType = SelectExpandType.Automatic)]");
+        result.AppendLine("[Expand(ExpandType = SelectExpandType.Allowed)]");
         result.AppendLine("[OrderBy]");
         result.AppendFormat("[Table(\"{0}\")]\n", table.Name);
         result.Append("public class ").Append(table.Name).Append("\n{\n");

@@ -10,7 +10,7 @@ namespace EndearingApp.Core.CustomDataAccsess.Services;
 public class CustomDataCrudService
 {
     private readonly ISqlExecutor _sqlExecutor;
-    private readonly ICustomEntityQueryDataProvider _customEntityQueryableProvider;
+    private readonly ICustomEntityDataProvider _customEntityQueryableProvider;
     private readonly IEdmModelManager _edmModelManager;
 
     //private readonly ICustomDataAccessSqlGenerator _customDataAccessSqlGenerator;
@@ -18,7 +18,7 @@ public class CustomDataCrudService
 
     public CustomDataCrudService(
         ISqlExecutor sqlExecutor,
-        ICustomEntityQueryDataProvider customEntityQueryableProvider,
+        ICustomEntityDataProvider customEntityQueryableProvider,
         IEdmModelManager edmModelManager
 
     ) {
