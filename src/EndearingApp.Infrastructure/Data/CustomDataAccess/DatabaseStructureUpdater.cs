@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using EndearingApp.Core.CustomDataAccsess.Interfaces;
+using EfSchemaCompare;
 
 namespace EndearingApp.Infrastructure.Data.CustomDataAccess;
 public class DatabaseStructureUpdater : IDatabaseStructureUpdater
@@ -14,7 +15,8 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
     private readonly ICustomEntityDataProvider _customEntityQueryDataProvider;
     private readonly ILogger? _logger;
 
-    public DatabaseStructureUpdater(AppDbContext appDbContext, ICustomEntityDataProvider customEntityQueryDataProvider)
+    public DatabaseStructureUpdater(AppDbContext appDbContext, 
+        ICustomEntityDataProvider customEntityQueryDataProvider)
     {
         _appDbContext = appDbContext;
         _customEntityQueryDataProvider = customEntityQueryDataProvider;
@@ -45,16 +47,39 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             await CallDotnetCli("add package Npgsql.EntityFrameworkCore.PostgreSQL -v 8.0.4", folderPath);
             await CallDotnetCli("add package Microsoft.OData.ModelBuilder -v 1.0.9", folderPath);
             await CallDotnetCli("add package Microsoft.EntityFrameworkCore.Design", folderPath);
+            await CallDotnetCli("new tool-manifest", folderPath);
+            await CallDotnetCli("tool install dotnet-ef", folderPath);
             File.WriteAllText(folderPath + "\\AppContext.cs", appContext);
             File.Delete(folderPath + "\\Class1.cs");
             await CallDotnetCli("ef migrations add InitialCreate", folderPath);
-            ClearInitialMigration(folderPath + "\\Migrations\\");
-            await CallDotnetCli("ef database update", folderPath);
+            await CallDotnetCli("dotnet publish", folderPath);
+            if (GetIsDatabaseUpToDate()) 
+            {
+                ClearInitialMigration(folderPath + "\\Migrations\\");
+            }
+            try
+            {
+                await CallDotnetCli("ef database update", folderPath);
+            }
+            catch 
+            {
+                throw new InvalidOperationException("Initial migration of custom schema failed" +
+                    "Database structure have to be up to date or empty;");
+            } 
         }
         File.WriteAllText(folderPath + "\\AppContext.cs", appContext);
         await CallDotnetCli("ef migrations add " + GetNewMigrationName(), folderPath);
         await CallDotnetCli("ef database update", folderPath);
         await CallDotnetCli("dotnet publish", folderPath);
+    }
+    private bool GetIsDatabaseUpToDate() 
+    {
+        var dbContext = _customEntityQueryDataProvider.GetDbContext();
+        var comparer = new CompareEfSql();
+        var hasErrors = comparer.CompareEfWithDb(dbContext);
+        _customEntityQueryDataProvider.FreePreviousAssembly();
+
+        return !hasErrors;
     }
     private void ClearInitialMigration(string migrationFolder) 
     {
@@ -118,7 +143,11 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
     private string GetNewMigrationName()
     {
         return "updateState" +
-                DateTime.UtcNow.ToString().Replace(" ", "_").Replace(".", "").Replace(":", "");
+                DateTime.UtcNow.ToString().
+                Replace(" ", "_").
+                Replace(".", "").
+                Replace(":", "").
+                Replace("/", "");
     }
     private string GetAllTablesClasses(string ns, string dbContextName, DbStructure dbStructure, string connectionString)
     {

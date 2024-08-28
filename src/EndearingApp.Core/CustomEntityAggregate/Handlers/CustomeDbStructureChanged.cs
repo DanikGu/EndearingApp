@@ -4,6 +4,7 @@ using EndearingApp.Core.CustomEntityAggregate.Specifications;
 using EndearingApp.SharedKernel.Interfaces;
 using EndearingApp.Core.CustomEntityAggregate.Interfaces;
 using EndearingApp.Core.CustomEntityAggregate.DbStructureModels;
+using EndearingApp.Core.CustomDataAccsess.Interfaces;
 
 namespace EndearingApp.Core.CustomEntityAggregate.Handlers;
 
@@ -11,15 +12,18 @@ public class CustomeDbStructureChangedHandler : INotificationHandler<CustomDbStr
 {
   private readonly IRepository<CustomEntity> _customEntityRepository;
   private readonly IDatabaseStructureUpdater _databaseStructureUpdater;
+    private readonly IEdmModelManager _edmModelManager;
 
-  public CustomeDbStructureChangedHandler(
+    public CustomeDbStructureChangedHandler(
         IRepository<CustomEntity> customEntityRepository,
-        IDatabaseStructureUpdater databaseStructureUpdater
+        IDatabaseStructureUpdater databaseStructureUpdater,
+        IEdmModelManager edmModelManager
     )
     {
-    _customEntityRepository = customEntityRepository;
-    _databaseStructureUpdater = databaseStructureUpdater;
-  }
+        _customEntityRepository = customEntityRepository;
+        _databaseStructureUpdater = databaseStructureUpdater;
+        _edmModelManager = edmModelManager;
+    }
 
     public async Task Handle(
         CustomDbStructureChangedEvent notification,
@@ -27,7 +31,8 @@ public class CustomeDbStructureChangedHandler : INotificationHandler<CustomDbStr
     {
         var customeEntities = await _customEntityRepository.ListAsync(new GetAllSpec());
         var targetStructure = MapCustomEntitiesToDbStructure(customeEntities);
-        await _databaseStructureUpdater.UpdateDbStructure(targetStructure);           
+        await _databaseStructureUpdater.UpdateDbStructure(targetStructure);
+        _edmModelManager.Build();
     }
 
     private DbStructure MapCustomEntitiesToDbStructure(

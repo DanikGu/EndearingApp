@@ -117,10 +117,10 @@ using (var scope = app.Services.CreateScope())
 
     try
     {
-        //var context = services.GetRequiredService<AppDbContext>();
-        //context.Database.Migrate();
-        //var mediator = services.GetRequiredService<IMediator>();
-        //mediator.Publish(new CustomDbStructureChangedEvent()).GetAwaiter().GetResult();
+        var context = services.GetRequiredService<AppDbContext>();
+        context.Database.Migrate();
+        var mediator = services.GetRequiredService<IMediator>();
+        mediator.Publish(new CustomDbStructureChangedEvent()).GetAwaiter().GetResult();
 
 
 
