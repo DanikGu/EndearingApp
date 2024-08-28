@@ -286,7 +286,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                 AppendFormat(".WithMany(b => b.{0})\n", rel!.Table!.Name + "_EtnColl").
                 AppendFormat(".HasForeignKey(b => b.{0})\n", rel!.Field!.Name).
                 AppendFormat(".HasPrincipalKey(b => b.{0})\n", rel!.ReferencedField!.Name);
-            if (rel.ConstraintName is not null)
+            if (!string.IsNullOrWhiteSpace(rel.ConstraintName))
             {
                 fieldsConfig.
                     AppendFormat(".HasConstraintName(\"{0}\")", rel.ConstraintName);
