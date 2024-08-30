@@ -5,7 +5,11 @@ meta {
 }
 
 get {
-  url: {{BaseUrl}}odata/Cell
+  url: {{BaseUrl}}odata/Animal?$expand=Cell_Etn($select=CellNumber,Id)
   body: json
   auth: none
+}
+
+params:query {
+  $expand: Cell_Etn($select
 }

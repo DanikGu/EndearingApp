@@ -3938,3 +3938,728 @@ ORDER BY c."Id", f."Id"
 2024-08-28 16:46:20.781 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 51.4777ms
 2024-08-28 16:46:20.781 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
 2024-08-28 16:46:20.782 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Cell - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 56.0314ms
+2024-08-28 21:27:30.882 +03:00 [INF] Registered 9 endpoints in 1 410 milliseconds.
+2024-08-28 21:27:31.040 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-28 21:27:31.294 +03:00 [INF] Executed DbCommand (41ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-28 21:27:31.305 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-28 21:27:31.317 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-28 21:27:31.323 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-28 21:27:31.323 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-28 21:27:31.331 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-08-28 21:27:31.508 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-28 21:27:31.538 +03:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:28:03.734 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-28 21:28:03.734 +03:00 [INF] Hosting environment: Development
+2024-08-28 21:28:03.734 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-08-28 21:28:03.744 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/CustomEntity - null null
+2024-08-28 21:28:03.744 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-28 21:28:03.776 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-28 21:28:03.798 +03:00 [INF] Executing endpoint 'HTTP: GET /CustomEntity'
+2024-08-28 21:28:03.871 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:28:03.970 +03:00 [INF] Executed endpoint 'HTTP: GET /CustomEntity'
+2024-08-28 21:28:03.979 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/CustomEntity - 200 null application/json 238.7307ms
+2024-08-28 21:28:04.309 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 569.5072ms
+2024-08-28 21:28:04.310 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-08-28 21:29:06.485 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/Setting/DataBaseTypesDescription - null null
+2024-08-28 21:29:06.487 +03:00 [INF] Executing endpoint 'HTTP: GET Setting/{Name}'
+2024-08-28 21:29:06.525 +03:00 [INF] Executed DbCommand (8ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT s."Id", s."Description", s."JsonSetting", s."Name"
+FROM customization."SystemSetting" AS s
+WHERE s."Name" = @__name_0
+2024-08-28 21:29:06.536 +03:00 [INF] Executed endpoint 'HTTP: GET Setting/{Name}'
+2024-08-28 21:29:06.536 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/Setting/DataBaseTypesDescription - 200 null application/json 51.0002ms
+2024-08-28 21:29:06.542 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/Setting/DataBaseTypesDescription - null null
+2024-08-28 21:29:06.542 +03:00 [INF] Executing endpoint 'HTTP: GET Setting/{Name}'
+2024-08-28 21:29:06.545 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT s."Id", s."Description", s."JsonSetting", s."Name"
+FROM customization."SystemSetting" AS s
+WHERE s."Name" = @__name_0
+2024-08-28 21:29:06.547 +03:00 [INF] Executed endpoint 'HTTP: GET Setting/{Name}'
+2024-08-28 21:29:06.547 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/Setting/DataBaseTypesDescription - 200 null application/json 5.426ms
+2024-08-28 21:29:10.108 +03:00 [INF] Request starting HTTP/1.1 DELETE http://localhost:4000/CustomEntity/Test2 - null 0
+2024-08-28 21:29:10.109 +03:00 [INF] Executing endpoint 'HTTP: DELETE /CustomEntity/{Name}'
+2024-08-28 21:29:10.133 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-28 21:29:10.139 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-28 21:29:10.214 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = Guid), @p2='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='20']
+DELETE FROM customization."Field"
+WHERE "Id" = @p0;
+DELETE FROM customization."Field"
+WHERE "Id" = @p1;
+DELETE FROM customization."CustomEntity"
+WHERE "Id" = @p2;
+2024-08-28 21:29:10.235 +03:00 [INF] Executed endpoint 'HTTP: DELETE /CustomEntity/{Name}'
+2024-08-28 21:29:10.235 +03:00 [INF] Request finished HTTP/1.1 DELETE http://localhost:4000/CustomEntity/Test2 - 200 null application/json 127.5478ms
+2024-08-28 21:29:10.238 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/CustomEntity - null null
+2024-08-28 21:29:10.239 +03:00 [INF] Executing endpoint 'HTTP: GET /CustomEntity'
+2024-08-28 21:29:10.241 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:29:10.243 +03:00 [INF] Executed endpoint 'HTTP: GET /CustomEntity'
+2024-08-28 21:29:10.243 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/CustomEntity - 200 null application/json 4.9692ms
+2024-08-28 21:29:12.157 +03:00 [INF] Request starting HTTP/1.1 DELETE http://localhost:4000/CustomEntity/Test - null 0
+2024-08-28 21:29:12.157 +03:00 [INF] Executing endpoint 'HTTP: DELETE /CustomEntity/{Name}'
+2024-08-28 21:29:12.160 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-28 21:29:12.163 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = Guid), @p2='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='20']
+DELETE FROM customization."Field"
+WHERE "Id" = @p0;
+DELETE FROM customization."Field"
+WHERE "Id" = @p1;
+DELETE FROM customization."CustomEntity"
+WHERE "Id" = @p2;
+2024-08-28 21:29:12.168 +03:00 [INF] Executed endpoint 'HTTP: DELETE /CustomEntity/{Name}'
+2024-08-28 21:29:12.168 +03:00 [INF] Request finished HTTP/1.1 DELETE http://localhost:4000/CustomEntity/Test - 200 null application/json 11.5698ms
+2024-08-28 21:29:12.171 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/CustomEntity - null null
+2024-08-28 21:29:12.172 +03:00 [INF] Executing endpoint 'HTTP: GET /CustomEntity'
+2024-08-28 21:29:12.173 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:29:12.175 +03:00 [INF] Executed endpoint 'HTTP: GET /CustomEntity'
+2024-08-28 21:29:12.176 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/CustomEntity - 200 null application/json 4.3973ms
+2024-08-28 21:29:44.335 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:4000/CustomEntity - application/json 297
+2024-08-28 21:29:44.335 +03:00 [INF] Executing endpoint 'HTTP: POST /CustomEntity'
+2024-08-28 21:29:44.431 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?', @p2='?' (DbType = Guid), @p3='?' (DbType = Guid), @p4='?' (DbType = Boolean), @p5='?', @p6='?' (DbType = Int32), @p7='?' (DbType = Int32), @p8='?' (DbType = Guid), @p9='?' (DbType = Guid), @p10='?' (DbType = Boolean), @p11='?', @p12='?' (DbType = Int32), @p13='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='20']
+INSERT INTO customization."CustomEntity" ("Id", "Name")
+VALUES (@p0, @p1);
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p2, @p3, @p4, @p5, @p6, @p7);
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p8, @p9, @p10, @p11, @p12, @p13);
+2024-08-28 21:29:44.444 +03:00 [INF] Executed endpoint 'HTTP: POST /CustomEntity'
+2024-08-28 21:29:44.444 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:4000/CustomEntity - 200 null application/json 109.4475ms
+2024-08-28 21:29:44.448 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/CustomEntity - null null
+2024-08-28 21:29:44.448 +03:00 [INF] Executing endpoint 'HTTP: GET /CustomEntity'
+2024-08-28 21:29:44.450 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:29:44.452 +03:00 [INF] Executed endpoint 'HTTP: GET /CustomEntity'
+2024-08-28 21:29:44.452 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/CustomEntity - 200 null application/json 4.5935ms
+2024-08-28 21:29:47.485 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 395
+2024-08-28 21:29:47.485 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:29:47.489 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-28 21:29:47.505 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?'], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+2024-08-28 21:29:47.508 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:29:54.417 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:29:54.417 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 200 null application/json 6931.9698ms
+2024-08-28 21:30:24.939 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Cell - application/json null
+2024-08-28 21:30:24.986 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:30:24.995 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:30:25.032 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Cell, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-28 21:30:25.118 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 120.6872ms
+2024-08-28 21:30:25.118 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:30:25.118 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Cell - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 179.7888ms
+2024-08-28 21:30:42.923 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 500
+2024-08-28 21:30:42.923 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:30:42.925 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-28 21:30:42.930 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?', @p2='?' (DbType = Guid), @p3='?' (DbType = Guid), @p4='?' (DbType = Boolean), @p5='?', @p6='?' (DbType = Int32), @p7='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p2, @p3, @p4, @p5, @p6, @p7);
+2024-08-28 21:30:42.935 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:30:49.620 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:30:49.621 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 200 null application/json 6698.3608ms
+2024-08-28 21:31:01.807 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 807
+2024-08-28 21:31:01.807 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:31:01.812 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-28 21:31:01.820 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?', @p2='?' (DbType = Guid), @p3='?', @p4='?' (DbType = Guid), @p5='?' (DbType = Guid), @p6='?' (DbType = Guid), @p7='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+INSERT INTO customization."Relationship" ("Id", "ConstraintName", "ReferencedCustomEntityId", "ReferencedFieldId", "SourceCustomEntityId", "SourceFieldId")
+VALUES (@p2, @p3, @p4, @p5, @p6, @p7);
+2024-08-28 21:31:01.826 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:31:04.417 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:31:04.419 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+CliWrap.Exceptions.CommandExecutionException: Command execution failed because the underlying process (dotnet.exe#30696) returned a non-zero exit code (1).
+
+Command:
+dotnet ef migrations add updateState28082024_183101
+
+You can suppress this validation by calling `WithValidation(CommandResultValidation.None)` on the command.
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 271
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CallDotnetCli(String command, String folderPath) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 128
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CreateUpdateProjectMigrationsAndApplyThem(String appContext, String projectName, String folderPath) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 71
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.UpdateDbStructure(DbStructure dbStructure) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 37
+   at EndearingApp.Core.CustomEntityAggregate.Handlers.CustomeDbStructureChangedHandler.Handle(CustomDbStructureChangedEvent notification, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Core\CustomEntityAggregate\Handlers\CustomeDbStructureChanged.cs:line 34
+   at MediatR.NotificationPublishers.ForeachAwaitPublisher.Publish(IEnumerable`1 handlerExecutors, INotification notification, CancellationToken cancellationToken)
+   at EndearingApp.SharedKernel.DomainEventDispatcher.DispatchAndClearEvents(IEnumerable`1 entitiesWithEvents) in E:\Source E\EndearingApp\src\EndearingApp.SharedKernel\DomainEventDispatcher.cs:line 23
+   at EndearingApp.Infrastructure.Data.AppDbContext.SaveChangesAsync(CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\AppDbContext.cs:line 41
+   at Ardalis.Specification.EntityFrameworkCore.RepositoryBase`1.SaveChangesAsync(CancellationToken cancellationToken)
+   at Ardalis.Specification.EntityFrameworkCore.RepositoryBase`1.UpdateAsync(T entity, CancellationToken cancellationToken)
+   at EndearingApp.Web.Endpoints.CustomEntityEndpoints.Update.HandleAsync(CustomeEntityDTO request, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Web\Endpoints\CustomEntityEndpoints\Update.cs:line 43
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.OData.Routing.ODataRouteDebugMiddleware.Invoke(HttpContext context)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-08-28 21:31:04.448 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 500 null text/plain; charset=utf-8 2640.6503ms
+2024-08-28 21:31:15.689 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 807
+2024-08-28 21:31:15.689 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:31:15.692 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-28 21:31:15.699 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?'], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+2024-08-28 21:31:15.701 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:31:18.222 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:31:18.223 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+CliWrap.Exceptions.CommandExecutionException: Command execution failed because the underlying process (dotnet.exe#31616) returned a non-zero exit code (1).
+
+Command:
+dotnet ef migrations add updateState28082024_183115
+
+You can suppress this validation by calling `WithValidation(CommandResultValidation.None)` on the command.
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 271
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CallDotnetCli(String command, String folderPath) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 128
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CreateUpdateProjectMigrationsAndApplyThem(String appContext, String projectName, String folderPath) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 71
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.UpdateDbStructure(DbStructure dbStructure) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 37
+   at EndearingApp.Core.CustomEntityAggregate.Handlers.CustomeDbStructureChangedHandler.Handle(CustomDbStructureChangedEvent notification, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Core\CustomEntityAggregate\Handlers\CustomeDbStructureChanged.cs:line 34
+   at MediatR.NotificationPublishers.ForeachAwaitPublisher.Publish(IEnumerable`1 handlerExecutors, INotification notification, CancellationToken cancellationToken)
+   at EndearingApp.SharedKernel.DomainEventDispatcher.DispatchAndClearEvents(IEnumerable`1 entitiesWithEvents) in E:\Source E\EndearingApp\src\EndearingApp.SharedKernel\DomainEventDispatcher.cs:line 23
+   at EndearingApp.Infrastructure.Data.AppDbContext.SaveChangesAsync(CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\AppDbContext.cs:line 41
+   at Ardalis.Specification.EntityFrameworkCore.RepositoryBase`1.SaveChangesAsync(CancellationToken cancellationToken)
+   at Ardalis.Specification.EntityFrameworkCore.RepositoryBase`1.UpdateAsync(T entity, CancellationToken cancellationToken)
+   at EndearingApp.Web.Endpoints.CustomEntityEndpoints.Update.HandleAsync(CustomeEntityDTO request, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Web\Endpoints\CustomEntityEndpoints\Update.cs:line 43
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.OData.Routing.ODataRouteDebugMiddleware.Invoke(HttpContext context)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-08-28 21:31:18.225 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 500 null text/plain; charset=utf-8 2536.6144ms
+2024-08-28 21:32:52.478 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 807
+2024-08-28 21:32:52.478 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:32:52.482 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-28 21:32:52.492 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?'], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+2024-08-28 21:32:52.494 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:33:17.452 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:33:17.453 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+CliWrap.Exceptions.CommandExecutionException: Command execution failed because the underlying process (dotnet.exe#33684) returned a non-zero exit code (1).
+
+Command:
+dotnet ef migrations add updateState28082024_183314
+
+You can suppress this validation by calling `WithValidation(CommandResultValidation.None)` on the command.
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 271
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CallDotnetCli(String command, String folderPath) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 128
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CreateUpdateProjectMigrationsAndApplyThem(String appContext, String projectName, String folderPath) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 71
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.UpdateDbStructure(DbStructure dbStructure) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 37
+   at EndearingApp.Core.CustomEntityAggregate.Handlers.CustomeDbStructureChangedHandler.Handle(CustomDbStructureChangedEvent notification, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Core\CustomEntityAggregate\Handlers\CustomeDbStructureChanged.cs:line 34
+   at MediatR.NotificationPublishers.ForeachAwaitPublisher.Publish(IEnumerable`1 handlerExecutors, INotification notification, CancellationToken cancellationToken)
+   at EndearingApp.SharedKernel.DomainEventDispatcher.DispatchAndClearEvents(IEnumerable`1 entitiesWithEvents) in E:\Source E\EndearingApp\src\EndearingApp.SharedKernel\DomainEventDispatcher.cs:line 23
+   at EndearingApp.Infrastructure.Data.AppDbContext.SaveChangesAsync(CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\AppDbContext.cs:line 41
+   at Ardalis.Specification.EntityFrameworkCore.RepositoryBase`1.SaveChangesAsync(CancellationToken cancellationToken)
+   at Ardalis.Specification.EntityFrameworkCore.RepositoryBase`1.UpdateAsync(T entity, CancellationToken cancellationToken)
+   at EndearingApp.Web.Endpoints.CustomEntityEndpoints.Update.HandleAsync(CustomeEntityDTO request, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Web\Endpoints\CustomEntityEndpoints\Update.cs:line 43
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.OData.Routing.ODataRouteDebugMiddleware.Invoke(HttpContext context)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-08-28 21:33:17.455 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 500 null text/plain; charset=utf-8 24977.6453ms
+2024-08-28 21:39:20.315 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 807
+2024-08-28 21:39:20.315 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:39:20.319 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-28 21:39:20.328 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?'], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+2024-08-28 21:39:20.329 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:39:22.418 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:39:22.419 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+CliWrap.Exceptions.CommandExecutionException: Command execution failed because the underlying process (dotnet.exe#34584) returned a non-zero exit code (1).
+
+Command:
+dotnet ef migrations add updateState28082024_183920
+
+You can suppress this validation by calling `WithValidation(CommandResultValidation.None)` on the command.
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 271
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CallDotnetCli(String command, String folderPath)
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CreateUpdateProjectMigrationsAndApplyThem(String appContext, String projectName, String folderPath)
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.UpdateDbStructure(DbStructure dbStructure)
+   at EndearingApp.Core.CustomEntityAggregate.Handlers.CustomeDbStructureChangedHandler.Handle(CustomDbStructureChangedEvent notification, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Core\CustomEntityAggregate\Handlers\CustomeDbStructureChanged.cs:line 34
+   at MediatR.NotificationPublishers.ForeachAwaitPublisher.Publish(IEnumerable`1 handlerExecutors, INotification notification, CancellationToken cancellationToken)
+   at EndearingApp.SharedKernel.DomainEventDispatcher.DispatchAndClearEvents(IEnumerable`1 entitiesWithEvents) in E:\Source E\EndearingApp\src\EndearingApp.SharedKernel\DomainEventDispatcher.cs:line 23
+   at EndearingApp.Infrastructure.Data.AppDbContext.SaveChangesAsync(CancellationToken cancellationToken)
+   at Ardalis.Specification.EntityFrameworkCore.RepositoryBase`1.SaveChangesAsync(CancellationToken cancellationToken)
+   at Ardalis.Specification.EntityFrameworkCore.RepositoryBase`1.UpdateAsync(T entity, CancellationToken cancellationToken)
+   at EndearingApp.Web.Endpoints.CustomEntityEndpoints.Update.HandleAsync(CustomeEntityDTO request, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Web\Endpoints\CustomEntityEndpoints\Update.cs:line 43
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.OData.Routing.ODataRouteDebugMiddleware.Invoke(HttpContext context)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-08-28 21:39:22.421 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 500 null text/plain; charset=utf-8 2106.6081ms
+2024-08-28 21:39:30.474 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 807
+2024-08-28 21:39:30.475 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:39:30.480 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-28 21:39:30.486 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?'], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+2024-08-28 21:39:30.487 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:39:32.605 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:39:32.606 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+CliWrap.Exceptions.CommandExecutionException: Command execution failed because the underlying process (dotnet.exe#9752) returned a non-zero exit code (1).
+
+Command:
+dotnet ef migrations add updateState28082024_183930
+
+You can suppress this validation by calling `WithValidation(CommandResultValidation.None)` on the command.
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 271
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CallDotnetCli(String command, String folderPath)
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CreateUpdateProjectMigrationsAndApplyThem(String appContext, String projectName, String folderPath)
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.UpdateDbStructure(DbStructure dbStructure)
+   at EndearingApp.Core.CustomEntityAggregate.Handlers.CustomeDbStructureChangedHandler.Handle(CustomDbStructureChangedEvent notification, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Core\CustomEntityAggregate\Handlers\CustomeDbStructureChanged.cs:line 34
+   at MediatR.NotificationPublishers.ForeachAwaitPublisher.Publish(IEnumerable`1 handlerExecutors, INotification notification, CancellationToken cancellationToken)
+   at EndearingApp.SharedKernel.DomainEventDispatcher.DispatchAndClearEvents(IEnumerable`1 entitiesWithEvents) in E:\Source E\EndearingApp\src\EndearingApp.SharedKernel\DomainEventDispatcher.cs:line 23
+   at EndearingApp.Infrastructure.Data.AppDbContext.SaveChangesAsync(CancellationToken cancellationToken)
+   at Ardalis.Specification.EntityFrameworkCore.RepositoryBase`1.SaveChangesAsync(CancellationToken cancellationToken)
+   at Ardalis.Specification.EntityFrameworkCore.RepositoryBase`1.UpdateAsync(T entity, CancellationToken cancellationToken)
+   at EndearingApp.Web.Endpoints.CustomEntityEndpoints.Update.HandleAsync(CustomeEntityDTO request, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Web\Endpoints\CustomEntityEndpoints\Update.cs:line 43
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.OData.Routing.ODataRouteDebugMiddleware.Invoke(HttpContext context)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-08-28 21:39:32.608 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 500 null text/plain; charset=utf-8 2133.6726ms
+2024-08-28 21:42:04.786 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 807
+2024-08-28 21:42:04.787 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:42:04.790 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-28 21:42:04.799 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?'], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+2024-08-28 21:42:04.801 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:42:11.778 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:42:11.778 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 200 null application/json 6992.0856ms
+2024-08-28 21:42:39.730 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:4000/CustomEntity - application/json 393
+2024-08-28 21:42:39.730 +03:00 [INF] Executing endpoint 'HTTP: POST /CustomEntity'
+2024-08-28 21:42:39.734 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?', @p2='?' (DbType = Guid), @p3='?' (DbType = Guid), @p4='?' (DbType = Boolean), @p5='?', @p6='?' (DbType = Int32), @p7='?' (DbType = Int32), @p8='?' (DbType = Guid), @p9='?' (DbType = Guid), @p10='?' (DbType = Boolean), @p11='?', @p12='?' (DbType = Int32), @p13='?' (DbType = Int32), @p14='?' (DbType = Guid), @p15='?' (DbType = Guid), @p16='?' (DbType = Boolean), @p17='?', @p18='?' (DbType = Int32), @p19='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='20']
+INSERT INTO customization."CustomEntity" ("Id", "Name")
+VALUES (@p0, @p1);
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p2, @p3, @p4, @p5, @p6, @p7);
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p8, @p9, @p10, @p11, @p12, @p13);
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p14, @p15, @p16, @p17, @p18, @p19);
+2024-08-28 21:42:39.744 +03:00 [INF] Executed endpoint 'HTTP: POST /CustomEntity'
+2024-08-28 21:42:39.746 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:4000/CustomEntity - 200 null application/json 15.6579ms
+2024-08-28 21:42:39.748 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/CustomEntity - null null
+2024-08-28 21:42:39.749 +03:00 [INF] Executing endpoint 'HTTP: GET /CustomEntity'
+2024-08-28 21:42:39.751 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:42:39.754 +03:00 [INF] Executed endpoint 'HTTP: GET /CustomEntity'
+2024-08-28 21:42:39.755 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/CustomEntity - 200 null application/json 6.2797ms
+2024-08-28 21:43:07.497 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 709
+2024-08-28 21:43:07.497 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:43:07.502 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-28 21:43:07.507 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?', @p2='?' (DbType = Guid), @p3='?' (DbType = Guid), @p4='?' (DbType = Boolean), @p5='?', @p6='?' (DbType = Int32), @p7='?' (DbType = Int32), @p8='?' (DbType = Guid), @p9='?', @p10='?' (DbType = Guid), @p11='?' (DbType = Guid), @p12='?' (DbType = Guid), @p13='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p2, @p3, @p4, @p5, @p6, @p7);
+INSERT INTO customization."Relationship" ("Id", "ConstraintName", "ReferencedCustomEntityId", "ReferencedFieldId", "SourceCustomEntityId", "SourceFieldId")
+VALUES (@p8, @p9, @p10, @p11, @p12, @p13);
+2024-08-28 21:43:07.513 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-28 21:43:14.342 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-28 21:43:14.342 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 200 null application/json 6845.479ms
+2024-08-28 21:43:53.134 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Room - application/json null
+2024-08-28 21:43:53.164 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:43:53.165 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:43:53.199 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Room, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-28 21:43:53.254 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 89.3388ms
+2024-08-28 21:43:53.255 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:43:53.255 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Room - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 121.7872ms
+2024-08-28 21:44:04.844 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell - application/json null
+2024-08-28 21:44:04.846 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:44:04.846 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:44:04.869 +03:00 [INF] Executing BadRequestObjectResult, writing value of type 'Microsoft.AspNetCore.Mvc.SerializableError'.
+2024-08-28 21:44:04.877 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 31.3441ms
+2024-08-28 21:44:04.877 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:44:04.877 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell - 400 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 32.9878ms
+2024-08-28 21:44:15.847 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - application/json null
+2024-08-28 21:44:15.847 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:44:15.847 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:44:15.893 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Room, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:44:15.920 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 72.5439ms
+2024-08-28 21:44:15.920 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:44:15.920 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 73.4732ms
+2024-08-28 21:45:45.167 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - application/json null
+2024-08-28 21:45:45.170 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:45:45.170 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:45:45.210 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Room, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:45:45.278 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 108.0208ms
+2024-08-28 21:45:45.278 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:45:45.278 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 111.9311ms
+2024-08-28 21:46:09.958 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - application/json null
+2024-08-28 21:46:09.961 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:46:09.962 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:46:09.964 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Room, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:46:09.966 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 4.7565ms
+2024-08-28 21:46:09.966 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:46:09.967 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 8.6054ms
+2024-08-28 21:46:10.628 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - application/json null
+2024-08-28 21:46:10.629 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:46:10.629 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:46:10.630 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Room, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:46:10.632 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 3.0217ms
+2024-08-28 21:46:10.632 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:46:10.632 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 4.0028ms
+2024-08-28 21:46:11.521 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - application/json null
+2024-08-28 21:46:11.521 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:46:11.521 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:46:11.522 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Room, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:46:11.524 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 2.858ms
+2024-08-28 21:46:11.524 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:46:11.525 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 3.5487ms
+2024-08-28 21:46:11.930 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - application/json null
+2024-08-28 21:46:11.930 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:46:11.930 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:46:11.932 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Room, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:46:11.934 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 3.5151ms
+2024-08-28 21:46:11.934 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:46:11.934 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 4.3822ms
+2024-08-28 21:46:12.112 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - application/json null
+2024-08-28 21:46:12.112 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:46:12.112 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:46:12.114 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Room, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:46:12.116 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 3.6606ms
+2024-08-28 21:46:12.116 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:46:12.116 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 4.4777ms
+2024-08-28 21:49:45.356 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - application/json null
+2024-08-28 21:49:45.359 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:49:45.359 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:49:45.360 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Room, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:49:45.365 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 5.7167ms
+2024-08-28 21:49:45.365 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:49:45.365 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Room?$expand=Cell_EtnColl - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 9.4406ms
+2024-08-28 21:49:52.781 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Cell/$count - application/json null
+2024-08-28 21:49:52.783 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:49:52.784 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:49:52.805 +03:00 [INF] Executing OkObjectResult, writing value of type 'System.Int64'.
+2024-08-28 21:49:52.811 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 27.0981ms
+2024-08-28 21:49:52.811 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:49:52.811 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Cell/$count - 200 null text/plain; charset=utf-8 30.1878ms
+2024-08-28 21:49:55.361 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Cell - application/json null
+2024-08-28 21:49:55.361 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:49:55.361 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:49:55.362 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Cell, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-28 21:49:55.366 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 4.3463ms
+2024-08-28 21:49:55.366 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:49:55.366 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Cell - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 5.0368ms
+2024-08-28 21:49:59.380 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal - application/json null
+2024-08-28 21:49:59.380 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:49:59.380 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:49:59.381 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-28 21:49:59.392 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 11.3824ms
+2024-08-28 21:49:59.392 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:49:59.392 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 12.0942ms
+2024-08-28 21:50:26.442 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal - application/json null
+2024-08-28 21:50:26.470 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:50:26.470 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:50:26.471 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-28 21:50:26.473 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 2.817ms
+2024-08-28 21:50:26.473 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:50:26.473 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 32.3165ms
+2024-08-28 21:50:27.179 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal - application/json null
+2024-08-28 21:50:27.179 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:50:27.179 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:50:27.179 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-28 21:50:27.181 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 2.3158ms
+2024-08-28 21:50:27.181 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:50:27.182 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 3.0248ms
+2024-08-28 21:50:27.644 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal - application/json null
+2024-08-28 21:50:27.645 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:50:27.645 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:50:27.645 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-28 21:50:27.647 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 2.4237ms
+2024-08-28 21:50:27.647 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:50:27.647 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 3.151ms
+2024-08-28 21:50:57.494 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn - application/json null
+2024-08-28 21:50:57.497 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:50:57.498 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:50:57.502 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:50:57.519 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 21.1604ms
+2024-08-28 21:50:57.519 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:50:57.519 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 24.8216ms
+2024-08-28 21:51:14.019 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn($select=CellNumber) - application/json null
+2024-08-28 21:51:14.019 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:51:14.019 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:51:14.029 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:51:14.040 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 20.7216ms
+2024-08-28 21:51:14.040 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:51:14.040 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn($select=CellNumber) - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 21.393ms
+2024-08-28 21:51:21.951 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-28 21:51:21.951 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:51:21.951 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:51:21.953 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:51:21.958 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 6.2422ms
+2024-08-28 21:51:21.958 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:51:21.958 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn($select=CellNumber,Id) - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 7.0407ms
+2024-08-28 21:58:44.665 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-28 21:58:44.668 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:58:44.668 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:58:44.671 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:58:44.705 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 36.8189ms
+2024-08-28 21:58:44.705 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:58:44.705 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn($select=CellNumber,Id) - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 41.031ms
+2024-08-28 21:58:45.262 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-28 21:58:45.262 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:58:45.262 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:58:45.263 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:58:45.265 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 2.6991ms
+2024-08-28 21:58:45.265 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:58:45.265 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn($select=CellNumber,Id) - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 3.4007ms
+2024-08-28 21:58:45.692 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-28 21:58:45.692 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:58:45.692 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:58:45.693 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:58:45.695 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 2.6837ms
+2024-08-28 21:58:45.695 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:58:45.695 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn($select=CellNumber,Id) - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 3.3382ms
+2024-08-28 21:58:45.937 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-28 21:58:45.938 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:58:45.938 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:58:45.939 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:58:45.941 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 3.0757ms
+2024-08-28 21:58:45.941 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:58:45.941 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn($select=CellNumber,Id) - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 3.9058ms
+2024-08-28 21:58:46.287 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-28 21:58:46.287 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:58:46.287 +03:00 [INF] Route matched with {action = "Get", controller = "List", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.List (EndearingApp.Web).
+2024-08-28 21:58:46.288 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[Microsoft.AspNetCore.OData.Query.Wrapper.SelectAllAndExpand`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Microsoft.AspNetCore.OData, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]'.
+2024-08-28 21:58:46.290 +03:00 [INF] Executed action EndearingApp.Web.Controllers.List.Get (EndearingApp.Web) in 2.7024ms
+2024-08-28 21:58:46.290 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.List.Get (EndearingApp.Web)'
+2024-08-28 21:58:46.290 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal?$expand=Cell_Etn($select=CellNumber,Id) - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 3.3579ms

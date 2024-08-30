@@ -17,13 +17,13 @@ namespace EndearingApp.Infrastructure.Data.CustomDataAccess;
 
 public class DefaultEdmModelManager : IEdmModelManager
 {
-    public DefaultEdmModelManager(ICustomEntityDataProvider entityQueryDataProvider)
+    public DefaultEdmModelManager(ICustomEntityQueryProvider entityQueryDataProvider)
     {
         _entityQueryDataProvider = entityQueryDataProvider;
     }
 
     private static IEdmModel? _edmModel;
-    private readonly ICustomEntityDataProvider _entityQueryDataProvider;
+    private readonly ICustomEntityQueryProvider _entityQueryDataProvider;
 
     public IEdmModel Build()
     {

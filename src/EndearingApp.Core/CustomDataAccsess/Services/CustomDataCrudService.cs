@@ -10,15 +10,13 @@ namespace EndearingApp.Core.CustomDataAccsess.Services;
 public class CustomDataCrudService
 {
     private readonly ISqlExecutor _sqlExecutor;
-    private readonly ICustomEntityDataProvider _customEntityQueryableProvider;
+    private readonly ICustomEntityQueryProvider _customEntityQueryableProvider;
     private readonly IEdmModelManager _edmModelManager;
 
-    //private readonly ICustomDataAccessSqlGenerator _customDataAccessSqlGenerator;
-    //private readonly IDbStructureCache _dbStructureCache;
 
     public CustomDataCrudService(
         ISqlExecutor sqlExecutor,
-        ICustomEntityDataProvider customEntityQueryableProvider,
+        ICustomEntityQueryProvider customEntityQueryableProvider,
         IEdmModelManager edmModelManager
 
     ) {
@@ -90,26 +88,5 @@ public class CustomDataCrudService
             throw;
         }
     }
-    /*
-    public async Task<object> List<T>(HttpContext context, Uri relativeUrl)
-    {
-        //var command = _customDataAccessSqlGenerator.GetSqlQuery(relativeUrl);
-        //var result = await _sqlExecutor.List<T>(command);
-        var parser = GetParser(relativeUrl);
-        var paths = parser.ParsePath().ToList();
-        var entitySetSegment = paths.FirstOrDefault(x => x is EntitySetSegment);
-        var actionExecutedContext = new ActionExecutedContext(null, new List<IFilterMetadata>(), null);
-        actionExecutedContext.HttpContext = context;
-        actionExecutedContext.ActionDescriptor = new ControllerActionDescriptor()
-        {
-            MethodInfo = this.GetType().GetMethod("Mock")
-        };
-        actionExecutedContext.Result = new OkObjectResult(_customEntityQueryableProvider.GetDbSet(entitySetSegment!.Identifier));
-        new EnableQueryAttribute().OnActionExecuted(actionExecutedContext);
-
-        await Task.CompletedTask;
-        return (actionExecutedContext!.Result! as ObjectResult)!.Value!;
-    }*/
-    
 }
 

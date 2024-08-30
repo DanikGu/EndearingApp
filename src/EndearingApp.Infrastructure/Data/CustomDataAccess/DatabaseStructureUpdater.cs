@@ -9,17 +9,21 @@ using EndearingApp.Core.CustomDataAccsess.Interfaces;
 using EfSchemaCompare;
 
 namespace EndearingApp.Infrastructure.Data.CustomDataAccess;
+//TODO: Add ability to specify odata atrributes 
 public class DatabaseStructureUpdater : IDatabaseStructureUpdater
 {
     private readonly AppDbContext _appDbContext;
-    private readonly ICustomEntityDataProvider _customEntityQueryDataProvider;
+    private readonly ICustomEntityQueryProvider _customEntityQueryDataProvider;
+    private readonly DbContextAssemblyLoader _contextAssemblyLoader;
     private readonly ILogger? _logger;
 
     public DatabaseStructureUpdater(AppDbContext appDbContext, 
-        ICustomEntityDataProvider customEntityQueryDataProvider)
+        ICustomEntityQueryProvider customEntityQueryDataProvider,
+        DbContextAssemblyLoader contextAssemblyLoader)
     {
         _appDbContext = appDbContext;
         _customEntityQueryDataProvider = customEntityQueryDataProvider;
+        _contextAssemblyLoader = contextAssemblyLoader;
         _logger = null;
     }
     public async Task UpdateDbStructure(DbStructure dbStructure)
@@ -33,9 +37,9 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         var dbContextName = "AppDbContext";
         var appContextText = GetAllTablesClasses(projectName, dbContextName, dbStructure, connectionString!);
         var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, projectName);
-        _customEntityQueryDataProvider.FreePreviousAssembly();
+        _contextAssemblyLoader.FreePreviousAssembly();
         await CreateUpdateProjectMigrationsAndApplyThem(appContextText, projectName, path);
-        _customEntityQueryDataProvider.ReloadDbContextAsseblies();
+        _contextAssemblyLoader.ReloadDbContextAsseblies();
     }
     private async Task CreateUpdateProjectMigrationsAndApplyThem(string appContext, 
         string projectName, string folderPath)
@@ -77,7 +81,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         var dbContext = _customEntityQueryDataProvider.GetDbContext();
         var comparer = new CompareEfSql();
         var hasErrors = comparer.CompareEfWithDb(dbContext);
-        _customEntityQueryDataProvider.FreePreviousAssembly();
+        _contextAssemblyLoader.FreePreviousAssembly();
 
         return !hasErrors;
     }

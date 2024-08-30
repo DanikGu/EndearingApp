@@ -1,0 +1,15 @@
+meta {
+  name: GetById
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BaseUrl}}odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id)
+  body: json
+  auth: none
+}
+
+params:query {
+  $expand: Cell_Etn($select
+}
