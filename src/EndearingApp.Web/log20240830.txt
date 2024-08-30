@@ -1,0 +1,809 @@
+2024-08-30 19:57:52.775 +03:00 [INF] Registered 9 endpoints in 6,177 milliseconds.
+2024-08-30 19:57:53.432 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-30 19:57:53.824 +03:00 [INF] Executed DbCommand (61ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 19:57:53.845 +03:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 19:57:53.868 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 19:57:53.885 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 19:57:53.887 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 19:57:53.898 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-08-30 19:57:54.208 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-30 19:57:54.263 +03:00 [INF] Executed DbCommand (28ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-30 19:58:18.505 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-30 19:58:18.579 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-30 19:58:18.580 +03:00 [INF] Hosting environment: Development
+2024-08-30 19:58:18.580 +03:00 [INF] Content root path: C:\Users\Danik\Source\Repos\DanikGu\EndearingApp\src\EndearingApp.Web
+2024-08-30 19:58:19.157 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-30 19:58:19.201 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 700.7775ms
+2024-08-30 19:58:19.206 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-08-30 20:18:54.354 +03:00 [INF] Registered 9 endpoints in 1,817 milliseconds.
+2024-08-30 20:18:54.682 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-30 20:18:54.894 +03:00 [WRN] The path template 'odata/{entityset}' on the action 'Create' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:18:54.899 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Patch' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:18:54.901 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Update' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:18:54.901 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Delete' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:18:55.308 +03:00 [INF] Executed DbCommand (116ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:18:55.327 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:18:55.357 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:18:55.372 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:18:55.373 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:18:55.390 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-08-30 20:18:56.101 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-30 20:18:56.210 +03:00 [INF] Executed DbCommand (37ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-30 20:19:17.065 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-30 20:19:17.159 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-30 20:19:17.159 +03:00 [INF] Hosting environment: Development
+2024-08-30 20:19:17.159 +03:00 [INF] Content root path: C:\Users\Danik\Source\Repos\DanikGu\EndearingApp\src\EndearingApp.Web
+2024-08-30 20:19:17.242 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-30 20:19:17.336 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 279.0531ms
+2024-08-30 20:19:17.343 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-08-30 20:19:44.129 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-30 20:19:44.147 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:19:44.148 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:19:44.152 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - 405 null null 22.7889ms
+2024-08-30 20:19:48.075 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-30 20:19:48.076 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:19:48.076 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:19:48.077 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - 405 null null 2.3972ms
+2024-08-30 20:19:49.292 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-30 20:19:49.294 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:19:49.294 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:19:49.297 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - 405 null null 5.1094ms
+2024-08-30 20:23:43.211 +03:00 [INF] Registered 9 endpoints in 1,881 milliseconds.
+2024-08-30 20:23:43.566 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-30 20:23:43.778 +03:00 [WRN] The path template 'odata/{entityset}' on the action 'Create' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:23:43.787 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Patch' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:23:43.790 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Update' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:23:43.790 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Delete' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:23:44.246 +03:00 [INF] Executed DbCommand (94ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:23:44.281 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:23:44.328 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:23:44.345 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:23:44.346 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:23:44.362 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-08-30 20:23:45.088 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-30 20:23:45.195 +03:00 [INF] Executed DbCommand (37ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-30 20:24:00.556 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-30 20:24:00.731 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-30 20:24:00.731 +03:00 [INF] Hosting environment: Development
+2024-08-30 20:24:00.731 +03:00 [INF] Content root path: C:\Users\Danik\Source\Repos\DanikGu\EndearingApp\src\EndearingApp.Web
+2024-08-30 20:24:00.788 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-30 20:24:00.834 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 284.4642ms
+2024-08-30 20:24:00.838 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-08-30 20:25:02.211 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-30 20:25:02.221 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:25:02.222 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:25:02.224 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - 405 null null 14.0102ms
+2024-08-30 20:25:03.133 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-30 20:25:03.135 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:25:03.136 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:25:03.137 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - 405 null null 4.2101ms
+2024-08-30 20:25:03.786 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-30 20:25:03.787 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:25:03.788 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:25:03.789 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - 405 null null 2.756ms
+2024-08-30 20:25:04.478 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-30 20:25:04.479 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:25:04.479 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:25:04.480 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - 405 null null 2.2644ms
+2024-08-30 20:25:38.276 +03:00 [INF] Registered 9 endpoints in 1,621 milliseconds.
+2024-08-30 20:25:38.447 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-30 20:25:38.771 +03:00 [INF] Executed DbCommand (60ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:25:38.787 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:25:38.810 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:25:38.821 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:25:38.823 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:25:38.833 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-08-30 20:25:39.118 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-30 20:25:39.169 +03:00 [INF] Executed DbCommand (18ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-30 20:25:53.802 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-30 20:25:53.925 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-30 20:25:53.925 +03:00 [INF] Hosting environment: Development
+2024-08-30 20:25:53.925 +03:00 [INF] Content root path: C:\Users\Danik\Source\Repos\DanikGu\EndearingApp\src\EndearingApp.Web
+2024-08-30 20:25:54.003 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-30 20:25:54.084 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 285.3032ms
+2024-08-30 20:25:54.088 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-08-30 20:25:58.436 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-30 20:25:58.440 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:25:58.441 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:25:58.444 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - 405 null null 7.808ms
+2024-08-30 20:25:59.244 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-30 20:25:59.250 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:25:59.251 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:25:59.254 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - 405 null null 10.5219ms
+2024-08-30 20:25:59.812 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-30 20:25:59.813 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:25:59.813 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:25:59.814 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - 405 null null 2.6029ms
+2024-08-30 20:26:00.038 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-30 20:26:00.039 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:26:00.039 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:26:00.040 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - 405 null null 2.4473ms
+2024-08-30 20:26:01.223 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - application/json null
+2024-08-30 20:26:01.225 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:26:01.226 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:26:01.227 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal(c993e6ed-481f-4035-94e7-5b94e89bf1fe)?$expand=Cell_Etn($select=CellNumber,Id) - 405 null null 4.687ms
+2024-08-30 20:26:44.907 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal - application/json null
+2024-08-30 20:26:44.908 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:26:44.908 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:26:44.909 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal - 405 null null 1.929ms
+2024-08-30 20:26:46.767 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal - application/json null
+2024-08-30 20:26:46.768 +03:00 [INF] Executing endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:26:46.768 +03:00 [INF] Executed endpoint '405 HTTP Method Not Supported'
+2024-08-30 20:26:46.769 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal - 405 null null 1.5803ms
+2024-08-30 20:28:58.700 +03:00 [INF] Registered 9 endpoints in 1,775 milliseconds.
+2024-08-30 20:28:58.956 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-30 20:28:59.475 +03:00 [INF] Executed DbCommand (107ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:28:59.500 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:28:59.521 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:28:59.534 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:28:59.536 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:28:59.550 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-08-30 20:29:00.160 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-30 20:29:00.247 +03:00 [INF] Executed DbCommand (24ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-30 20:29:16.950 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-30 20:29:17.090 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-30 20:29:17.090 +03:00 [INF] Hosting environment: Development
+2024-08-30 20:29:17.091 +03:00 [INF] Content root path: C:\Users\Danik\Source\Repos\DanikGu\EndearingApp\src\EndearingApp.Web
+2024-08-30 20:29:17.213 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-30 20:29:17.275 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 337.8092ms
+2024-08-30 20:29:17.278 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-08-30 20:29:38.749 +03:00 [INF] Registered 9 endpoints in 1,758 milliseconds.
+2024-08-30 20:29:38.951 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-30 20:30:09.652 +03:00 [INF] Registered 9 endpoints in 1,801 milliseconds.
+2024-08-30 20:30:09.878 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-30 20:30:10.032 +03:00 [WRN] The path template 'odata/{entityset}' on the action 'Create' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:30:10.038 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Patch' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:30:10.039 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Update' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:30:10.040 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Delete' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:30:10.438 +03:00 [INF] Executed DbCommand (93ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:30:10.469 +03:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:30:10.500 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:30:10.514 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:30:10.516 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:30:10.530 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-08-30 20:30:11.029 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-30 20:30:11.112 +03:00 [INF] Executed DbCommand (29ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-30 20:30:26.901 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal - application/json null
+2024-08-30 20:30:26.901 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-30 20:30:27.067 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-30 20:30:27.082 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-30 20:30:27.083 +03:00 [INF] Hosting environment: Development
+2024-08-30 20:30:27.083 +03:00 [INF] Content root path: C:\Users\Danik\Source\Repos\DanikGu\EndearingApp\src\EndearingApp.Web
+2024-08-30 20:30:27.136 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:30:27.174 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 288.5004ms
+2024-08-30 20:30:27.179 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-08-30 20:30:27.189 +03:00 [INF] Route matched with {action = "Get", controller = "CrudOdata", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.CrudOdataController (EndearingApp.Web).
+2024-08-30 20:30:27.380 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-30 20:30:27.662 +03:00 [INF] Executed action EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web) in 468.6344ms
+2024-08-30 20:30:27.662 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:30:27.663 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 779.1996ms
+2024-08-30 20:30:29.806 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal - application/json null
+2024-08-30 20:30:29.811 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:30:29.812 +03:00 [INF] Route matched with {action = "Get", controller = "CrudOdata", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.CrudOdataController (EndearingApp.Web).
+2024-08-30 20:30:29.816 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-30 20:30:29.826 +03:00 [INF] Executed action EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web) in 14.0034ms
+2024-08-30 20:30:29.826 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:30:29.827 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 21.0759ms
+2024-08-30 20:31:30.108 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/$metadata - null null
+2024-08-30 20:31:30.114 +03:00 [INF] Executing endpoint 'Microsoft.AspNetCore.OData.Routing.Controllers.MetadataController.GetMetadata (Microsoft.AspNetCore.OData)'
+2024-08-30 20:31:30.121 +03:00 [INF] Route matched with {action = "GetMetadata", controller = "Metadata", page = ""}. Executing controller action with signature Microsoft.OData.Edm.IEdmModel GetMetadata() on controller Microsoft.AspNetCore.OData.Routing.Controllers.MetadataController (Microsoft.AspNetCore.OData).
+2024-08-30 20:31:30.125 +03:00 [INF] Executing ObjectResult, writing value of type 'Microsoft.OData.Edm.EdmModel'.
+2024-08-30 20:31:30.311 +03:00 [INF] Executed action Microsoft.AspNetCore.OData.Routing.Controllers.MetadataController.GetMetadata (Microsoft.AspNetCore.OData) in 190.154ms
+2024-08-30 20:31:30.311 +03:00 [INF] Executed endpoint 'Microsoft.AspNetCore.OData.Routing.Controllers.MetadataController.GetMetadata (Microsoft.AspNetCore.OData)'
+2024-08-30 20:31:30.312 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/$metadata - 200 null application/xml; charset=utf-8 204.8336ms
+2024-08-30 20:32:55.128 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Cell - application/json null
+2024-08-30 20:32:55.158 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:32:55.160 +03:00 [INF] Route matched with {action = "Get", controller = "CrudOdata", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.CrudOdataController (EndearingApp.Web).
+2024-08-30 20:32:55.161 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Cell, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-30 20:32:55.305 +03:00 [INF] Executed action EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web) in 144.9107ms
+2024-08-30 20:32:55.305 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:32:55.305 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Cell - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 178.7102ms
+2024-08-30 20:33:03.543 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Animal - application/json 52
+2024-08-30 20:33:03.545 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:33:03.997 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:33:04.008 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Animal - 204 null null 465.4337ms
+2024-08-30 20:33:15.427 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Cell - application/json null
+2024-08-30 20:33:15.430 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:33:15.430 +03:00 [INF] Route matched with {action = "Get", controller = "CrudOdata", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.CrudOdataController (EndearingApp.Web).
+2024-08-30 20:33:15.433 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Cell, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-30 20:33:15.443 +03:00 [INF] Executed action EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web) in 12.3309ms
+2024-08-30 20:33:15.443 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:33:15.444 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Cell - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 17.5187ms
+2024-08-30 20:33:23.468 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal - application/json null
+2024-08-30 20:33:23.469 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:33:23.470 +03:00 [INF] Route matched with {action = "Get", controller = "CrudOdata", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.CrudOdataController (EndearingApp.Web).
+2024-08-30 20:33:23.471 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-30 20:33:23.476 +03:00 [INF] Executed action EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web) in 6.3275ms
+2024-08-30 20:33:23.476 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:33:23.477 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 9.0982ms
+2024-08-30 20:33:24.739 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal - application/json null
+2024-08-30 20:33:24.740 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:33:24.741 +03:00 [INF] Route matched with {action = "Get", controller = "CrudOdata", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.CrudOdataController (EndearingApp.Web).
+2024-08-30 20:33:24.742 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-30 20:33:24.752 +03:00 [INF] Executed action EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web) in 11.2943ms
+2024-08-30 20:33:24.753 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:33:24.754 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 13.9682ms
+2024-08-30 20:33:25.004 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal - application/json null
+2024-08-30 20:33:25.005 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:33:25.005 +03:00 [INF] Route matched with {action = "Get", controller = "CrudOdata", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.CrudOdataController (EndearingApp.Web).
+2024-08-30 20:33:25.007 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-30 20:33:25.012 +03:00 [INF] Executed action EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web) in 6.4282ms
+2024-08-30 20:33:25.012 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:33:25.013 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 8.6285ms
+2024-08-30 20:33:25.192 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal - application/json null
+2024-08-30 20:33:25.193 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:33:25.193 +03:00 [INF] Route matched with {action = "Get", controller = "CrudOdata", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.CrudOdataController (EndearingApp.Web).
+2024-08-30 20:33:25.195 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-30 20:33:25.200 +03:00 [INF] Executed action EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web) in 5.8971ms
+2024-08-30 20:33:25.200 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:33:25.200 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 8.3789ms
+2024-08-30 20:33:25.399 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal - application/json null
+2024-08-30 20:33:25.401 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:33:25.401 +03:00 [INF] Route matched with {action = "Get", controller = "CrudOdata", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.CrudOdataController (EndearingApp.Web).
+2024-08-30 20:33:25.403 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-30 20:33:25.412 +03:00 [INF] Executed action EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web) in 10.7885ms
+2024-08-30 20:33:25.413 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:33:25.413 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 14.4872ms
+2024-08-30 20:33:25.777 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Animal - application/json null
+2024-08-30 20:33:25.779 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:33:25.779 +03:00 [INF] Route matched with {action = "Get", controller = "CrudOdata", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.CrudOdataController (EndearingApp.Web).
+2024-08-30 20:33:25.781 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Animal, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-30 20:33:25.791 +03:00 [INF] Executed action EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web) in 11.0808ms
+2024-08-30 20:33:25.791 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:33:25.792 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Animal - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 14.5051ms
+2024-08-30 20:34:02.364 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:34:02.368 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:34:02.370 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:34:02.370 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 7.1874ms
+2024-08-30 20:34:03.541 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:34:03.542 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:34:03.545 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:34:03.545 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 4.8796ms
+2024-08-30 20:34:03.762 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:34:03.763 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:34:03.765 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:34:03.768 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 5.5687ms
+2024-08-30 20:35:04.904 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:04.907 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:04.909 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:04.909 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 7.0377ms
+2024-08-30 20:35:05.752 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:05.753 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:05.755 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:05.756 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 4.0885ms
+2024-08-30 20:35:06.437 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:06.437 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:06.439 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:06.439 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 2.6215ms
+2024-08-30 20:35:06.622 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:06.623 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:06.626 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:06.627 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 5.1535ms
+2024-08-30 20:35:06.770 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:06.771 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:06.772 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:06.772 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 1.3358ms
+2024-08-30 20:35:06.938 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:06.939 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:06.941 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:06.942 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 4.2744ms
+2024-08-30 20:35:07.739 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:07.740 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:07.741 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:07.742 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 2.5516ms
+2024-08-30 20:35:07.912 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:07.913 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:07.915 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:07.915 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 2.9829ms
+2024-08-30 20:35:08.140 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:08.141 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:08.144 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:08.145 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 4.9429ms
+2024-08-30 20:35:08.517 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:08.518 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:08.520 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:08.520 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 2.9583ms
+2024-08-30 20:35:08.694 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:08.695 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:08.697 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:08.698 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 3.166ms
+2024-08-30 20:35:08.851 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:08.851 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:08.852 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:08.852 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 1.3881ms
+2024-08-30 20:35:09.036 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:09.037 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:09.040 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:09.040 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 4.0787ms
+2024-08-30 20:35:09.185 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:09.187 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:09.188 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:09.188 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 3.6077ms
+2024-08-30 20:35:09.367 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:09.367 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:09.368 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:09.368 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 1.4131ms
+2024-08-30 20:35:09.552 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:09.553 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:09.556 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:09.557 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 4.9055ms
+2024-08-30 20:35:09.724 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:09.725 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:09.727 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:09.727 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 3.0283ms
+2024-08-30 20:35:10.005 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:10.005 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:10.006 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:10.006 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 1.5604ms
+2024-08-30 20:35:10.286 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:10.287 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:10.290 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:10.291 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 5.1429ms
+2024-08-30 20:35:10.707 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:35:10.708 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:10.710 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:35:10.710 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 3.512ms
+2024-08-30 20:36:44.902 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:36:44.904 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:44.910 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:44.910 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 8.6264ms
+2024-08-30 20:36:45.826 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:36:45.827 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:45.829 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:45.829 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 3.3867ms
+2024-08-30 20:36:46.505 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:36:46.506 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:46.507 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:46.507 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 1.3678ms
+2024-08-30 20:36:46.842 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:36:46.843 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:46.843 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:46.843 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 1.0347ms
+2024-08-30 20:36:46.983 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:36:46.983 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:46.984 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:46.984 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 1.1843ms
+2024-08-30 20:36:47.648 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:36:47.648 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:47.650 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:47.650 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 2.8928ms
+2024-08-30 20:36:47.760 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:36:47.760 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:47.761 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:47.761 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 1.2602ms
+2024-08-30 20:36:48.301 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:36:48.302 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:48.304 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:48.305 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 4.1005ms
+2024-08-30 20:36:48.499 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:36:48.499 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:48.501 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:48.501 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 2.2094ms
+2024-08-30 20:36:48.674 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:36:48.674 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:48.675 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:48.676 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 1.6475ms
+2024-08-30 20:36:48.846 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:36:48.846 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:48.848 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:48.848 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 2.7992ms
+2024-08-30 20:36:49.047 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:36:49.048 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:49.050 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:49.051 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 3.6002ms
+2024-08-30 20:36:49.267 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:36:49.268 +03:00 [INF] Executing endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:49.270 +03:00 [INF] Executed endpoint 'HTTP: POST odata/{TableName}'
+2024-08-30 20:36:49.270 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 204 null null 2.5974ms
+2024-08-30 20:39:21.156 +03:00 [INF] Registered 5 endpoints in 833 milliseconds.
+2024-08-30 20:39:21.357 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-30 20:39:21.479 +03:00 [WRN] The path template 'odata/{entityset}' on the action 'Create' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:39:21.484 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Patch' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:39:21.487 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Update' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:39:21.488 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Delete' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:39:22.529 +03:00 [INF] Executed DbCommand (68ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:39:22.556 +03:00 [INF] Executed DbCommand (7ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:39:22.589 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:39:22.609 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:39:22.610 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:39:22.622 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-08-30 20:39:22.934 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-30 20:39:22.984 +03:00 [INF] Executed DbCommand (21ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-30 20:39:38.367 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-30 20:39:38.486 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-30 20:39:38.487 +03:00 [INF] Hosting environment: Development
+2024-08-30 20:39:38.488 +03:00 [INF] Content root path: C:\Users\Danik\Source\Repos\DanikGu\EndearingApp\src\EndearingApp.Web
+2024-08-30 20:39:51.708 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-30 20:39:51.746 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 13394.8109ms
+2024-08-30 20:39:51.749 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-08-30 20:39:59.198 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:39:59.207 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Create (EndearingApp.Web)'
+2024-08-30 20:39:59.225 +03:00 [INF] Route matched with {action = "Create", controller = "CrudOdata", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Create(System.String) on controller EndearingApp.Web.Controllers.CrudOdataController (EndearingApp.Web).
+2024-08-30 20:42:30.100 +03:00 [INF] Registered 5 endpoints in 859 milliseconds.
+2024-08-30 20:42:30.292 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-30 20:42:30.452 +03:00 [WRN] The path template 'odata/{entityset}' on the action 'Create' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:42:30.456 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Patch' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:42:30.459 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Update' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:42:30.460 +03:00 [WRN] The path template 'odata/{entityset}({key})' on the action 'Delete' in controller 'CrudOdata' is not a valid OData path template. Resource not found for the segment '{entityset}'.
+2024-08-30 20:42:31.487 +03:00 [INF] Executed DbCommand (63ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:42:31.509 +03:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:42:31.532 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:42:31.544 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:42:31.545 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:42:31.554 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-08-30 20:42:31.858 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-30 20:42:31.910 +03:00 [INF] Executed DbCommand (21ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-30 20:42:47.777 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-30 20:42:47.932 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-30 20:42:47.933 +03:00 [INF] Hosting environment: Development
+2024-08-30 20:42:47.933 +03:00 [INF] Content root path: C:\Users\Danik\Source\Repos\DanikGu\EndearingApp\src\EndearingApp.Web
+2024-08-30 20:42:48.025 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-30 20:42:48.095 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 331.8401ms
+2024-08-30 20:42:48.099 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-08-30 20:42:55.513 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:42:55.528 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Create (EndearingApp.Web)'
+2024-08-30 20:42:55.568 +03:00 [INF] Route matched with {action = "Create", controller = "CrudOdata", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Create(System.String) on controller EndearingApp.Web.Controllers.CrudOdataController (EndearingApp.Web).
+2024-08-30 20:43:26.613 +03:00 [INF] Executed action EndearingApp.Web.Controllers.CrudOdataController.Create (EndearingApp.Web) in 31041.5922ms
+2024-08-30 20:43:26.635 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Create (EndearingApp.Web)'
+2024-08-30 20:43:26.643 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+System.InvalidOperationException: The request must have an associated EDM model. Consider registering Edm model calling AddOData().
+   at Microsoft.AspNetCore.OData.Results.ResultHelpers.GenerateODataLink(HttpRequest request, Object entity, Boolean isEntityId)
+   at Microsoft.AspNetCore.OData.Results.CreatedODataResult`1.GenerateLocationHeader(HttpRequest request)
+   at Microsoft.AspNetCore.OData.Results.CreatedODataResult`1.ExecuteResultAsync(ActionContext context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResultFilterAsync>g__Awaited|30_0[TFilter,TFilterAsync](ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResultExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.ResultNext[TFilter,TFilterAsync](State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeResultFilters()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.OData.Routing.ODataRouteDebugMiddleware.Invoke(HttpContext context)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-08-30 20:43:26.664 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 500 null text/plain; charset=utf-8 31151.9572ms
+2024-08-30 20:52:55.262 +03:00 [INF] Registered 5 endpoints in 937 milliseconds.
+2024-08-30 20:52:55.476 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-30 20:52:56.752 +03:00 [INF] Executed DbCommand (59ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:52:56.771 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:52:56.797 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:52:56.816 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:52:56.818 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:52:56.828 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-08-30 20:52:57.235 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-30 20:52:57.294 +03:00 [INF] Executed DbCommand (23ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-30 20:53:20.784 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-30 20:53:20.892 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-30 20:53:20.893 +03:00 [INF] Hosting environment: Development
+2024-08-30 20:53:20.893 +03:00 [INF] Content root path: C:\Users\Danik\Source\Repos\DanikGu\EndearingApp\src\EndearingApp.Web
+2024-08-30 20:53:20.996 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-30 20:53:21.092 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 317.876ms
+2024-08-30 20:53:21.101 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-08-30 20:53:29.723 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:57678/odata/Cell - application/json 52
+2024-08-30 20:53:29.748 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Create (EndearingApp.Web)'
+2024-08-30 20:53:29.762 +03:00 [INF] Route matched with {action = "Create", controller = "CrudOdata", page = ""}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Create(System.String) on controller EndearingApp.Web.Controllers.CrudOdataController (EndearingApp.Web).
+2024-08-30 20:53:36.091 +03:00 [INF] Executing ObjectResult, writing value of type 'CustomEntitiesDbContext.Cell'.
+2024-08-30 20:53:36.249 +03:00 [INF] Executed action EndearingApp.Web.Controllers.CrudOdataController.Create (EndearingApp.Web) in 6483.4356ms
+2024-08-30 20:53:36.250 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Create (EndearingApp.Web)'
+2024-08-30 20:53:36.250 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:57678/odata/Cell - 201 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 6527.9145ms
+2024-08-30 20:53:50.312 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/odata/Cell - application/json null
+2024-08-30 20:53:53.811 +03:00 [INF] Executing endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:53:53.816 +03:00 [INF] Route matched with {action = "Get", controller = "CrudOdata", page = ""}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Get(System.String) on controller EndearingApp.Web.Controllers.CrudOdataController (EndearingApp.Web).
+2024-08-30 20:53:59.004 +03:00 [INF] Executing OkObjectResult, writing value of type 'Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1[[CustomEntitiesDbContext.Cell, CustomEntitiesDbContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2024-08-30 20:53:59.076 +03:00 [INF] Executed action EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web) in 5259.3643ms
+2024-08-30 20:53:59.076 +03:00 [INF] Executed endpoint 'EndearingApp.Web.Controllers.CrudOdataController.Get (EndearingApp.Web)'
+2024-08-30 20:53:59.076 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/odata/Cell - 200 null application/json; odata.metadata=minimal; odata.streaming=true; charset=utf-8 8763.7447ms
+2024-08-30 20:54:20.616 +03:00 [INF] Registered 5 endpoints in 932 milliseconds.
+2024-08-30 20:54:20.818 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-30 20:54:21.956 +03:00 [INF] Executed DbCommand (56ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:54:21.974 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:54:21.998 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:54:22.011 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-30 20:54:22.012 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-30 20:54:22.022 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-08-30 20:54:22.306 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-30 20:54:22.354 +03:00 [INF] Executed DbCommand (17ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-30 20:54:35.877 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-30 20:54:35.942 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-30 20:54:35.942 +03:00 [INF] Hosting environment: Development
+2024-08-30 20:54:35.942 +03:00 [INF] Content root path: C:\Users\Danik\Source\Repos\DanikGu\EndearingApp\src\EndearingApp.Web
+2024-08-30 20:54:35.979 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-30 20:54:36.013 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 139.6033ms
+2024-08-30 20:54:36.016 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404

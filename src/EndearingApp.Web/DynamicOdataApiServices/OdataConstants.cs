@@ -1,4 +1,4 @@
-﻿namespace EndearingApp.Web.Endpoints.OdataApi;
+﻿namespace EndearingApp.Web.DynamicOdataApiServices;
 
 public class OdataConstants
 {

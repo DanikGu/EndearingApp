@@ -9,7 +9,6 @@ using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using EndearingApp.Core.CustomDataAccsess.Interfaces;
 using Microsoft.AspNetCore.Http.Extensions;
-using EndearingApp.Web.Endpoints.OdataApi;
 using MediatR;
 
 namespace EndearingApp.Web.DynamicOdataApiServices;
