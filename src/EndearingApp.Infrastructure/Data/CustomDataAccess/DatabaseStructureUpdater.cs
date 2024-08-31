@@ -71,6 +71,14 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                     "Database structure have to be up to date or empty;");
             } 
         }
+        if (File.Exists(folderPath + "\\AppContext.cs")) 
+        {
+            var currDbContext = File.ReadAllText(folderPath + "\\AppContext.cs");
+            if (currDbContext == appContext) 
+            { 
+                return; 
+            }
+        }
         File.WriteAllText(folderPath + "\\AppContext.cs", appContext);
         await CallDotnetCli("ef migrations add " + GetNewMigrationName(), folderPath);
         await CallDotnetCli("ef database update", folderPath);
@@ -175,15 +183,15 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             var relationshipsToThisTable = dbStructure.Tables
                 .SelectMany(x => x.Relationships.Where(y => y.ReferencedTable == table))
                 .ToArray();
-            var @class = GenerateDbModelClass(table, relationshipsToThisTable);
+            var @class = GetDbModelClass(table, relationshipsToThisTable);
             result.Append(@class);
         }
         result.Append('\n');
-        result.Append(GenerateDbContext(dbContextName, dbStructure, connectionString));
+        result.Append(GetDbContext(dbContextName, dbStructure, connectionString));
         return result.ToString();
     }
 
-    private StringBuilder GenerateDbContext(string dbContextName, DbStructure dbStructure, string connectionString)
+    private StringBuilder GetDbContext(string dbContextName, DbStructure dbStructure, string connectionString)
     {
         var result = new StringBuilder();
         result.AppendFormat("public class {0}: DbContext\n{{\n", dbContextName);
@@ -202,7 +210,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         result.Append("}\n");
         return result;
     }
-    private StringBuilder GenerateDbModelClass(Table table, Relationship[] toThisTable)
+    private StringBuilder GetDbModelClass(Table table, Relationship[] toThisTable)
     {
         var result = new StringBuilder();
 
@@ -324,7 +332,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             SystemTypesEnum.Double => "double",
             SystemTypesEnum.UnlimitedText => "string",
             SystemTypesEnum.LimitedText => "string",
-            SystemTypesEnum.Date => "DateTime",
+            SystemTypesEnum.Date => "DateOnly",
             SystemTypesEnum.Time => "TimeSpan",
             SystemTypesEnum.Timestamp => "DateTime",
             SystemTypesEnum.Boolean => "bool",
@@ -333,13 +341,12 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             _ => throw new ArgumentOutOfRangeException(nameof(systemType), systemType, null)
         };
     }
-    private string MapDeleteBehaviorToEfCoreEnum(RelationshipDeleteBehavior deleteBehavior)
+    private string MapDeleteBehaviorToEfCoreEnum(RelationshipDeleteBehavior? deleteBehavior)
     {
         return deleteBehavior switch
         {
             RelationshipDeleteBehavior.Cascade => "DeleteBehavior.Cascade",
             RelationshipDeleteBehavior.SetNull => "DeleteBehavior.SetNull",
-            RelationshipDeleteBehavior.Restrict => "DeleteBehavior.Restrict",
             RelationshipDeleteBehavior.NoAction => "DeleteBehavior.NoAction",
             _ => "DeleteBehavior.SetNull"
         };

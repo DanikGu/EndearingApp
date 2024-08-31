@@ -27,5 +27,5 @@ public class Relationship
     [DataMember]
     public string? ConstraintName { get; set; }
     [DataMember]
-    public RelationshipDeleteBehavior DeleteBehavior { get; set; }
+    public RelationshipDeleteBehavior? DeleteBehavior { get; set; }
 }

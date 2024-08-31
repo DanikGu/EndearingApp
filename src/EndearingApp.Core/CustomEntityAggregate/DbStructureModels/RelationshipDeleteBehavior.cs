@@ -2,7 +2,6 @@
 
 public enum RelationshipDeleteBehavior
 {
-    Restrict,
     SetNull,
     Cascade,
     NoAction

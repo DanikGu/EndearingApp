@@ -1,0 +1,654 @@
+2024-08-31 15:33:56.863 +03:00 [INF] Registered 9 endpoints in 1 897 milliseconds.
+2024-08-31 15:33:57.136 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-31 15:33:57.594 +03:00 [INF] Executed DbCommand (72ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-31 15:33:57.615 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-31 15:33:57.635 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-31 15:33:57.648 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-31 15:33:57.650 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-31 15:33:57.665 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-08-31 15:33:57.981 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-31 15:33:58.029 +03:00 [INF] Executed DbCommand (16ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 15:34:11.534 +03:00 [ERR] An error occurred seeding the DB. Command execution failed because the underlying process (dotnet.exe#30488) returned a non-zero exit code (1).
+
+Command:
+dotnet ef database update
+
+You can suppress this validation by calling `WithValidation(CommandResultValidation.None)` on the command.
+CliWrap.Exceptions.CommandExecutionException: Command execution failed because the underlying process (dotnet.exe#30488) returned a non-zero exit code (1).
+
+Command:
+dotnet ef database update
+
+You can suppress this validation by calling `WithValidation(CommandResultValidation.None)` on the command.
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 271
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CallDotnetCli(String command, String folderPath) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 140
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CreateUpdateProjectMigrationsAndApplyThem(String appContext, String projectName, String folderPath) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 84
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.UpdateDbStructure(DbStructure dbStructure) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 41
+   at EndearingApp.Core.CustomEntityAggregate.Handlers.CustomeDbStructureChangedHandler.Handle(CustomDbStructureChangedEvent notification, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Core\CustomEntityAggregate\Handlers\CustomeDbStructureChanged.cs:line 34
+   at MediatR.NotificationPublishers.ForeachAwaitPublisher.Publish(IEnumerable`1 handlerExecutors, INotification notification, CancellationToken cancellationToken)
+   at Program.<Main>$(String[] args) in E:\Source E\EndearingApp\src\EndearingApp.Web\Program.cs:line 123
+2024-08-31 15:34:11.685 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-31 15:34:11.686 +03:00 [INF] Hosting environment: Development
+2024-08-31 15:34:11.686 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-08-31 15:34:11.720 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-31 15:34:12.355 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-31 15:34:12.386 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 671.4274ms
+2024-08-31 15:34:12.389 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-08-31 15:40:14.023 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/CustomEntity - null null
+2024-08-31 15:40:14.031 +03:00 [INF] Executing endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 15:40:14.100 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 15:40:14.223 +03:00 [INF] Executed endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 15:40:14.227 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/CustomEntity - 200 null application/json 205.7112ms
+2024-08-31 15:41:38.376 +03:00 [INF] Registered 9 endpoints in 1 183 milliseconds.
+2024-08-31 15:41:38.513 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-31 15:41:38.738 +03:00 [INF] Executed DbCommand (43ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-31 15:41:38.750 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-31 15:41:38.764 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-31 15:41:38.771 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-31 15:41:38.772 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-31 15:41:38.780 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-08-31 15:41:38.985 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-31 15:41:39.021 +03:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 15:41:45.769 +03:00 [ERR] An error occurred seeding the DB. Command execution failed because the underlying process (dotnet.exe#35016) returned a non-zero exit code (1).
+
+Command:
+dotnet ef database update
+
+You can suppress this validation by calling `WithValidation(CommandResultValidation.None)` on the command.
+CliWrap.Exceptions.CommandExecutionException: Command execution failed because the underlying process (dotnet.exe#35016) returned a non-zero exit code (1).
+
+Command:
+dotnet ef database update
+
+You can suppress this validation by calling `WithValidation(CommandResultValidation.None)` on the command.
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 271
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CallDotnetCli(String command, String folderPath) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 140
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CreateUpdateProjectMigrationsAndApplyThem(String appContext, String projectName, String folderPath) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 84
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.UpdateDbStructure(DbStructure dbStructure) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 41
+   at EndearingApp.Core.CustomEntityAggregate.Handlers.CustomeDbStructureChangedHandler.Handle(CustomDbStructureChangedEvent notification, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Core\CustomEntityAggregate\Handlers\CustomeDbStructureChanged.cs:line 34
+   at MediatR.NotificationPublishers.ForeachAwaitPublisher.Publish(IEnumerable`1 handlerExecutors, INotification notification, CancellationToken cancellationToken)
+   at Program.<Main>$(String[] args) in E:\Source E\EndearingApp\src\EndearingApp.Web\Program.cs:line 123
+2024-08-31 15:41:45.901 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-31 15:41:45.902 +03:00 [INF] Hosting environment: Development
+2024-08-31 15:41:45.902 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-08-31 15:41:45.925 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-31 15:41:46.005 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-31 15:41:46.037 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 115.7403ms
+2024-08-31 15:41:46.040 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-08-31 15:51:26.075 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/Setting/DataBaseTypesDescription - null null
+2024-08-31 15:51:26.082 +03:00 [INF] Executing endpoint 'HTTP: GET Setting/{Name}'
+2024-08-31 15:51:26.170 +03:00 [INF] Executed DbCommand (9ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT s."Id", s."Description", s."JsonSetting", s."Name"
+FROM customization."SystemSetting" AS s
+WHERE s."Name" = @__name_0
+2024-08-31 15:51:26.225 +03:00 [INF] Executed endpoint 'HTTP: GET Setting/{Name}'
+2024-08-31 15:51:26.229 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/Setting/DataBaseTypesDescription - null null
+2024-08-31 15:51:26.229 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/Setting/DataBaseTypesDescription - 200 null application/json 155.6714ms
+2024-08-31 15:51:26.230 +03:00 [INF] Executing endpoint 'HTTP: GET Setting/{Name}'
+2024-08-31 15:51:26.235 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT s."Id", s."Description", s."JsonSetting", s."Name"
+FROM customization."SystemSetting" AS s
+WHERE s."Name" = @__name_0
+2024-08-31 15:51:26.237 +03:00 [INF] Executed endpoint 'HTTP: GET Setting/{Name}'
+2024-08-31 15:51:26.237 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/Setting/DataBaseTypesDescription - 200 null application/json 8.266ms
+2024-08-31 15:51:47.504 +03:00 [INF] Request starting HTTP/1.1 DELETE http://localhost:4000/CustomEntity/Animal - null 0
+2024-08-31 15:51:47.506 +03:00 [INF] Executing endpoint 'HTTP: DELETE /CustomEntity/{Name}'
+2024-08-31 15:51:47.536 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-31 15:51:47.545 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-31 15:51:47.637 +03:00 [INF] Executed DbCommand (5ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = Guid), @p2='?' (DbType = Guid), @p3='?' (DbType = Guid), @p4='?' (DbType = Guid), @p5='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='20']
+DELETE FROM customization."Field"
+WHERE "Id" = @p0;
+DELETE FROM customization."Field"
+WHERE "Id" = @p1;
+DELETE FROM customization."Field"
+WHERE "Id" = @p2;
+DELETE FROM customization."Relationship"
+WHERE "Id" = @p3;
+DELETE FROM customization."Field"
+WHERE "Id" = @p4;
+DELETE FROM customization."CustomEntity"
+WHERE "Id" = @p5;
+2024-08-31 15:51:47.662 +03:00 [INF] Executed endpoint 'HTTP: DELETE /CustomEntity/{Name}'
+2024-08-31 15:51:47.663 +03:00 [INF] Request finished HTTP/1.1 DELETE http://localhost:4000/CustomEntity/Animal - 200 null application/json 158.3986ms
+2024-08-31 15:51:47.674 +03:00 [INF] Request starting HTTP/1.1 DELETE http://localhost:4000/CustomEntity/Staff - null 0
+2024-08-31 15:51:47.674 +03:00 [INF] Executing endpoint 'HTTP: DELETE /CustomEntity/{Name}'
+2024-08-31 15:51:47.677 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-31 15:51:47.681 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = Guid), @p2='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='20']
+DELETE FROM customization."Field"
+WHERE "Id" = @p0;
+DELETE FROM customization."Field"
+WHERE "Id" = @p1;
+DELETE FROM customization."CustomEntity"
+WHERE "Id" = @p2;
+2024-08-31 15:51:47.684 +03:00 [INF] Executed endpoint 'HTTP: DELETE /CustomEntity/{Name}'
+2024-08-31 15:51:47.684 +03:00 [INF] Request finished HTTP/1.1 DELETE http://localhost:4000/CustomEntity/Staff - 200 null application/json 10.2027ms
+2024-08-31 15:51:47.699 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/CustomEntity - null null
+2024-08-31 15:51:47.699 +03:00 [INF] Executing endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 15:51:47.705 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 15:51:47.738 +03:00 [INF] Executed endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 15:51:47.738 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/CustomEntity - 200 null application/json 38.7824ms
+2024-08-31 15:51:49.360 +03:00 [INF] Request starting HTTP/1.1 DELETE http://localhost:4000/CustomEntity/Cell - null 0
+2024-08-31 15:51:49.361 +03:00 [INF] Executing endpoint 'HTTP: DELETE /CustomEntity/{Name}'
+2024-08-31 15:51:49.363 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-31 15:51:49.368 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = Guid), @p2='?' (DbType = Guid), @p3='?' (DbType = Guid), @p4='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='20']
+DELETE FROM customization."Field"
+WHERE "Id" = @p0;
+DELETE FROM customization."Field"
+WHERE "Id" = @p1;
+DELETE FROM customization."Relationship"
+WHERE "Id" = @p2;
+DELETE FROM customization."Field"
+WHERE "Id" = @p3;
+DELETE FROM customization."CustomEntity"
+WHERE "Id" = @p4;
+2024-08-31 15:51:49.371 +03:00 [INF] Executed endpoint 'HTTP: DELETE /CustomEntity/{Name}'
+2024-08-31 15:51:49.371 +03:00 [INF] Request finished HTTP/1.1 DELETE http://localhost:4000/CustomEntity/Cell - 200 null application/json 10.8948ms
+2024-08-31 15:51:49.372 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/CustomEntity - null null
+2024-08-31 15:51:49.373 +03:00 [INF] Executing endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 15:51:49.375 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 15:51:49.377 +03:00 [INF] Executed endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 15:51:49.377 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/CustomEntity - 200 null application/json 4.9228ms
+2024-08-31 15:51:49.379 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/CustomEntity - null null
+2024-08-31 15:51:49.379 +03:00 [INF] Executing endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 15:51:49.381 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 15:51:49.384 +03:00 [INF] Executed endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 15:51:49.384 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/CustomEntity - 200 null application/json 4.812ms
+2024-08-31 15:51:51.094 +03:00 [INF] Request starting HTTP/1.1 DELETE http://localhost:4000/CustomEntity/Room - null 0
+2024-08-31 15:51:51.094 +03:00 [INF] Executing endpoint 'HTTP: DELETE /CustomEntity/{Name}'
+2024-08-31 15:51:51.097 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-31 15:51:51.100 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?' (DbType = Guid), @p2='?' (DbType = Guid), @p3='?' (DbType = Guid), @p4='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='20']
+DELETE FROM customization."Field"
+WHERE "Id" = @p0;
+DELETE FROM customization."Field"
+WHERE "Id" = @p1;
+DELETE FROM customization."Field"
+WHERE "Id" = @p2;
+DELETE FROM customization."Field"
+WHERE "Id" = @p3;
+DELETE FROM customization."CustomEntity"
+WHERE "Id" = @p4;
+2024-08-31 15:51:51.104 +03:00 [INF] Executed endpoint 'HTTP: DELETE /CustomEntity/{Name}'
+2024-08-31 15:51:51.104 +03:00 [INF] Request finished HTTP/1.1 DELETE http://localhost:4000/CustomEntity/Room - 200 null application/json 9.9152ms
+2024-08-31 15:51:51.111 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/CustomEntity - null null
+2024-08-31 15:51:51.111 +03:00 [INF] Executing endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 15:51:51.113 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 15:51:51.114 +03:00 [INF] Executed endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 15:51:51.115 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/CustomEntity - 200 null application/json 4.1833ms
+2024-08-31 15:52:02.360 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:4000/CustomEntity - application/json 192
+2024-08-31 15:52:02.360 +03:00 [INF] Executing endpoint 'HTTP: POST /CustomEntity'
+2024-08-31 15:52:02.453 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?', @p2='?' (DbType = Guid), @p3='?' (DbType = Guid), @p4='?' (DbType = Boolean), @p5='?', @p6='?' (DbType = Int32), @p7='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='20']
+INSERT INTO customization."CustomEntity" ("Id", "Name")
+VALUES (@p0, @p1);
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p2, @p3, @p4, @p5, @p6, @p7);
+2024-08-31 15:52:02.461 +03:00 [INF] Executed endpoint 'HTTP: POST /CustomEntity'
+2024-08-31 15:52:02.462 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:4000/CustomEntity - 200 null application/json 102.1777ms
+2024-08-31 15:52:02.468 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/CustomEntity - null null
+2024-08-31 15:52:02.468 +03:00 [INF] Executing endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 15:52:02.471 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 15:52:02.472 +03:00 [INF] Executed endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 15:52:02.473 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/CustomEntity - 200 null application/json 4.5808ms
+2024-08-31 15:52:14.760 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 192
+2024-08-31 15:52:14.760 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-31 15:52:14.763 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-31 15:52:14.777 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?'], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+2024-08-31 15:52:14.779 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 15:52:22.394 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-31 15:52:22.396 +03:00 [ERR] An unhandled exception has occurred while executing the request.
+CliWrap.Exceptions.CommandExecutionException: Command execution failed because the underlying process (dotnet.exe#32420) returned a non-zero exit code (1).
+
+Command:
+dotnet ef database update
+
+You can suppress this validation by calling `WithValidation(CommandResultValidation.None)` on the command.
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 271
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at CliWrap.Command.ExecuteAsync(ProcessEx process, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 287
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CallDotnetCli(String command, String folderPath) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 140
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.CreateUpdateProjectMigrationsAndApplyThem(String appContext, String projectName, String folderPath) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 84
+   at EndearingApp.Infrastructure.Data.CustomDataAccess.DatabaseStructureUpdater.UpdateDbStructure(DbStructure dbStructure) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\CustomDataAccess\DatabaseStructureUpdater.cs:line 41
+   at EndearingApp.Core.CustomEntityAggregate.Handlers.CustomeDbStructureChangedHandler.Handle(CustomDbStructureChangedEvent notification, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Core\CustomEntityAggregate\Handlers\CustomeDbStructureChanged.cs:line 34
+   at MediatR.NotificationPublishers.ForeachAwaitPublisher.Publish(IEnumerable`1 handlerExecutors, INotification notification, CancellationToken cancellationToken)
+   at EndearingApp.SharedKernel.DomainEventDispatcher.DispatchAndClearEvents(IEnumerable`1 entitiesWithEvents) in E:\Source E\EndearingApp\src\EndearingApp.SharedKernel\DomainEventDispatcher.cs:line 23
+   at EndearingApp.Infrastructure.Data.AppDbContext.SaveChangesAsync(CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Infrastructure\Data\AppDbContext.cs:line 41
+   at Ardalis.Specification.EntityFrameworkCore.RepositoryBase`1.SaveChangesAsync(CancellationToken cancellationToken)
+   at Ardalis.Specification.EntityFrameworkCore.RepositoryBase`1.UpdateAsync(T entity, CancellationToken cancellationToken)
+   at EndearingApp.Web.Endpoints.CustomEntityEndpoints.Update.HandleAsync(CustomeEntityDTO request, CancellationToken cancellationToken) in E:\Source E\EndearingApp\src\EndearingApp.Web\Endpoints\CustomEntityEndpoints\Update.cs:line 43
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at FastEndpoints.Endpoint`2.ExecAsync(CancellationToken ct)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at Microsoft.AspNetCore.OData.Routing.ODataRouteDebugMiddleware.Invoke(HttpContext context)
+   at Ardalis.ListStartupServices.ShowAllServicesMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+2024-08-31 15:52:22.407 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 500 null text/plain; charset=utf-8 7647.3385ms
+2024-08-31 15:52:41.609 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/CustomEntity - null null
+2024-08-31 15:52:41.610 +03:00 [INF] Executing endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 15:52:41.612 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 15:52:41.614 +03:00 [INF] Executed endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 15:52:41.614 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/CustomEntity - 200 null application/json 4.6444ms
+2024-08-31 15:54:28.737 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/Setting/DataBaseTypesDescription - null null
+2024-08-31 15:54:28.738 +03:00 [INF] Executing endpoint 'HTTP: GET Setting/{Name}'
+2024-08-31 15:54:28.738 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 192
+2024-08-31 15:54:28.738 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-31 15:54:28.744 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT s."Id", s."Description", s."JsonSetting", s."Name"
+FROM customization."SystemSetting" AS s
+WHERE s."Name" = @__name_0
+2024-08-31 15:54:28.746 +03:00 [INF] Executed endpoint 'HTTP: GET Setting/{Name}'
+2024-08-31 15:54:28.746 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/Setting/DataBaseTypesDescription - 200 null application/json 10.2085ms
+2024-08-31 15:54:28.768 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-31 15:54:28.771 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?'], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+2024-08-31 15:54:28.773 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 15:54:29.869 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/Setting/DataBaseTypesDescription - null null
+2024-08-31 15:54:29.869 +03:00 [INF] Executing endpoint 'HTTP: GET Setting/{Name}'
+2024-08-31 15:54:29.873 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT s."Id", s."Description", s."JsonSetting", s."Name"
+FROM customization."SystemSetting" AS s
+WHERE s."Name" = @__name_0
+2024-08-31 15:54:29.878 +03:00 [INF] Executed endpoint 'HTTP: GET Setting/{Name}'
+2024-08-31 15:54:29.878 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/Setting/DataBaseTypesDescription - 200 null application/json 9.426ms
+2024-08-31 15:54:45.867 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-31 15:54:45.867 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 200 null application/json 17128.6648ms
+2024-08-31 15:57:16.886 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 514
+2024-08-31 15:57:16.886 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-31 15:57:16.890 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-31 15:57:16.895 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?', @p2='?' (DbType = Guid), @p3='?' (DbType = Guid), @p4='?' (DbType = Boolean), @p5='?', @p6='?' (DbType = Int32), @p7='?' (DbType = Int32), @p8='?' (DbType = Guid), @p9='?' (DbType = Guid), @p10='?' (DbType = Boolean), @p11='?', @p12='?' (DbType = Int32), @p13='?' (DbType = Int32), @p14='?' (DbType = Guid), @p15='?' (DbType = Guid), @p16='?' (DbType = Boolean), @p17='?', @p18='?' (DbType = Int32), @p19='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p2, @p3, @p4, @p5, @p6, @p7);
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p8, @p9, @p10, @p11, @p12, @p13);
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p14, @p15, @p16, @p17, @p18, @p19);
+2024-08-31 15:57:16.933 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 15:57:23.862 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-31 15:57:23.863 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 200 null application/json 6976.5639ms
+2024-08-31 16:02:18.688 +03:00 [INF] Registered 9 endpoints in 1 113 milliseconds.
+2024-08-31 16:02:18.818 +03:00 [INF] User profile is available. Using 'C:\Users\Danik\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2024-08-31 16:02:19.032 +03:00 [INF] Executed DbCommand (40ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-31 16:02:19.042 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-31 16:02:19.055 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-31 16:02:19.061 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-08-31 16:02:19.062 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-08-31 16:02:19.069 +03:00 [INF] No migrations were applied. The database is already up to date.
+2024-08-31 16:02:19.288 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-31 16:02:19.324 +03:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 16:02:27.622 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-31 16:02:27.625 +03:00 [INF] Hosting environment: Development
+2024-08-31 16:02:27.625 +03:00 [INF] Content root path: E:\Source E\EndearingApp\src\EndearingApp.Web
+2024-08-31 16:02:27.636 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:57678/ - null null
+2024-08-31 16:02:27.708 +03:00 [WRN] Failed to determine the https port for redirect.
+2024-08-31 16:02:27.735 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:57678/ - 404 null null 102.3752ms
+2024-08-31 16:02:27.738 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:57678/, Response status code: 404
+2024-08-31 16:03:39.809 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 627
+2024-08-31 16:03:39.812 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-31 16:03:39.984 +03:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2024-08-31 16:03:40.001 +03:00 [INF] Executed DbCommand (7ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-31 16:03:40.094 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?', @p2='?' (DbType = Guid), @p3='?' (DbType = Guid), @p4='?' (DbType = Boolean), @p5='?', @p6='?' (DbType = Int32), @p7='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p2, @p3, @p4, @p5, @p6, @p7);
+2024-08-31 16:03:40.119 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 16:03:54.499 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-31 16:03:54.504 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 200 null application/json 14694.5359ms
+2024-08-31 16:04:29.019 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:4000/CustomEntity - application/json 291
+2024-08-31 16:04:29.023 +03:00 [INF] Executing endpoint 'HTTP: POST /CustomEntity'
+2024-08-31 16:04:29.040 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?', @p2='?' (DbType = Guid), @p3='?' (DbType = Guid), @p4='?' (DbType = Boolean), @p5='?', @p6='?' (DbType = Int32), @p7='?' (DbType = Int32), @p8='?' (DbType = Guid), @p9='?' (DbType = Guid), @p10='?' (DbType = Boolean), @p11='?', @p12='?' (DbType = Int32), @p13='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='20']
+INSERT INTO customization."CustomEntity" ("Id", "Name")
+VALUES (@p0, @p1);
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p2, @p3, @p4, @p5, @p6, @p7);
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p8, @p9, @p10, @p11, @p12, @p13);
+2024-08-31 16:04:29.076 +03:00 [INF] Executed endpoint 'HTTP: POST /CustomEntity'
+2024-08-31 16:04:29.076 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:4000/CustomEntity - 200 null application/json 58.1925ms
+2024-08-31 16:04:29.085 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/CustomEntity - null null
+2024-08-31 16:04:29.086 +03:00 [INF] Executing endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 16:04:29.096 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 16:04:29.125 +03:00 [INF] Executed endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 16:04:29.126 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/CustomEntity - 200 null application/json 40.7851ms
+2024-08-31 16:04:30.711 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 291
+2024-08-31 16:04:30.712 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-31 16:04:30.714 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-31 16:04:30.720 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?'], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+2024-08-31 16:04:30.722 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 16:04:37.578 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-31 16:04:37.579 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 200 null application/json 6867.2486ms
+2024-08-31 16:05:04.359 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 1040
+2024-08-31 16:05:04.359 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-31 16:05:04.368 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-31 16:05:04.382 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?', @p2='?' (DbType = Guid), @p3='?' (DbType = Guid), @p4='?' (DbType = Boolean), @p5='?', @p6='?' (DbType = Int32), @p7='?' (DbType = Int32), @p8='?' (DbType = Guid), @p9='?', @p10='?' (DbType = Guid), @p11='?' (DbType = Guid), @p12='?' (DbType = Guid), @p13='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p2, @p3, @p4, @p5, @p6, @p7);
+INSERT INTO customization."Relationship" ("Id", "ConstraintName", "ReferencedCustomEntityId", "ReferencedFieldId", "SourceCustomEntityId", "SourceFieldId")
+VALUES (@p8, @p9, @p10, @p11, @p12, @p13);
+2024-08-31 16:05:04.389 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 16:05:11.293 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-31 16:05:11.293 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 200 null application/json 6934.3598ms
+2024-08-31 16:05:50.167 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:4000/CustomEntity - application/json 396
+2024-08-31 16:05:50.169 +03:00 [INF] Executing endpoint 'HTTP: POST /CustomEntity'
+2024-08-31 16:05:50.173 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@p0='?' (DbType = Guid), @p1='?', @p2='?' (DbType = Guid), @p3='?' (DbType = Guid), @p4='?' (DbType = Boolean), @p5='?', @p6='?' (DbType = Int32), @p7='?' (DbType = Int32), @p8='?' (DbType = Guid), @p9='?' (DbType = Guid), @p10='?' (DbType = Boolean), @p11='?', @p12='?' (DbType = Int32), @p13='?' (DbType = Int32), @p14='?' (DbType = Guid), @p15='?' (DbType = Guid), @p16='?' (DbType = Boolean), @p17='?', @p18='?' (DbType = Int32), @p19='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='20']
+INSERT INTO customization."CustomEntity" ("Id", "Name")
+VALUES (@p0, @p1);
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p2, @p3, @p4, @p5, @p6, @p7);
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p8, @p9, @p10, @p11, @p12, @p13);
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p14, @p15, @p16, @p17, @p18, @p19);
+2024-08-31 16:05:50.182 +03:00 [INF] Executed endpoint 'HTTP: POST /CustomEntity'
+2024-08-31 16:05:50.186 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:4000/CustomEntity - 200 null application/json 19.6282ms
+2024-08-31 16:05:50.192 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:4000/CustomEntity - null null
+2024-08-31 16:05:50.193 +03:00 [INF] Executing endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 16:05:50.195 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 16:05:50.199 +03:00 [INF] Executed endpoint 'HTTP: GET /CustomEntity'
+2024-08-31 16:05:50.199 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:4000/CustomEntity - 200 null application/json 7.0364ms
+2024-08-31 16:06:25.078 +03:00 [INF] Request starting HTTP/1.1 PUT http://localhost:4000/CustomEntity - application/json 715
+2024-08-31 16:06:25.078 +03:00 [INF] Executing endpoint 'HTTP: PUT /CustomEntity'
+2024-08-31 16:06:25.086 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[@__name_0='?'], CommandType='"Text"', CommandTimeout='20']
+SELECT t."Id", t."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM (
+    SELECT c."Id", c."Name"
+    FROM customization."CustomEntity" AS c
+    WHERE c."Name" = @__name_0
+    LIMIT 1
+) AS t
+LEFT JOIN customization."Field" AS f ON t."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON t."Id" = r."SourceCustomEntityId"
+ORDER BY t."Id", f."Id"
+2024-08-31 16:06:25.090 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[@p1='?' (DbType = Guid), @p0='?', @p2='?' (DbType = Guid), @p3='?' (DbType = Guid), @p4='?' (DbType = Boolean), @p5='?', @p6='?' (DbType = Int32), @p7='?' (DbType = Int32), @p8='?' (DbType = Guid), @p9='?', @p10='?' (DbType = Guid), @p11='?' (DbType = Guid), @p12='?' (DbType = Guid), @p13='?' (DbType = Guid)], CommandType='"Text"', CommandTimeout='20']
+UPDATE customization."CustomEntity" SET "Name" = @p0
+WHERE "Id" = @p1;
+INSERT INTO customization."Field" ("Id", "CustomEntityId", "IsPrimaryKey", "Name", "Size", "Type")
+VALUES (@p2, @p3, @p4, @p5, @p6, @p7);
+INSERT INTO customization."Relationship" ("Id", "ConstraintName", "ReferencedCustomEntityId", "ReferencedFieldId", "SourceCustomEntityId", "SourceFieldId")
+VALUES (@p8, @p9, @p10, @p11, @p12, @p13);
+2024-08-31 16:06:25.097 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT c."Id", c."Name", f."Id", f."CustomEntityId", f."IsPrimaryKey", f."Name", f."Size", f."Type", r."Id", r."ConstraintName", r."ReferencedCustomEntityId", r."ReferencedFieldId", r."SourceCustomEntityId", r."SourceFieldId"
+FROM customization."CustomEntity" AS c
+LEFT JOIN customization."Field" AS f ON c."Id" = f."CustomEntityId"
+LEFT JOIN customization."Relationship" AS r ON c."Id" = r."SourceCustomEntityId"
+ORDER BY c."Id", f."Id"
+2024-08-31 16:06:32.081 +03:00 [INF] Executed endpoint 'HTTP: PUT /CustomEntity'
+2024-08-31 16:06:32.082 +03:00 [INF] Request finished HTTP/1.1 PUT http://localhost:4000/CustomEntity - 200 null application/json 7003.9644ms
