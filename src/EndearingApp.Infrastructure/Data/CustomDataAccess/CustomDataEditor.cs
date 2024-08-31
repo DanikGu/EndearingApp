@@ -60,6 +60,7 @@ public class CustomDataEditor : ICustomDataEditor
         var deltaObj = JsonConvert.
             DeserializeObject(jsonChangedValues, deltaType);
         Utils.CallMethodByName(deltaObj!, "Patch", new object[] { etn });
+        dbContext.Update(etn!);
         dbContext.SaveChanges();
         return etn;
     }

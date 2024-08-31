@@ -1,0 +1,38 @@
+meta {
+  name: Batch
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{BaseUrl}}odata/$batch
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "requests": [
+          {
+              "id": "1",
+              "method": "GET",
+              "url": "{{BaseUrl}}odata/Staff"
+          },
+          {
+              "id": "3",
+              "method": "POST",
+              "url": "{{BaseUrl}}odata/Staff",
+              "body": {
+                "Name": "Chlen",
+                "Position": "Hui",
+                "Id": "f7d4e2b9-a94d-44f4-84f2-8b5a7c3e5f2f"
+              }
+          },
+          {
+              "id": "2",
+              "method": "GET",
+              "url": "{{BaseUrl}}odata/Staff"
+          }
+      ]
+  }
+}

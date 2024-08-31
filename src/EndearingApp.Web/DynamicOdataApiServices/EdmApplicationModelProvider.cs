@@ -1,6 +1,7 @@
 ﻿using EndearingApp.Core.CustomDataAccsess.Interfaces;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Batch;
 using Microsoft.AspNetCore.OData.Extensions;
 using Microsoft.AspNetCore.OData.Routing.Template;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -10,12 +11,10 @@ namespace EndearingApp.Web.DynamicOdataApiServices;
 
 public partial class EdmApplicationModelProvider : IApplicationModelProvider
 {
-    private readonly IEdmModelManager _modelManager;
     const string prefix = OdataConstants.OdataRoute;
-    public EdmApplicationModelProvider(IOptions<ODataOptions> options, IEdmModelManager modelManager)
+    public EdmApplicationModelProvider(IOptions<ODataOptions> options)
     {
-        options.Value.AddRouteComponents(prefix, EdmCoreModel.Instance);
-        _modelManager = modelManager;
+        options.Value.AddRouteComponents(prefix, EdmCoreModel.Instance, new DefaultODataBatchHandler());
     }
 
     /// <summary>

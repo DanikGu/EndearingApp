@@ -5,7 +5,11 @@ meta {
 }
 
 get {
-  url: {{BaseUrl}}odata/Animal
+  url: {{BaseUrl}}odata/Staff?$format=xml
   body: json
   auth: none
+}
+
+params:query {
+  $format: xml
 }

@@ -1,11 +1,17 @@
 meta {
-  name: GetById
+  name: PutEntity
   type: http
-  seq: 3
+  seq: 7
 }
 
-get {
+put {
   url: {{BaseUrl}}odata/Staff(f7d4e2b9-a94d-44f4-84f2-8b5a7c3e5f2c)
   body: json
   auth: none
+}
+
+body:json {
+  {
+      "Name": "Margarita Nikilaevna"
+  }
 }
