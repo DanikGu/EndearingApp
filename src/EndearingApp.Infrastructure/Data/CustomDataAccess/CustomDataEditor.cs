@@ -75,6 +75,8 @@ public class CustomDataEditor : ICustomDataEditor
             throw new ArgumentException($"Entity with name {tableName} and key {key} wasn't found");
         }
         var newEtn = JsonConvert.DeserializeObject(updatedEntity, modelType);
+        var keyProp = Utils.GetKeyProp(modelType, dbContext);
+        keyProp.PropertyInfo!.SetValue(newEtn, Utils.ConvertToKeyType(key, keyProp.ClrType));
         dbContext.Update(newEtn!);
         dbContext.SaveChanges();
         return etn;
