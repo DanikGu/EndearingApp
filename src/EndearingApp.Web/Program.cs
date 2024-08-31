@@ -88,7 +88,7 @@ else
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
+app.UseODataBatching();
 app.UseRouting();
 app.UseFastEndpoints(c =>
 {
