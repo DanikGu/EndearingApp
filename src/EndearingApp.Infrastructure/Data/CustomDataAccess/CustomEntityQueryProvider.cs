@@ -42,8 +42,6 @@ public class CustomEntityQueryProvider : ICustomEntityQueryProvider
 
         return query;
     }
-    
-    
     private IQueryable ApplyWhereFieldEqual(IQueryable dbSet, string fieldName, object value) 
     {
         var modelType = Utils.GetTableModelType(dbSet);
@@ -83,47 +81,5 @@ public class CustomEntityQueryProvider : ICustomEntityQueryProvider
     {
         var dbSet = Utils.GetPropValue<IQueryable>(dbContext, entityName);
         return dbSet ?? throw new ArgumentNullException("Table not found");
-    }
-    
-    private IQueryable IncludeAllFirstLevelProps(DbContext dbContext, IQueryable dbSet)
-    {
-        var modelType = Utils.GetTableModelType(dbSet);
-        var navigations = dbContext.Model
-            .FindEntityType(modelType)!
-            .GetDerivedTypesInclusive()
-            .SelectMany(type => type.GetNavigations())
-            .Distinct();
-        foreach (var navigation in navigations)
-        {
-            dbSet = IncludeField(dbSet, navigation.PropertyInfo!.Name);
-        }
-        return dbSet;
-    }
-   
-    
-    private IQueryable IncludeField(IQueryable dbSet, string fieldName)
-    {
-        var modelType = Utils.GetTableModelType(dbSet);
-
-        var parameter = Expression.Parameter(modelType, "e");
-        var property = modelType.GetProperty(fieldName, BindingFlags.Public | BindingFlags.Instance);
-
-        if (property is null)
-        {
-            throw new ArgumentException($"Property {fieldName}, " +
-                $"does not exists on type: {modelType.Name}");
-        }
-
-        var propertyAccess = Expression.MakeMemberAccess(parameter, property!);
-        var lambda = Expression.Lambda(propertyAccess, parameter);
-        var includeMethod = typeof(EntityFrameworkQueryableExtensions)
-            .GetMethods(BindingFlags.Static | BindingFlags.Public)
-            .FirstOrDefault(m => m.Name == "Include" && m.GetParameters().Length == 2)?
-            .MakeGenericMethod(modelType, property!.PropertyType);
-
-        return (IQueryable)includeMethod?.Invoke(dbSet, new object[] { dbSet, lambda })!;
-    }
-    
-    
-    
+    } 
 }
