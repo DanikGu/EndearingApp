@@ -30,5 +30,7 @@ public enum SystemTypesEnum
     [Description("Binary")]
     Binary = 12,
     [Description("UUID")]
-    UUID = 13
+    UUID = 13,
+    [Description("OptionSet")]
+    OptionSet = 14
 }

@@ -3,6 +3,7 @@ using System;
 using EndearingApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EndearingApp.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241008165059_AddDefaultSettings")]
+    partial class AddDefaultSettings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,9 +87,6 @@ namespace EndearingApp.Infrastructure.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<Guid?>("OptionSetDefinitionId")
-                        .HasColumnType("uuid");
-
                     b.Property<int?>("Size")
                         .HasColumnType("integer");
 
@@ -96,8 +96,6 @@ namespace EndearingApp.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomEntityId");
-
-                    b.HasIndex("OptionSetDefinitionId");
 
                     b.HasIndex("Name", "CustomEntityId")
                         .IsUnique();
@@ -130,25 +128,7 @@ namespace EndearingApp.Infrastructure.Data.Migrations
 
                     b.HasIndex("CustomEntityId");
 
-                    b.ToTable("FormMetadata", "customization");
-                });
-
-            modelBuilder.Entity("EndearingApp.Core.CustomEntityAggregate.OptionSetDefinition", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsGlobal")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OptionSetDefinition", "customization");
+                    b.ToTable("FormMetadata");
                 });
 
             modelBuilder.Entity("EndearingApp.Core.CustomEntityAggregate.Relationship", b =>
@@ -216,13 +196,7 @@ namespace EndearingApp.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EndearingApp.Core.CustomEntityAggregate.OptionSetDefinition", "OptionSetDefinition")
-                        .WithMany()
-                        .HasForeignKey("OptionSetDefinitionId");
-
                     b.Navigation("CustomEntity");
-
-                    b.Navigation("OptionSetDefinition");
                 });
 
             modelBuilder.Entity("EndearingApp.Core.CustomEntityAggregate.FormMetadata", b =>

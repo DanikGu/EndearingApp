@@ -24,5 +24,6 @@ public class CustomEntityConfig : IEntityTypeConfiguration<CustomEntity>
             .HasMany(x => x.Fields)
             .WithOne(x => x.CustomEntity)
             .OnDelete(DeleteBehavior.Cascade);
+        builder.Property(x => x.Metadata).HasColumnType("jsonb");
     }
 }

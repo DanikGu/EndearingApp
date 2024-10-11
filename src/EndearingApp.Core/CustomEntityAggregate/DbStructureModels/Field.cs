@@ -21,5 +21,6 @@ public class Field
     public bool IsIndexed { get; set; }
     [DataMember]
     public bool IsUnique { get; set; }
-
+    [DataMember]
+    public OptionSet? OptionSet{ get; set; }
 }

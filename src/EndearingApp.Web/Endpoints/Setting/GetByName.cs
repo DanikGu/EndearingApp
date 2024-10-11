@@ -1,7 +1,7 @@
 ﻿using FastEndpoints;
 using Mapster;
-using EndearingApp.Core.SystemSettings;
-using EndearingApp.Core.SystemSettings.Specifications;
+using EndearingApp.Core.SystemSettingsAggregate;
+using EndearingApp.Core.SystemSettingsAggregate.Specifications;
 using EndearingApp.SharedKernel.Interfaces;
 using EndearingApp.Web.Models;
 

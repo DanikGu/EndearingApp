@@ -3,7 +3,6 @@ using Mapster;
 using EndearingApp.Core.CustomEntityAggregate;
 using EndearingApp.Core.CustomEntityAggregate.Specifications;
 using EndearingApp.SharedKernel.Interfaces;
-using EndearingApp.Web.Exstensions;
 using EndearingApp.Web.Models;
 
 namespace EndearingApp.Web.Endpoints.CustomEntityEndpoints;

@@ -30,5 +30,6 @@ public class FieldConfig : IEntityTypeConfiguration<Field>
             .HasMany(x => x.ReferencedRelationshipToThis)
             .WithOne(x => x.ReferencedField)
             .OnDelete(DeleteBehavior.Cascade);
+        builder.Property(x => x.Metadata).HasColumnType("jsonb");
     }
 }

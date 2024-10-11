@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using EndearingApp.Core.CustomEntityAggregate;
-using EndearingApp.Core.SystemSettings;
+using EndearingApp.Core.SystemSettingsAggregate;
 
 namespace EndearingApp.Infrastructure.Data.Config;
 

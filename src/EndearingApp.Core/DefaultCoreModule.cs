@@ -2,7 +2,6 @@
 using Autofac;
 using Mapster;
 using MapsterMapper;
-using EndearingApp.Core.CustomDataAccsess.Services;
 using EndearingApp.SharedKernel.Interfaces;
 using Module = Autofac.Module;
 
@@ -13,10 +12,6 @@ public class DefaultCoreModule : Module
     protected override void Load(ContainerBuilder builder)
     {
         AddMapster(builder);
-        builder
-            .RegisterType<CustomDataCrudService>()
-            .As<CustomDataCrudService>()
-            .InstancePerLifetimeScope();
     }
 
     public void AddMapster(ContainerBuilder builder)

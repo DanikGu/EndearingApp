@@ -27,7 +27,10 @@ public class CustomeEntityDTO : BaseDto<CustomeEntityDTO, CustomEntity>
             );
     }
 }
+public class CustomeEntityMetadataDto 
+{
 
+}
 public class FieldDto
 {
     public Guid Id { get; set; } = Guid.NewGuid();

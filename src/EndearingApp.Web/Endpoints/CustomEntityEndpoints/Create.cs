@@ -3,6 +3,7 @@ using Mapster;
 using EndearingApp.Core.CustomEntityAggregate;
 using EndearingApp.SharedKernel.Interfaces;
 using EndearingApp.Web.Models;
+using System.Diagnostics;
 
 namespace EndearingApp.Web.Endpoints.CustomEntityEndpoints;
 
@@ -26,8 +27,15 @@ public class Create : Endpoint<CustomeEntityDTO, CreateCustomEntityResponse>
         CancellationToken cancellationToken
     )
     {
-        var updateEntity = request.Adapt<CustomEntity>();
-        var result = await _repository.AddAsync(updateEntity);
-        await SendOkAsync(new CreateCustomEntityResponse(result.Id), cancellationToken);
+        try
+        {
+            var updateEntity = request.Adapt<CustomEntity>();
+            var result = await _repository.AddAsync(updateEntity);
+            await SendOkAsync(new CreateCustomEntityResponse(result.Id), cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.ToString());
+        }
     }
 }

@@ -31,7 +31,7 @@ public class Relationship
         this.ConstraintName = constraintName;
     }
 
-    public Guid Id { get; set; } = default;
+    public Guid Id { get; set; } = Guid.NewGuid();
     public Guid SourceCustomEntityId { get; set; } = default(Guid);
     public CustomEntity? SourceCustomEntity { get; set; } = default;
     public Guid SourceFieldId { get; set; } = default(Guid);
@@ -46,25 +46,25 @@ public class Relationship
 
     [DataMember]
     [NotMapped]
-    public string SourceFieldName
+    public string? SourceFieldName
     {
-        get => SourceField?.Name ?? throw new ArgumentNullException();
+        get => SourceField?.Name;
         set { }
     }
 
     [DataMember]
     [NotMapped]
-    public string ReferencedTableName
+    public string? ReferencedTableName
     {
-        get => ReferencedCustomEntity?.Name ?? throw new ArgumentNullException();
+        get => ReferencedCustomEntity?.Name;
         set { }
     }
 
     [DataMember]
     [NotMapped]
-    public string ReferencedFieldName
+    public string? ReferencedFieldName
     {
-        get => ReferencedField?.Name ?? throw new ArgumentNullException();
+        get => ReferencedField?.Name;
         set { }
     }
 }

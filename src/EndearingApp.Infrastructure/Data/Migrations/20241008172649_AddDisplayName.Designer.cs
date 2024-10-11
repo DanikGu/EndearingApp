@@ -3,6 +3,7 @@ using System;
 using EndearingApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EndearingApp.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241008172649_AddDisplayName")]
+    partial class AddDisplayName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -130,7 +133,7 @@ namespace EndearingApp.Infrastructure.Data.Migrations
 
                     b.HasIndex("CustomEntityId");
 
-                    b.ToTable("FormMetadata", "customization");
+                    b.ToTable("FormMetadata");
                 });
 
             modelBuilder.Entity("EndearingApp.Core.CustomEntityAggregate.OptionSetDefinition", b =>
@@ -148,7 +151,7 @@ namespace EndearingApp.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OptionSetDefinition", "customization");
+                    b.ToTable("OptionSetDefinition");
                 });
 
             modelBuilder.Entity("EndearingApp.Core.CustomEntityAggregate.Relationship", b =>

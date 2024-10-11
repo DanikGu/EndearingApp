@@ -35,13 +35,29 @@ public class CustomeDbStructureChangedHandler : INotificationHandler<CustomDbStr
         _edmModelManager.Build();
     }
 
-    private DbStructure MapCustomEntitiesToDbStructure(
-        List<CustomEntity> customEntities,
-        bool mapToDbTypes = true
-    )
+    private DbStructure MapCustomEntitiesToDbStructure(List<CustomEntity> customEntities)
     {
         var dbStructure = new DbStructure();
         var tables = new List<Table>();
+        var optSets = customEntities.
+            SelectMany(x => x.Fields).
+            Select(x => x.OptionSetDefinition).
+            Where(x => x != null).
+            ToList();
+        var optDefToOptModel = new Dictionary<Guid, OptionSet>();
+        dbStructure.OptionSets = optSets.Select(x => {
+            var optSet = new OptionSet
+            {
+                Name = x!.Name,
+                Options = x.Options.Select(y => new DbStructureModels.Option
+                {
+                    Name = y.Name,
+                    Value = y.Value,
+                }).ToList()
+            };
+            optDefToOptModel[x.Id] = optSet;
+            return optSet;
+        }).ToArray();
         foreach (var customEntity in customEntities)
         {
             var table = new Table
@@ -50,12 +66,15 @@ public class CustomeDbStructureChangedHandler : INotificationHandler<CustomDbStr
                 Fields = customEntity.Fields
                     .Select(
                         f =>
-                            new EndearingApp.Core.CustomEntityAggregate.DbStructureModels.Field
+                            new DbStructureModels.Field
                             {
                                 Name = f.Name,
                                 Type = f.Type,
                                 Size = f.Size,
-                                IsPrimaryKey = f.IsPrimaryKey
+                                IsPrimaryKey = f.IsPrimaryKey,
+                                OptionSet = f.Type == SystemTypesEnum.OptionSet ?
+                                    optDefToOptModel[f.OptionSetDefinition!.Id]:
+                                    null
                             }
                     )
                     .ToArray()
@@ -67,10 +86,10 @@ public class CustomeDbStructureChangedHandler : INotificationHandler<CustomDbStr
         {
             var customEntity = customEntities.First(ce => ce.Name == table.Name);
 
-            var relationships = new List<EndearingApp.Core.CustomEntityAggregate.DbStructureModels.Relationship>();
+            var relationships = new List<DbStructureModels.Relationship>();
             foreach (var rel in customEntity.Relationships)
             {
-                var relationship = new EndearingApp.Core.CustomEntityAggregate.DbStructureModels.Relationship
+                var relationship = new DbStructureModels.Relationship
                 {
                     ConstraintName = rel.ConstraintName!,
                     Table = table,

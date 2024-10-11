@@ -11,6 +11,8 @@ public class GetAllSpec : Specification<CustomEntity>
 {
     public GetAllSpec()
     {
-        Query.Include(x => x.Fields).Include(y => y.Relationships);
+        Query.
+            Include(x => x.Fields).
+            Include(y => y.Relationships);
     }
 }

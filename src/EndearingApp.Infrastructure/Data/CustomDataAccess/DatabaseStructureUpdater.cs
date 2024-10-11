@@ -1,12 +1,12 @@
-﻿using System.Text;
-using EndearingApp.Core.CustomEntityAggregate.Interfaces;
-using EndearingApp.Core.CustomEntityAggregate.DbStructureModels;
+﻿using System.Diagnostics;
+using System.Text;
 using CliWrap;
-using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-using EndearingApp.Core.CustomDataAccsess.Interfaces;
 using EfSchemaCompare;
+using EndearingApp.Core.CustomDataAccsess.Interfaces;
+using EndearingApp.Core.CustomEntityAggregate.DbStructureModels;
+using EndearingApp.Core.CustomEntityAggregate.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace EndearingApp.Infrastructure.Data.CustomDataAccess;
 //TODO: Add ability to specify odata atrributes 
@@ -17,7 +17,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
     private readonly DbContextAssemblyLoader _contextAssemblyLoader;
     private readonly ILogger? _logger;
 
-    public DatabaseStructureUpdater(AppDbContext appDbContext, 
+    public DatabaseStructureUpdater(AppDbContext appDbContext,
         ICustomEntityQueryProvider customEntityQueryDataProvider,
         DbContextAssemblyLoader contextAssemblyLoader)
     {
@@ -41,7 +41,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         await CreateUpdateProjectMigrationsAndApplyThem(appContextText, projectName, path);
         _contextAssemblyLoader.ReloadDbContextAsseblies();
     }
-    private async Task CreateUpdateProjectMigrationsAndApplyThem(string appContext, 
+    private async Task CreateUpdateProjectMigrationsAndApplyThem(string appContext,
         string projectName, string folderPath)
     {
         if (!Directory.Exists(folderPath))
@@ -57,7 +57,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             File.Delete(folderPath + "\\Class1.cs");
             await CallDotnetCli("ef migrations add InitialCreate", folderPath);
             await CallDotnetCli("dotnet publish", folderPath);
-            if (GetIsDatabaseUpToDate()) 
+            if (GetIsDatabaseUpToDate())
             {
                 ClearInitialMigration(folderPath + "\\Migrations\\");
             }
@@ -65,18 +65,18 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             {
                 await CallDotnetCli("ef database update", folderPath);
             }
-            catch 
+            catch
             {
                 throw new InvalidOperationException("Initial migration of custom schema failed" +
                     "Database structure have to be up to date or empty;");
-            } 
+            }
         }
-        if (File.Exists(folderPath + "\\AppContext.cs")) 
+        if (File.Exists(folderPath + "\\AppContext.cs"))
         {
             var currDbContext = File.ReadAllText(folderPath + "\\AppContext.cs");
-            if (currDbContext == appContext) 
-            { 
-                return; 
+            if (currDbContext == appContext)
+            {
+                return;
             }
         }
         File.WriteAllText(folderPath + "\\AppContext.cs", appContext);
@@ -84,7 +84,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         await CallDotnetCli("ef database update", folderPath);
         await CallDotnetCli("dotnet publish", folderPath);
     }
-    private bool GetIsDatabaseUpToDate() 
+    private bool GetIsDatabaseUpToDate()
     {
         var dbContext = _customEntityQueryDataProvider.GetDbContext();
         var comparer = new CompareEfSql();
@@ -93,11 +93,11 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
 
         return !hasErrors;
     }
-    private void ClearInitialMigration(string migrationFolder) 
+    private void ClearInitialMigration(string migrationFolder)
     {
         var files = Directory.GetFiles(migrationFolder);
         var migratonFile = files.FirstOrDefault(x => x.Contains("InitialCreate.cs"));
-        if (migratonFile is null) 
+        if (migratonFile is null)
         {
             throw new ArgumentException("Migration is not found");
         }
@@ -176,8 +176,29 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         result.AppendLine("using Microsoft.OData.ModelBuilder;");
         result.AppendLine("using System.Linq;");
 
-
         result.Append("namespace ").Append(ns).Append(";\n");
+        //add modified on 
+        result.Append("""
+            public abstract class BaseEntity 
+            {
+                public Guid Id { get; set; }
+                public DateTime CreatedOn { get; set; }
+                public DateTime ModifiedOn { get; set; }
+            }
+        """);
+
+        foreach (var optSet in dbStructure?.OptionSets ?? Enumerable.Empty<OptionSet>()) 
+        {
+            result.AppendLine("public enum " + optSet.Name + "{ \n");
+            foreach (var opt in optSet.Options) 
+            {
+                result.AppendFormat("""
+                    {0} = {1},
+                """, opt.Name, opt.Value);
+            }
+            result.AppendLine("\n}");
+        }
+
         foreach (var table in dbStructure!.Tables!)
         {
             var relationshipsToThisTable = dbStructure.Tables
@@ -194,6 +215,29 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
     private StringBuilder GetDbContext(string dbContextName, DbStructure dbStructure, string connectionString)
     {
         var result = new StringBuilder();
+        var baseEntityTrackingFunc = """
+            public override int SaveChanges(bool acceptAllChangesOnSuccess)
+            {
+                foreach (var entry in ChangeTracker.Entries())
+                {
+                    if (!(entry.Entity is BaseEntity)) {
+                        continue;
+                    }
+                    switch (entry.State)
+                    {
+                        case EntityState.Added:
+                            ((BaseEntity)entry.Entity).CreatedOn = DateTime.UtcNow;
+                            ((BaseEntity)entry.Entity).ModifiedOn = DateTime.UtcNow;
+                            break;
+
+                        case EntityState.Modified:
+                            ((BaseEntity)entry.Entity).ModifiedOn = DateTime.UtcNow;
+                            break;
+                    }
+                }
+                return base.SaveChanges(acceptAllChangesOnSuccess);
+            }
+            """;
         result.AppendFormat("public class {0}: DbContext\n{{\n", dbContextName);
         result.AppendFormat("protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => " +
             "optionsBuilder.UseNpgsql(\"{0}\");", connectionString);
@@ -203,11 +247,13 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                 modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
            }
         """);
+        result.AppendLine(baseEntityTrackingFunc);
         foreach (var table in dbStructure!.Tables!)
         {
             result.AppendFormat("public DbSet<{0}> {0} {{ get; set; }}\n", table.Name);
         }
         result.Append("}\n");
+
         return result;
     }
     private StringBuilder GetDbModelClass(Table table, Relationship[] toThisTable)
@@ -220,12 +266,12 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         result.AppendLine("[Expand(ExpandType = SelectExpandType.Allowed)]");
         result.AppendLine("[OrderBy]");
         result.AppendFormat("[Table(\"{0}\")]\n", table.Name);
-        result.Append("public class ").Append(table.Name).Append("\n{\n");
+        result.Append("public class ").Append(table.Name).Append(":BaseEntity\n{\n");
         foreach (var field in table.Fields)
         {
             var relationship = table.Relationships.FirstOrDefault(x => x.Field == field);
             result.AppendFormat("public {0} {1} {{ get; set; }}\n",
-                MapSystemTypeToCSharpType(field.Type),
+                MapSystemTypeToCSharpType(field),
                 field.Name);
             if (relationship is not null)
             {
@@ -285,10 +331,11 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                 AppendFormat(".HasAlternateKey(b => b.{0})", index.Name);
             fieldsConfig.Append(";\n");
         }
-        var primaryKey = table.Fields.First(x => x.IsPrimaryKey);
+        //var primaryKey = table.Fields.First(x => x.IsPrimaryKey);
+        //Now when all entities are derived from base entity no need to create primary key manually
         fieldsConfig.
             AppendFormat("builder").
-            AppendFormat(".HasKey(b => b.{0})", primaryKey.Name);
+            AppendFormat(".HasKey(b => b.{0})", "Id");
         fieldsConfig.Append(";\n");
         foreach (var rel in table.Relationships)
         {
@@ -320,8 +367,9 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         return result;
     }
 
-    private string MapSystemTypeToCSharpType(SystemTypesEnum systemType)
+    private string MapSystemTypeToCSharpType(Field field)
     {
+        var systemType = field.Type;
         return systemType switch
         {
             SystemTypesEnum.Integer => "int",
@@ -338,6 +386,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             SystemTypesEnum.Boolean => "bool",
             SystemTypesEnum.Binary => "byte[]",
             SystemTypesEnum.UUID => "Guid",
+            SystemTypesEnum.OptionSet => field.OptionSet!.Name,
             _ => throw new ArgumentOutOfRangeException(nameof(systemType), systemType, null)
         };
     }
