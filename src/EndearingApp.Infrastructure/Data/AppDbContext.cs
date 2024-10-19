@@ -20,6 +20,8 @@ public class AppDbContext : DbContext
     public DbSet<Field> Fields{ get; set; }
     public DbSet<Relationship> Relationships { get; set; }
     public DbSet<FormMetadata> FormMetadata { get; set; }
+    public DbSet<OptionSetDefinition> OptionSetDefentions { get; set; }
+    public DbSet<Option> Options { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

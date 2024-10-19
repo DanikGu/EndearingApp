@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EndearingApp.Web.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
 public class ActionController : Controller
@@ -13,10 +14,11 @@ public class ActionController : Controller
     {
         _mediator = mediator;
     }
-    [HttpPost]
+    [HttpPost("UpdateDbStructure")]
     public IActionResult UpdateDbStructure()
     {
         _mediator.Publish(new CustomDbStructureChangedEvent());
         return Ok();
     }
 }
+

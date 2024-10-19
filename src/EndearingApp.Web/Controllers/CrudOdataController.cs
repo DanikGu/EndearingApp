@@ -8,6 +8,7 @@ using EndearingApp.Infrastructure.Data.CustomDataAccess;
 using MediatR;
 
 namespace EndearingApp.Web.Controllers;
+[ApiExplorerSettings(IgnoreApi = true)]
 public class CrudOdataController : ODataController
 {
     private readonly ICustomEntityQueryProvider _customEntityQueryableProvider;

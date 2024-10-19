@@ -35,6 +35,10 @@ public class CustomeDbStructureChangedHandler : INotificationHandler<CustomDbStr
         _edmModelManager.Build();
     }
 
+    private bool IsOptionSet(Field field) {
+        return field.Type == SystemTypesEnum.OptionSet ||
+            field.Type == SystemTypesEnum.OptionSetMutiSelect;
+    }
     private DbStructure MapCustomEntitiesToDbStructure(List<CustomEntity> customEntities)
     {
         var dbStructure = new DbStructure();
@@ -72,7 +76,7 @@ public class CustomeDbStructureChangedHandler : INotificationHandler<CustomDbStr
                                 Type = f.Type,
                                 Size = f.Size,
                                 IsPrimaryKey = f.IsPrimaryKey,
-                                OptionSet = f.Type == SystemTypesEnum.OptionSet ?
+                                OptionSet = IsOptionSet(f) ?
                                     optDefToOptModel[f.OptionSetDefinition!.Id]:
                                     null
                             }

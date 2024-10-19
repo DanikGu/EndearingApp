@@ -22,5 +22,7 @@ public class Field
     [DataMember]
     public bool IsUnique { get; set; }
     [DataMember]
+    public bool IsNullable { get; set; } = true;
+    [DataMember]
     public OptionSet? OptionSet{ get; set; }
 }

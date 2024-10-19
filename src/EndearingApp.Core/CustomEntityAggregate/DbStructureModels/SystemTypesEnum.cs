@@ -32,5 +32,7 @@ public enum SystemTypesEnum
     [Description("UUID")]
     UUID = 13,
     [Description("OptionSet")]
-    OptionSet = 14
+    OptionSet = 14,
+    [Description("OptionSetMutiSelect")]
+    OptionSetMutiSelect = 15
 }

@@ -1,0 +1,173 @@
+2024-10-19 14:42:01.259 +03:00 [INF] Executed DbCommand (32ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-10-19 14:42:01.297 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-10-19 14:42:01.352 +03:00 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'customization') THEN
+        CREATE SCHEMA customization;
+    END IF;
+END $EF$;
+CREATE TABLE customization.__efmigrationshistory (
+    "MigrationId" character varying(150) NOT NULL,
+    "ProductVersion" character varying(32) NOT NULL,
+    CONSTRAINT "PK___efmigrationshistory" PRIMARY KEY ("MigrationId")
+);
+2024-10-19 14:42:01.361 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_class c
+    JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+    WHERE n.nspname='customization' AND
+          c.relname='__efmigrationshistory'
+)
+2024-10-19 14:42:01.365 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+SELECT "MigrationId", "ProductVersion"
+FROM customization.__efmigrationshistory
+ORDER BY "MigrationId";
+2024-10-19 14:42:01.375 +03:00 [INF] Applying migration '20241008164746_InitialMigration'.
+2024-10-19 14:42:01.400 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+DO $EF$
+BEGIN
+    IF NOT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'customization') THEN
+        CREATE SCHEMA customization;
+    END IF;
+END $EF$;
+2024-10-19 14:42:01.407 +03:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE TABLE customization."CustomEntity" (
+    "Id" uuid NOT NULL,
+    "DisplayName" text NOT NULL,
+    "Description" text NOT NULL,
+    "Metadata" jsonb NOT NULL,
+    "Name" character varying(100) NOT NULL,
+    "CustomEntityMetadataId" uuid,
+    CONSTRAINT "PK_CustomEntity" PRIMARY KEY ("Id")
+);
+2024-10-19 14:42:01.414 +03:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE TABLE customization."SystemSetting" (
+    "Id" uuid NOT NULL,
+    "Name" character varying(100) NOT NULL,
+    "Description" text,
+    "JsonSetting" jsonb,
+    CONSTRAINT "PK_SystemSetting" PRIMARY KEY ("Id")
+);
+2024-10-19 14:42:01.420 +03:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE TABLE customization."Field" (
+    "Id" uuid NOT NULL,
+    "Name" character varying(100) NOT NULL,
+    "DisplayName" text NOT NULL,
+    "Description" text NOT NULL,
+    "Metadata" jsonb NOT NULL,
+    "Type" integer NOT NULL,
+    "Size" integer,
+    "IsPrimaryKey" boolean NOT NULL,
+    "CustomEntityId" uuid NOT NULL,
+    CONSTRAINT "PK_Field" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_Field_CustomEntity_CustomEntityId" FOREIGN KEY ("CustomEntityId") REFERENCES customization."CustomEntity" ("Id") ON DELETE CASCADE
+);
+2024-10-19 14:42:01.428 +03:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE TABLE "FormMetadata" (
+    "Id" uuid NOT NULL,
+    "CustomEntityId" uuid NOT NULL,
+    "DisplayName" text NOT NULL,
+    "Description" text NOT NULL,
+    "Metadata" text NOT NULL,
+    CONSTRAINT "PK_FormMetadata" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_FormMetadata_CustomEntity_CustomEntityId" FOREIGN KEY ("CustomEntityId") REFERENCES customization."CustomEntity" ("Id") ON DELETE CASCADE
+);
+2024-10-19 14:42:01.433 +03:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE TABLE customization."Relationship" (
+    "Id" uuid NOT NULL,
+    "SourceCustomEntityId" uuid NOT NULL,
+    "SourceFieldId" uuid NOT NULL,
+    "ReferencedCustomEntityId" uuid NOT NULL,
+    "ReferencedFieldId" uuid NOT NULL,
+    "ConstraintName" character varying(100) NOT NULL,
+    CONSTRAINT "PK_Relationship" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_Relationship_CustomEntity_ReferencedCustomEntityId" FOREIGN KEY ("ReferencedCustomEntityId") REFERENCES customization."CustomEntity" ("Id") ON DELETE CASCADE,
+    CONSTRAINT "FK_Relationship_CustomEntity_SourceCustomEntityId" FOREIGN KEY ("SourceCustomEntityId") REFERENCES customization."CustomEntity" ("Id") ON DELETE CASCADE,
+    CONSTRAINT "FK_Relationship_Field_ReferencedFieldId" FOREIGN KEY ("ReferencedFieldId") REFERENCES customization."Field" ("Id") ON DELETE CASCADE,
+    CONSTRAINT "FK_Relationship_Field_SourceFieldId" FOREIGN KEY ("SourceFieldId") REFERENCES customization."Field" ("Id") ON DELETE CASCADE
+);
+2024-10-19 14:42:01.437 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE UNIQUE INDEX "IX_CustomEntity_Name" ON customization."CustomEntity" ("Name");
+2024-10-19 14:42:01.442 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE INDEX "IX_Field_CustomEntityId" ON customization."Field" ("CustomEntityId");
+2024-10-19 14:42:01.446 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE UNIQUE INDEX "IX_Field_Name_CustomEntityId" ON customization."Field" ("Name", "CustomEntityId");
+2024-10-19 14:42:01.450 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE INDEX "IX_FormMetadata_CustomEntityId" ON "FormMetadata" ("CustomEntityId");
+2024-10-19 14:42:01.455 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE INDEX "IX_Relationship_ReferencedCustomEntityId" ON customization."Relationship" ("ReferencedCustomEntityId");
+2024-10-19 14:42:01.459 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE INDEX "IX_Relationship_ReferencedFieldId" ON customization."Relationship" ("ReferencedFieldId");
+2024-10-19 14:42:01.463 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE INDEX "IX_Relationship_SourceCustomEntityId" ON customization."Relationship" ("SourceCustomEntityId");
+2024-10-19 14:42:01.467 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE INDEX "IX_Relationship_SourceFieldId" ON customization."Relationship" ("SourceFieldId");
+2024-10-19 14:42:01.469 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+INSERT INTO customization.__efmigrationshistory ("MigrationId", "ProductVersion")
+VALUES ('20241008164746_InitialMigration', '8.0.10');
+2024-10-19 14:42:01.476 +03:00 [INF] Applying migration '20241008165059_AddDefaultSettings'.
+2024-10-19 14:42:01.491 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+INSERT INTO customization."SystemSetting" ("Id", "Name", "JsonSetting")
+VALUES ('3a4f0894-3459-4914-8fca-10212e21ee2a', 'DataBaseTypesDescription', '{"typesConfig":{"0":{"Name":"Whole Number","IsSizeAplicable":false,"IsPrimaryKeyAplicable":true},"1":{"Name":"Whole Number (Small)","IsSizeAplicable":false,"IsPrimaryKeyAplicable":true},"2":{"Name":"Whole Number (Big)","IsSizeAplicable":false,"IsPrimaryKeyAplicable":true},"3":{"Name":"Decimal Number","IsSizeAplicable":false,"IsPrimaryKeyAplicable":false},"4":{"Name":"Real Number","IsSizeAplicable":false,"IsPrimaryKeyAplicable":false},"5":{"Name":"Double Precision Number","IsSizeAplicable":false,"IsPrimaryKeyAplicable":false},"6":{"Name":"Unlimited Text","IsSizeAplicable":false,"IsPrimaryKeyAplicable":false},"7":{"Name":"Limited Text","IsSizeAplicable":true,"IsPrimaryKeyAplicable":false},"8":{"Name":"Date","IsSizeAplicable":false,"IsPrimaryKeyAplicable":false},"9":{"Name":"Time","IsSizeAplicable":false,"IsPrimaryKeyAplicable":false},"10":{"Name":"Date and Time","IsSizeAplicable":false,"IsPrimaryKeyAplicable":false},"11":{"Name":"Yes/No","IsSizeAplicable":false,"IsPrimaryKeyAplicable":false},"12":{"Name":"Binary Data","IsSizeAplicable":false,"IsPrimaryKeyAplicable":false},"13":{"Name":"Unique Identifier","IsSizeAplicable":false,"IsPrimaryKeyAplicable":true}},"descriptions":{"Whole Number":"Positive or negative whole numbers without decimal fractions.","Whole Number (Small)":"Small positive or negative whole numbers without decimal fractions.","Whole Number (Big)":"Large positive or negative whole numbers without decimal fractions.","Decimal Number":"Numbers with decimal fractions, allowing for precise values.","Real Number":"Single-precision floating point numbers, suitable for approximate values.","Double Precision Number":"Double-precision floating point numbers, suitable for precise values.","Unlimited Text":"Unlimited-length string data, suitable for large amounts of text.","Limited Text":"String data with a specified maximum length, suitable for smaller text fields.","Date":"Calendar dates in the format YYYY-MM-DD.","Time":"Times of day in the format HH:MM:SS.","Date and Time":"Timestamps representing both date and time in the format YYYY-MM-DD HH:MM:SS.","Yes/No":"Boolean values representing true or false.","Binary Data":"Arbitrary binary data, such as images or files.","Unique Identifier":"Universally unique identifiers, typically used as primary keys."}}');
+2024-10-19 14:42:01.493 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+INSERT INTO customization.__efmigrationshistory ("MigrationId", "ProductVersion")
+VALUES ('20241008165059_AddDefaultSettings', '8.0.10');
+2024-10-19 14:42:01.496 +03:00 [INF] Applying migration '20241008165828_AddOptionSetDefenitionToField'.
+2024-10-19 14:42:01.507 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+ALTER TABLE customization."Field" ADD "OptionSetDefinitionId" uuid;
+2024-10-19 14:42:01.513 +03:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE TABLE "OptionSetDefinition" (
+    "Id" uuid NOT NULL,
+    "Name" text NOT NULL,
+    "IsGlobal" boolean NOT NULL,
+    CONSTRAINT "PK_OptionSetDefinition" PRIMARY KEY ("Id")
+);
+2024-10-19 14:42:01.518 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE INDEX "IX_Field_OptionSetDefinitionId" ON customization."Field" ("OptionSetDefinitionId");
+2024-10-19 14:42:01.520 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+ALTER TABLE customization."Field" ADD CONSTRAINT "FK_Field_OptionSetDefinition_OptionSetDefinitionId" FOREIGN KEY ("OptionSetDefinitionId") REFERENCES "OptionSetDefinition" ("Id");
+2024-10-19 14:42:01.522 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+INSERT INTO customization.__efmigrationshistory ("MigrationId", "ProductVersion")
+VALUES ('20241008165828_AddOptionSetDefenitionToField', '8.0.10');
+2024-10-19 14:42:01.525 +03:00 [INF] Applying migration '20241008172649_AddDisplayName'.
+2024-10-19 14:42:01.533 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+INSERT INTO customization.__efmigrationshistory ("MigrationId", "ProductVersion")
+VALUES ('20241008172649_AddDisplayName', '8.0.10');
+2024-10-19 14:42:01.536 +03:00 [INF] Applying migration '20241008180808_MoveEntitiesToCorrectSchema'.
+2024-10-19 14:42:01.543 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+ALTER TABLE "OptionSetDefinition" SET SCHEMA customization;
+2024-10-19 14:42:01.546 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+ALTER TABLE "FormMetadata" SET SCHEMA customization;
+2024-10-19 14:42:01.549 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+INSERT INTO customization.__efmigrationshistory ("MigrationId", "ProductVersion")
+VALUES ('20241008180808_MoveEntitiesToCorrectSchema', '8.0.10');
+2024-10-19 14:42:01.552 +03:00 [INF] Applying migration '20241011073416_AddOptions'.
+2024-10-19 14:42:01.566 +03:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE TABLE customization."Option" (
+    "Id" uuid NOT NULL,
+    "Value" integer NOT NULL,
+    "DisplayName" text NOT NULL,
+    "Name" text NOT NULL,
+    "Description" text NOT NULL,
+    "OptionSetId" uuid NOT NULL,
+    CONSTRAINT "PK_Option" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_Option_OptionSetDefinition_OptionSetId" FOREIGN KEY ("OptionSetId") REFERENCES customization."OptionSetDefinition" ("Id") ON DELETE CASCADE
+);
+2024-10-19 14:42:01.570 +03:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+CREATE INDEX "IX_Option_OptionSetId" ON customization."Option" ("OptionSetId");
+2024-10-19 14:42:01.572 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='20']
+INSERT INTO customization.__efmigrationshistory ("MigrationId", "ProductVersion")
+VALUES ('20241011073416_AddOptions', '8.0.10');

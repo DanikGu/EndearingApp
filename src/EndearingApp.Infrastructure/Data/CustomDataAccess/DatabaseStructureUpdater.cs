@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text;
+using System.Linq;
 using CliWrap;
 using EfSchemaCompare;
 using EndearingApp.Core.CustomDataAccsess.Interfaces;
@@ -7,6 +8,7 @@ using EndearingApp.Core.CustomEntityAggregate.DbStructureModels;
 using EndearingApp.Core.CustomEntityAggregate.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Xml;
 
 namespace EndearingApp.Infrastructure.Data.CustomDataAccess;
 //TODO: Add ability to specify odata atrributes 
@@ -48,13 +50,17 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         {
             Directory.CreateDirectory(folderPath);
             await CallDotnetCli($"new classlib --name {projectName} --output \"{folderPath}\" ", folderPath);
+            await CallDotnetCli("add package Microsoft.EntityFrameworkCore -v 8.0.10", folderPath);
             await CallDotnetCli("add package Npgsql.EntityFrameworkCore.PostgreSQL -v 8.0.4", folderPath);
             await CallDotnetCli("add package Microsoft.OData.ModelBuilder -v 1.0.9", folderPath);
             await CallDotnetCli("add package Microsoft.EntityFrameworkCore.Design", folderPath);
             await CallDotnetCli("new tool-manifest", folderPath);
+            DisableWarningsAsErrors(folderPath);
             await CallDotnetCli("tool install dotnet-ef", folderPath);
             File.WriteAllText(folderPath + "\\AppContext.cs", appContext);
             File.Delete(folderPath + "\\Class1.cs");
+
+
             await CallDotnetCli("ef migrations add InitialCreate", folderPath);
             await CallDotnetCli("dotnet publish", folderPath);
             if (GetIsDatabaseUpToDate())
@@ -83,6 +89,31 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         await CallDotnetCli("ef migrations add " + GetNewMigrationName(), folderPath);
         await CallDotnetCli("ef database update", folderPath);
         await CallDotnetCli("dotnet publish", folderPath);
+    }
+    private void DisableWarningsAsErrors(string folderPath)
+    {
+        //<TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+        var projectFile = Directory.GetFiles(folderPath).First(x => x.EndsWith(".csproj"));
+        var text = File.ReadAllText(projectFile);
+        var xmlDocument = new XmlDocument();
+        xmlDocument.LoadXml(text);
+        var propertyGroup = xmlDocument.GetElementsByTagName("PropertyGroup");
+        var warningsAsErrors = xmlDocument.GetElementsByTagName("TreatWarningsAsErrors");
+        if (warningsAsErrors.Count == 0)
+        {
+            var newElem = xmlDocument.CreateElement("TreatWarningsAsErrors");
+            newElem.InnerText = "False";
+            propertyGroup[0].AppendChild(newElem);
+        }
+        else 
+        {
+            foreach (var warning in warningsAsErrors)
+            {
+                (warning as XmlNode).InnerText = "False";
+            }
+        }
+        var resultXml = xmlDocument.OuterXml;
+        File.WriteAllText(projectFile, resultXml);
     }
     private bool GetIsDatabaseUpToDate()
     {
@@ -370,7 +401,8 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
     private string MapSystemTypeToCSharpType(Field field)
     {
         var systemType = field.Type;
-        return systemType switch
+        
+        string type = systemType switch
         {
             SystemTypesEnum.Integer => "int",
             SystemTypesEnum.SmallInteger => "short",
@@ -387,8 +419,14 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             SystemTypesEnum.Binary => "byte[]",
             SystemTypesEnum.UUID => "Guid",
             SystemTypesEnum.OptionSet => field.OptionSet!.Name,
+            SystemTypesEnum.OptionSetMutiSelect => field.OptionSet!.Name + "[]",
             _ => throw new ArgumentOutOfRangeException(nameof(systemType), systemType, null)
         };
+        if (field.IsNullable) 
+        {
+            type += "?";    
+        }
+        return type;
     }
     private string MapDeleteBehaviorToEfCoreEnum(RelationshipDeleteBehavior? deleteBehavior)
     {

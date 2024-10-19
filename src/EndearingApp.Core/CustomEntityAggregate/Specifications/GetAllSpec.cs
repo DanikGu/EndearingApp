@@ -13,6 +13,7 @@ public class GetAllSpec : Specification<CustomEntity>
     {
         Query.
             Include(x => x.Fields).
+            ThenInclude(x => x.OptionSetDefinition).
             Include(y => y.Relationships);
     }
 }
