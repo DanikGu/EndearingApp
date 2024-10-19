@@ -25,7 +25,9 @@ public class CustomEntitiesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CustomEntity>>> GetCustomEntities()
     {
-        return await _context.CustomEntities.ToListAsync();
+        return await _context.CustomEntities.
+            Include(x => x.Fields).
+            Include(x => x.Relationships).ToListAsync();
     }
 
     // GET: api/CustomEntities/5
