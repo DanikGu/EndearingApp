@@ -30,14 +30,20 @@ public class Relationship
         this.ReferencedFieldId = referencedFieldId;
         this.ConstraintName = constraintName;
     }
-
+    [DataMember]
     public Guid Id { get; set; } = Guid.NewGuid();
+    [DataMember]
     public Guid SourceCustomEntityId { get; set; } = default(Guid);
+    
     public CustomEntity? SourceCustomEntity { get; set; } = default;
+    [DataMember]
     public Guid SourceFieldId { get; set; } = default(Guid);
+    
     public Field? SourceField { get; set; } = default;
+    [DataMember]
     public Guid ReferencedCustomEntityId { get; set; } = default(Guid);
     public CustomEntity? ReferencedCustomEntity { get; set; }
+    [DataMember]
     public Guid ReferencedFieldId { get; set; } = default(Guid);
     public Field? ReferencedField { get; set; } = default;
 

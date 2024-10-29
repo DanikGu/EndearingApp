@@ -76,6 +76,10 @@ public class CustomeDbStructureChangedHandler : INotificationHandler<CustomDbStr
                                 Type = f.Type,
                                 Size = f.Size,
                                 IsPrimaryKey = f.IsPrimaryKey,
+                                IsIndexed = f.IsIndexed,
+                                IsNullable = f.IsNullable,
+                                IsUnique = f.IsUnique,
+                                IsRequired = f.IsRequired,
                                 OptionSet = IsOptionSet(f) ?
                                     optDefToOptModel[f.OptionSetDefinition!.Id]:
                                     null

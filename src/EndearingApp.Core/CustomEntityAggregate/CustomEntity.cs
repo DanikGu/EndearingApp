@@ -9,8 +9,11 @@ namespace EndearingApp.Core.CustomEntityAggregate;
 [DataContract]
 public class CustomEntity : EntityBase, IAggregateRoot
 {
+    [DataMember]
     public string DisplayName { get; set; } = string.Empty;
+    [DataMember]
     public string Description { get; set; } = string.Empty;
+    [DataMember]
     public string Metadata { get; set; } = "{}";
     public CustomEntity()
     {
@@ -28,12 +31,13 @@ public class CustomEntity : EntityBase, IAggregateRoot
     [DataMember]
     public string Name { get; set; } = "";
 
-    [DataMember]
     private List<Field> _fields = new List<Field>();
+    [DataMember]
     public IReadOnlyCollection<Field> Fields => _fields;
 
-    [DataMember]
+    
     private List<Relationship> _relationships = new List<Relationship>();
+    [DataMember]
     public IReadOnlyCollection<Relationship> Relationships => _relationships;
     [ForeignKey("CustomEntityMetadata")]
     public Guid? CustomEntityMetadataId { get; set; }

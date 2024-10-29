@@ -9,5 +9,8 @@ public class OptionSetDefinitionConfig : IEntityTypeConfiguration<OptionSetDefin
     public void Configure(EntityTypeBuilder<OptionSetDefinition> builder)
     {
         builder.ToTable("OptionSetDefinition", "customization");
+        builder.
+            HasMany(x => x.Options).
+            WithOne(x => x.OptionSet).OnDelete(DeleteBehavior.Cascade);
     }
 }
