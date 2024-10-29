@@ -17,7 +17,7 @@ namespace EndearingApp.Infrastructure.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -72,7 +72,19 @@ namespace EndearingApp.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsIndexed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsNullable")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsPrimaryKey")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsRequired")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsUnique")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Metadata")
@@ -270,7 +282,7 @@ namespace EndearingApp.Infrastructure.Data.Migrations
             modelBuilder.Entity("EndearingApp.Core.CustomEntityAggregate.Option", b =>
                 {
                     b.HasOne("EndearingApp.Core.CustomEntityAggregate.OptionSetDefinition", "OptionSet")
-                        .WithMany()
+                        .WithMany("Options")
                         .HasForeignKey("OptionSetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -325,6 +337,11 @@ namespace EndearingApp.Infrastructure.Data.Migrations
                     b.Navigation("ReferencedRelationshipToThis");
 
                     b.Navigation("SourcedRelationshipByThis");
+                });
+
+            modelBuilder.Entity("EndearingApp.Core.CustomEntityAggregate.OptionSetDefinition", b =>
+                {
+                    b.Navigation("Options");
                 });
 #pragma warning restore 612, 618
         }

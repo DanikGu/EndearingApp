@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EndearingApp.Core.CustomEntityAggregate;
 using EndearingApp.Infrastructure.Data;
+using EndearingApp.Web.Models;
+using Mapster;
 
 namespace EndearingApp.Web.Controllers;
 
@@ -23,16 +25,18 @@ public class CustomEntitiesController : ControllerBase
 
     // GET: api/CustomEntities
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CustomEntity>>> GetCustomEntities()
+    public async Task<ActionResult<IEnumerable<CustomeEntityDTO>>> GetCustomEntities()
     {
-        return await _context.CustomEntities.
+        var result = await _context.CustomEntities.
             Include(x => x.Fields).
             Include(x => x.Relationships).ToListAsync();
+        var dtos = result.Select(x => x.Adapt<CustomeEntityDTO>()).ToList();
+        return dtos;
     }
 
     // GET: api/CustomEntities/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<CustomEntity>> GetCustomEntity(Guid id)
+    public async Task<ActionResult<CustomeEntityDTO>> GetCustomEntity(Guid id)
     {
         var customEntity = await _context.CustomEntities.FindAsync(id);
 
@@ -41,18 +45,19 @@ public class CustomEntitiesController : ControllerBase
             return NotFound();
         }
 
-        return customEntity;
+        return customEntity.Adapt<CustomeEntityDTO>();
     }
 
     // PUT: api/CustomEntities/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutCustomEntity(Guid id, CustomEntity customEntity)
+    public async Task<IActionResult> PutCustomEntity(Guid id, CustomeEntityDTO customEntityDto)
     {
-        if (id != customEntity.Id)
+        if (id != customEntityDto.Id)
         {
             return BadRequest();
         }
+        var customEntity = customEntityDto.Adapt<CustomEntity>();
 
         _context.Entry(customEntity).State = EntityState.Modified;
 
@@ -78,9 +83,9 @@ public class CustomEntitiesController : ControllerBase
     // POST: api/CustomEntities
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<CustomEntity>> PostCustomEntity(CustomEntity customEntity)
+    public async Task<ActionResult<CustomeEntityDTO>> PostCustomEntity(CustomeEntityDTO customEntity)
     {
-        _context.CustomEntities.Add(customEntity);
+        _context.CustomEntities.Add(customEntity.Adapt<CustomEntity>());
         await _context.SaveChangesAsync();
 
         return CreatedAtAction("GetCustomEntity", new { id = customEntity.Id }, customEntity);

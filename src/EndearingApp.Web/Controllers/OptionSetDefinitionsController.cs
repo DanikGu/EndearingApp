@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using EndearingApp.Core.CustomEntityAggregate;
 using EndearingApp.Infrastructure.Data;
+using EndearingApp.Web.Models;
+using Mapster;
 
 namespace EndearingApp.Web.Controllers;
 
@@ -18,14 +20,15 @@ public class OptionSetDefinitionsController : ControllerBase
 
     // GET: api/OptionSetDefinitions
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<OptionSetDefinition>>> GetOptionSetDefentions()
+    public async Task<ActionResult<IEnumerable<OptionSetDefinitionDTO>>> GetOptionSetDefentions()
     {
-        return await _context.OptionSetDefentions.ToListAsync();
+        var entities = await _context.OptionSetDefentions.ToListAsync();
+        return entities.Select(x => x.Adapt<OptionSetDefinitionDTO>()).ToList();
     }
 
     // GET: api/OptionSetDefinitions/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<OptionSetDefinition>> GetOptionSetDefinition(Guid id)
+    public async Task<ActionResult<OptionSetDefinitionDTO>> GetOptionSetDefinition(Guid id)
     {
         var optionSetDefinition = await _context.OptionSetDefentions.FindAsync(id);
 
@@ -34,18 +37,19 @@ public class OptionSetDefinitionsController : ControllerBase
             return NotFound();
         }
 
-        return optionSetDefinition;
+        return optionSetDefinition.Adapt<OptionSetDefinitionDTO>();
     }
 
     // PUT: api/OptionSetDefinitions/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutOptionSetDefinition(Guid id, OptionSetDefinition optionSetDefinition)
+    public async Task<IActionResult> PutOptionSetDefinition(Guid id, OptionSetDefinitionDTO optionSetDefinitionDto)
     {
-        if (id != optionSetDefinition.Id)
+        if (id != optionSetDefinitionDto.Id)
         {
             return BadRequest();
         }
+        var optionSetDefinition = optionSetDefinitionDto.Adapt<OptionSetDefinition>();
 
         _context.Entry(optionSetDefinition).State = EntityState.Modified;
 
@@ -71,9 +75,9 @@ public class OptionSetDefinitionsController : ControllerBase
     // POST: api/OptionSetDefinitions
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<OptionSetDefinition>> PostOptionSetDefinition(OptionSetDefinition optionSetDefinition)
+    public async Task<ActionResult<OptionSetDefinitionDTO>> PostOptionSetDefinition(OptionSetDefinitionDTO optionSetDefinition)
     {
-        _context.OptionSetDefentions.Add(optionSetDefinition);
+        _context.OptionSetDefentions.Add(optionSetDefinition.Adapt<OptionSetDefinition>());
         await _context.SaveChangesAsync();
 
         return CreatedAtAction("GetOptionSetDefinition", new { id = optionSetDefinition.Id }, optionSetDefinition);

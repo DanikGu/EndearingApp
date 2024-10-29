@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog;
 using EndearingApp.Web.Controllers;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,8 +53,6 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
     );
 });
 builder.Services.AddControllers()
-    .AddJsonOptions(o => o.JsonSerializerOptions
-                .ReferenceHandler = ReferenceHandler.Preserve)
     .AddOData(opt => opt.Count().Filter().Expand().Select().OrderBy().SetMaxTop(null));
 builder.Services.TryAddEnumerable(
                 ServiceDescriptor.Transient<IApplicationModelProvider, EdmApplicationModelProvider>());

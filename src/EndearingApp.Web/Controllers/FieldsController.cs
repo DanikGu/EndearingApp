@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EndearingApp.Core.CustomEntityAggregate;
 using EndearingApp.Infrastructure.Data;
+using EndearingApp.Web.Models;
+using Mapster;
 
 namespace EndearingApp.Web.Controllers;
 
@@ -23,14 +25,15 @@ public class FieldsController : ControllerBase
 
     // GET: api/Fields
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Field>>> GetFields()
+    public async Task<ActionResult<IEnumerable<FieldDto>>> GetFields()
     {
-        return await _context.Fields.ToListAsync();
+        var entities = await _context.Fields.ToListAsync();
+        return entities.Select(x => x.Adapt<FieldDto>()).ToList();
     }
 
     // GET: api/Fields/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Field>> GetField(Guid id)
+    public async Task<ActionResult<FieldDto>> GetField(Guid id)
     {
         var @field = await _context.Fields.FindAsync(id);
 
@@ -39,19 +42,19 @@ public class FieldsController : ControllerBase
             return NotFound();
         }
 
-        return @field;
+        return @field.Adapt<FieldDto>();
     }
 
     // PUT: api/Fields/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutField(Guid id, Field @field)
+    public async Task<IActionResult> PutField(Guid id, FieldDto fieldDto)
     {
-        if (id != @field.Id)
+        if (id != fieldDto.Id)
         {
             return BadRequest();
         }
-
+        var @field = fieldDto.Adapt<Field>();
         _context.Entry(@field).State = EntityState.Modified;
 
         try
@@ -76,9 +79,9 @@ public class FieldsController : ControllerBase
     // POST: api/Fields
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<Field>> PostField(Field @field)
+    public async Task<ActionResult<FieldDto>> PostField(FieldDto @field)
     {
-        _context.Fields.Add(@field);
+        _context.Fields.Add(@field.Adapt<Field>());
         try
         {
             await _context.SaveChangesAsync();

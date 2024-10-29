@@ -13,7 +13,7 @@ public class CrudOdataController : ODataController
 {
     private readonly ICustomEntityQueryProvider _customEntityQueryableProvider;
     private readonly ICustomDataEditor _customDataEditor;
-
+    private static MethodInfo SingleResultCreateMethodInfo = typeof(SingleResult).GetMethod("Create")!;
     public CrudOdataController(ICustomEntityQueryProvider customEntityQueryableProvider,
         ICustomDataEditor customDataEditor)
     {
@@ -64,8 +64,7 @@ public class CrudOdataController : ODataController
     private SingleResult GetSingleResult(IQueryable queryable)
     {
         var modelType = Utils.GetTableModelType(queryable);
-        MethodInfo MI = typeof(SingleResult).GetMethod("Create")!;
-        MethodInfo genericMethod = MI.MakeGenericMethod(new[] { modelType });
+        MethodInfo genericMethod = SingleResultCreateMethodInfo.MakeGenericMethod(new[] { modelType });
         var result = genericMethod.Invoke(null, new[] { queryable });
         return (result as SingleResult)!;
     }

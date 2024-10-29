@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EndearingApp.Core.CustomEntityAggregate;
 using EndearingApp.Infrastructure.Data;
+using EndearingApp.Web.Models;
+using Mapster;
 
 namespace EndearingApp.Web.Controllers;
 
@@ -23,14 +25,15 @@ public class RelationshipsController : ControllerBase
 
     // GET: api/Relationships
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Relationship>>> GetRelationships()
+    public async Task<ActionResult<IEnumerable<RelationshipDTO>>> GetRelationships()
     {
-        return await _context.Relationships.ToListAsync();
+        var entities = await _context.Relationships.ToListAsync();
+        return entities.Select(x => x.Adapt<RelationshipDTO>()).ToList();
     }
 
     // GET: api/Relationships/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Relationship>> GetRelationship(Guid id)
+    public async Task<ActionResult<RelationshipDTO>> GetRelationship(Guid id)
     {
         var relationship = await _context.Relationships.FindAsync(id);
 
@@ -39,19 +42,19 @@ public class RelationshipsController : ControllerBase
             return NotFound();
         }
 
-        return relationship;
+        return relationship.Adapt<RelationshipDTO>();
     }
 
     // PUT: api/Relationships/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutRelationship(Guid id, Relationship relationship)
+    public async Task<IActionResult> PutRelationship(Guid id, RelationshipDTO relationshipDto)
     {
-        if (id != relationship.Id)
+        if (id != relationshipDto.Id)
         {
             return BadRequest();
         }
-
+        var relationship = relationshipDto.Adapt<Relationship>();
         _context.Entry(relationship).State = EntityState.Modified;
 
         try
@@ -76,9 +79,9 @@ public class RelationshipsController : ControllerBase
     // POST: api/Relationships
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<Relationship>> PostRelationship(Relationship relationship)
+    public async Task<ActionResult<RelationshipDTO>> PostRelationship(RelationshipDTO relationship)
     {
-        _context.Relationships.Add(relationship);
+        _context.Relationships.Add(relationship.Adapt<Relationship>());
         try
         {
             await _context.SaveChangesAsync();

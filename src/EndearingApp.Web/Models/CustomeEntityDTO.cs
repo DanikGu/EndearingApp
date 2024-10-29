@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using EndearingApp.Core.CustomEntityAggregate;
+using System.Runtime.Serialization;
 
 namespace EndearingApp.Web.Models;
 
@@ -10,8 +11,11 @@ public class CustomeEntityDTO : BaseDto<CustomeEntityDTO, CustomEntity>
     public const string Route = "/CustomEntity";
     public Guid Id { get; set; } = Guid.NewGuid();
     public string? Name { get; set; }
+    public string DisplayName { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Metadata { get; set; } = "{}";
     public List<FieldDto> Fields { get; set; } = new List<FieldDto>();
-    public List<RelationshipDto> Relationships { get; set; } = new List<RelationshipDto>();
+    public List<RelationshipDTO> Relationships { get; set; } = new List<RelationshipDTO>();
 
     public override void AddCustomMappings()
     {
@@ -27,20 +31,24 @@ public class CustomeEntityDTO : BaseDto<CustomeEntityDTO, CustomEntity>
             );
     }
 }
-public class CustomeEntityMetadataDto 
-{
-
-}
 public class FieldDto
 {
     public Guid Id { get; set; } = Guid.NewGuid();
-    public string Name { get; set; } = "";
+    public string? Name { get; set; }
+    public string DisplayName { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Metadata { get; set; } = "{}";
     public int Type { get; set; } = -1;
     public int? Size { get; set; }
     public bool IsPrimaryKey { get; set; }
+    public bool IsNullable { get; set; } = true;
+    public bool IsIndexed { get; set; }
+    public bool IsUnique { get; set; }
+    public bool IsRequired { get; set; }
+    public Guid? OptionSetDefinitionId { get; set; }
 }
 
-public class RelationshipDto : BaseDto<RelationshipDto, Relationship>
+public class RelationshipDTO : BaseDto<RelationshipDTO, Relationship>
 {
     public override void AddCustomMappings()
     {
