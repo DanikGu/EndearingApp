@@ -6,7 +6,7 @@ namespace EndearingApp.Web.Models;
 public class OptionSetDefinitionDTO: BaseDto<OptionSetDefinitionDTO, OptionSetDefinition>
 {
     public Guid Id { get; set; }
-
+    public string Name { get; set; } = string.Empty;
     public List<OptionDTO> Options = new();
     public bool IsGlobal { get; set; }
 }
