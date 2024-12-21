@@ -13,9 +13,6 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog;
-using EndearingApp.Web.Controllers;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,12 +27,11 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 });
 
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AppDbContext>(
-    options =>
-        options.UseNpgsql(
-            connectionString,
-            options => options.MigrationsHistoryTable("__efmigrationshistory", "customization")
-        )
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(
+        connectionString,
+        options => options.MigrationsHistoryTable("__efmigrationshistory", "customization")
+    )
 );
 builder.Services.AddMapster();
 
@@ -52,12 +48,15 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         new DefaultInfrastructureModule(builder.Environment.EnvironmentName == "Development")
     );
 });
-builder.Services.AddControllers()
+builder
+    .Services.AddControllers()
     .AddOData(opt => opt.Count().Filter().Expand().Select().OrderBy().SetMaxTop(null));
 builder.Services.TryAddEnumerable(
-                ServiceDescriptor.Transient<IApplicationModelProvider, EdmApplicationModelProvider>());
+    ServiceDescriptor.Transient<IApplicationModelProvider, EdmApplicationModelProvider>()
+);
 builder.Services.TryAddEnumerable(
-    ServiceDescriptor.Singleton<MatcherPolicy, CustomEdmModelMatcherPolicy>());
+    ServiceDescriptor.Singleton<MatcherPolicy, CustomEdmModelMatcherPolicy>()
+);
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -83,7 +82,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-};
+}
+;
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -109,7 +109,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-    
 app.Run();
 
 // Make the implicit Program.cs class public, so integration tests can reference the correct assembly for host building
