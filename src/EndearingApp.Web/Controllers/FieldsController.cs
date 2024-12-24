@@ -81,7 +81,11 @@ public class FieldsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<FieldDto>> PostField(FieldDto @field)
     {
-        _context.Fields.Add(@field.Adapt<Field>());
+        _logger.LogInformation(JsonConvert.SerializeObject(@field, Formatting.Indented));
+        var etn = @field.Adapt<Field>();
+        _context.Fields.Add(etn);
+        _logger.LogInformation(JsonConvert.SerializeObject(etn, Formatting.Indented));
+
         try
         {
             await _context.SaveChangesAsync();

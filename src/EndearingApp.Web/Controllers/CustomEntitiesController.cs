@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using EndearingApp.Core.CustomEntityAggregate;
 using EndearingApp.Infrastructure.Data;
 using EndearingApp.Web.Models;
 using Mapster;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace EndearingApp.Web.Controllers;
 
@@ -17,19 +18,22 @@ namespace EndearingApp.Web.Controllers;
 public class CustomEntitiesController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly ILogger<CustomEntitiesController> _logger;
 
-    public CustomEntitiesController(AppDbContext context)
+    public CustomEntitiesController(AppDbContext context, ILogger<CustomEntitiesController> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     // GET: api/CustomEntities
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CustomeEntityDTO>>> GetCustomEntities()
     {
-        var result = await _context.CustomEntities.
-            Include(x => x.Fields).
-            Include(x => x.Relationships).ToListAsync();
+        var result = await _context
+            .CustomEntities.Include(x => x.Fields)
+            .Include(x => x.Relationships)
+            .ToListAsync();
         var dtos = result.Select(x => x.Adapt<CustomeEntityDTO>()).ToList();
         return dtos;
     }
@@ -83,9 +87,12 @@ public class CustomEntitiesController : ControllerBase
     // POST: api/CustomEntities
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<CustomeEntityDTO>> PostCustomEntity(CustomeEntityDTO customEntity)
+    public async Task<ActionResult<CustomeEntityDTO>> PostCustomEntity(
+        CustomeEntityDTO customEntity
+    )
     {
-        _context.CustomEntities.Add(customEntity.Adapt<CustomEntity>());
+        var etn = customEntity.Adapt<CustomEntity>();
+        _context.CustomEntities.Add(etn);
         await _context.SaveChangesAsync();
 
         return CreatedAtAction("GetCustomEntity", new { id = customEntity.Id }, customEntity);

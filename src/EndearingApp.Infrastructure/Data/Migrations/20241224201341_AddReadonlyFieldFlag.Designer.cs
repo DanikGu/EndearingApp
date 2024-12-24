@@ -3,6 +3,7 @@ using System;
 using EndearingApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EndearingApp.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241224201341_AddReadonlyFieldFlag")]
+    partial class AddReadonlyFieldFlag
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,10 +84,10 @@ namespace EndearingApp.Infrastructure.Data.Migrations
                     b.Property<bool>("IsPrimaryKey")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsRequired")
+                    b.Property<bool>("IsReadOnly")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsSystemField")
+                    b.Property<bool>("IsRequired")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsUnique")
