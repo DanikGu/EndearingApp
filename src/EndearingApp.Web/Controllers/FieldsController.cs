@@ -49,12 +49,15 @@ public class FieldsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> PutField(Guid id, FieldDto fieldDto)
     {
-        await Task.Delay(5000);
         if (id != fieldDto.Id)
         {
             return BadRequest();
         }
         var @field = fieldDto.Adapt<Field>();
+        if (@field.IsSystemField)
+        {
+            return Forbid();
+        }
         _context.Entry(@field).State = EntityState.Modified;
 
         try
@@ -81,11 +84,12 @@ public class FieldsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<FieldDto>> PostField(FieldDto @field)
     {
-        _logger.LogInformation(JsonConvert.SerializeObject(@field, Formatting.Indented));
         var etn = @field.Adapt<Field>();
         _context.Fields.Add(etn);
-        _logger.LogInformation(JsonConvert.SerializeObject(etn, Formatting.Indented));
-
+        if (etn.IsSystemField)
+        {
+            return Forbid();
+        }
         try
         {
             await _context.SaveChangesAsync();
@@ -119,16 +123,12 @@ public class FieldsController : ControllerBase
         {
             return NotFound();
         }
-
-        _logger.Log(LogLevel.Information, fieldDelta);
-        _logger.Log(
-            LogLevel.Information,
-            JsonConvert.SerializeObject(fieldDeltaObj, Formatting.Indented)
-        );
-        _logger.Log(LogLevel.Information, JsonConvert.SerializeObject(@field, Formatting.Indented));
+        if (@field.IsSystemField)
+        {
+            return Forbid();
+        }
         fieldDeltaObj.Patch(@field);
         _context.Fields.Update(@field);
-        _logger.Log(LogLevel.Information, JsonConvert.SerializeObject(@field, Formatting.Indented));
         try
         {
             await _context.SaveChangesAsync();
@@ -154,11 +154,15 @@ public class FieldsController : ControllerBase
     public async Task<IActionResult> DeleteField(Guid id)
     {
         var @field = await _context.Fields.FindAsync(id);
+
         if (@field == null)
         {
             return NotFound();
         }
-
+        if (@field.IsSystemField)
+        {
+            return Forbid();
+        }
         _context.Fields.Remove(@field);
         await _context.SaveChangesAsync();
 

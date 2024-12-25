@@ -14,10 +14,7 @@ public class CustomEntity : EntityBase, IAggregateRoot
 
     public string Metadata { get; set; } = "{}";
 
-    public CustomEntity()
-    {
-        //RegisterDomainEvent(new CustomDbStructureChangedEvent());
-    }
+    public CustomEntity() { }
 
     public CustomEntity(Guid id, string name, List<Field> fields, List<Relationship> relationships)
     {
@@ -45,5 +42,10 @@ public class CustomEntity : EntityBase, IAggregateRoot
         Name = customEntity.Name;
         _fields = customEntity._fields;
         _relationships = customEntity._relationships;
+    }
+
+    public void AddCreateEvent()
+    {
+        RegisterDomainEvent(new CustomEntityCreated() { Id = Id });
     }
 }

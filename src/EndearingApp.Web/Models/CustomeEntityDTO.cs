@@ -45,7 +45,7 @@ public class FieldDto
     public int? Size { get; set; }
     public bool IsPrimaryKey { get; set; }
     public bool IsNullable { get; set; } = true;
-    public bool IsSystemField { get; set; } = true;
+    public bool IsSystemField { get; set; }
     public bool IsIndexed { get; set; }
     public bool IsUnique { get; set; }
     public bool IsRequired { get; set; }

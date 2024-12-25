@@ -363,3 +363,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 src/EndearingApp.Web/log20241029.txt
+src/swagger-codegen

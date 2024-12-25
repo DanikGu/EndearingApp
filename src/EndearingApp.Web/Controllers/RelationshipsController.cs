@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using EndearingApp.Core.CustomEntityAggregate;
 using EndearingApp.Infrastructure.Data;
 using EndearingApp.Web.Models;
 using Mapster;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace EndearingApp.Web.Controllers;
 
@@ -17,10 +18,12 @@ namespace EndearingApp.Web.Controllers;
 public class RelationshipsController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly ILogger<RelationshipsController> _logger;
 
-    public RelationshipsController(AppDbContext context)
+    public RelationshipsController(AppDbContext context, ILogger<RelationshipsController> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     // GET: api/Relationships
@@ -81,7 +84,10 @@ public class RelationshipsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<RelationshipDTO>> PostRelationship(RelationshipDTO relationship)
     {
-        _context.Relationships.Add(relationship.Adapt<Relationship>());
+        _logger.LogInformation(JsonConvert.SerializeObject(relationship, Formatting.Indented));
+        var etn = relationship.Adapt<Relationship>();
+        _logger.LogInformation(JsonConvert.SerializeObject(etn, Formatting.Indented));
+        _context.Relationships.Add(etn);
         try
         {
             await _context.SaveChangesAsync();

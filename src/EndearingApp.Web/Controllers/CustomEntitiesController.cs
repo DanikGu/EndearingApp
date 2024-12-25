@@ -92,6 +92,7 @@ public class CustomEntitiesController : ControllerBase
     )
     {
         var etn = customEntity.Adapt<CustomEntity>();
+        etn.AddCreateEvent();
         _context.CustomEntities.Add(etn);
         await _context.SaveChangesAsync();
 
