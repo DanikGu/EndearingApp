@@ -1,16 +1,17 @@
-/* eslint-disable no-unused-vars */
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig, loadEnv } from 'vite';
-
+import { defineConfig } from 'vitest/config';
+import { loadEnv } from 'vite';
+import path from 'path';
 // @ts-ignore
 export default ({ mode }) => {
+
   return defineConfig({
     plugins: [sveltekit()],
     server: {
       proxy: {
         '/api': {
           target: loadEnv(mode, process.cwd()).VITE_API_URL,
-          rewrite: path => path.replace(/^\/api/, ''),
+          //rewrite: path => path.replace(/^\/api/, ''),
           configure: (proxy, _options) => {
             if (mode !== "development") {
               return;
@@ -42,6 +43,9 @@ export default ({ mode }) => {
           },
         }
       }
+    },
+    test: {
+      include: ['src/**/*.{test,spec}.{js,ts}']
     }
   });
-}
+};
