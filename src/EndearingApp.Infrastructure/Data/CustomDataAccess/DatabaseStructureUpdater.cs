@@ -366,16 +366,18 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             if (relationship is not null)
             {
                 result.AppendFormat(
-                    "public {0} {0}_Etn {{ get; set; }}\n",
-                    relationship!.ReferencedTable!.Name
+                    "public {0} {1}_Etn {{ get; set; }}\n",
+                    relationship!.ReferencedTable!.Name,
+                    field.Name
                 );
             }
         }
         foreach (var relationship in toThisTable)
         {
             result.AppendFormat(
-                "public ICollection<{0}> {0}_EtnColl {{ get; set; }}\n",
-                relationship!.Table!.Name
+                "public ICollection<{0}> {1}_EtnColl {{ get; set; }}\n",
+                relationship!.Table!.Name,
+                relationship!.ConstraintName
             );
         }
 
@@ -433,8 +435,8 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         {
             fieldsConfig
                 .AppendFormat("builder")
-                .AppendFormat(".HasOne(b => b.{0})\n", rel!.ReferencedTable!.Name + "_Etn")
-                .AppendFormat(".WithMany(b => b.{0})\n", rel!.Table!.Name + "_EtnColl")
+                .AppendFormat(".HasOne(b => b.{0})\n", rel!.Field!.Name + "_Etn")
+                .AppendFormat(".WithMany(b => b.{0})\n", rel!.ConstraintName + "_EtnColl")
                 .AppendFormat(".HasForeignKey(b => b.{0})\n", rel!.Field!.Name)
                 .AppendFormat(".HasPrincipalKey(b => b.{0})\n", rel!.ReferencedField!.Name);
             if (!string.IsNullOrWhiteSpace(rel.ConstraintName))

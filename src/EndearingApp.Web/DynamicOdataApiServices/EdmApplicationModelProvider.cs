@@ -7,14 +7,20 @@ using Microsoft.AspNetCore.OData.Routing.Template;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Options;
 using Microsoft.OData.Edm;
+
 namespace EndearingApp.Web.DynamicOdataApiServices;
 
 public partial class EdmApplicationModelProvider : IApplicationModelProvider
 {
     const string prefix = OdataConstants.OdataRoute;
+
     public EdmApplicationModelProvider(IOptions<ODataOptions> options)
     {
-        options.Value.AddRouteComponents(prefix, EdmCoreModel.Instance, new DefaultODataBatchHandler());
+        options.Value.AddRouteComponents(
+            prefix,
+            EdmCoreModel.Instance,
+            new DefaultODataBatchHandler()
+        );
     }
 
     /// <summary>
@@ -25,26 +31,25 @@ public partial class EdmApplicationModelProvider : IApplicationModelProvider
     public void OnProvidersExecuted(ApplicationModelProviderContext context)
     {
         var model = new EdmModel();
-        
+
         foreach (var controllerModel in context.Result.Controllers)
         {
             if (controllerModel.ControllerName == "CrudOdata")
             {
-                ProcessHandleAll("odata", model, controllerModel);
+                ProcessHandleAll(RemoveTrailingSlash(prefix), model, controllerModel);
                 continue;
             }
 
             if (controllerModel.ControllerName == "Metadata")
             {
-                ProcessMetadata("odata", model, controllerModel);
+                ProcessMetadata(RemoveTrailingSlash(prefix), model, controllerModel);
+
                 continue;
             }
         }
     }
 
-    public void OnProvidersExecuting(ApplicationModelProviderContext context)
-    {
-    }
+    public void OnProvidersExecuting(ApplicationModelProviderContext context) { }
 
     private void ProcessHandleAll(string prefix, IEdmModel model, ControllerModel controllerModel)
     {
@@ -60,32 +65,35 @@ public partial class EdmApplicationModelProvider : IApplicationModelProvider
                 else
                 {
                     ODataPathTemplate path = new ODataPathTemplate(
-                        new EntitySetWithKeyTemplateSegment());
+                        new EntitySetWithKeyTemplateSegment()
+                    );
                     actionModel.AddSelector("get", prefix, model, path);
                 }
             }
             else if (actionModel.ActionName == "Create")
             {
-                ODataPathTemplate path = new ODataPathTemplate(
-                        new EntitySetTemplateSegment());
+                ODataPathTemplate path = new ODataPathTemplate(new EntitySetTemplateSegment());
                 actionModel.AddSelector("post", prefix, model, path);
             }
             else if (actionModel.ActionName == "Patch")
             {
                 ODataPathTemplate path = new ODataPathTemplate(
-                        new EntitySetWithKeyTemplateSegment());
+                    new EntitySetWithKeyTemplateSegment()
+                );
                 actionModel.AddSelector("patch", prefix, model, path);
             }
             else if (actionModel.ActionName == "Update")
             {
                 ODataPathTemplate path = new ODataPathTemplate(
-                        new EntitySetWithKeyTemplateSegment());
+                    new EntitySetWithKeyTemplateSegment()
+                );
                 actionModel.AddSelector("put", prefix, model, path);
             }
             else if (actionModel.ActionName == "Delete")
             {
                 ODataPathTemplate path = new ODataPathTemplate(
-                        new EntitySetWithKeyTemplateSegment());
+                    new EntitySetWithKeyTemplateSegment()
+                );
                 actionModel.AddSelector("delete", prefix, model, path);
             }
         }
@@ -106,5 +114,16 @@ public partial class EdmApplicationModelProvider : IApplicationModelProvider
                 actionModel.AddSelector("get", prefix, model, path);
             }
         }
+    }
+
+    private string RemoveTrailingSlash(string str)
+    {
+        int lastSlash = str.LastIndexOf('/');
+        if (lastSlash != str.Length - 1)
+        {
+            return str;
+        }
+        str = (lastSlash > -1) ? str.Substring(0, lastSlash) : str;
+        return str;
     }
 }
