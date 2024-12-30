@@ -1,9 +1,10 @@
-# EndearingAppweb.OptionSetDefinitionDTO
+# EndearingAppweb.OptionDTO
 
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **String** |  | [optional] 
+**value** | **Number** |  | [optional] 
+**displayName** | **String** |  | [optional] 
 **name** | **String** |  | [optional] 
-**options** | [**[OptionDTO]**](OptionDTO.md) |  | [optional] 
-**isGlobal** | **Boolean** |  | [optional] 
+**description** | **String** |  | [optional] 

@@ -35,6 +35,7 @@ import ODataFunctionImportInfo from './model/ODataFunctionImportInfo';
 import ODataServiceDocument from './model/ODataServiceDocument';
 import ODataSingletonInfo from './model/ODataSingletonInfo';
 import ODataTypeAnnotation from './model/ODataTypeAnnotation';
+import OptionDTO from './model/OptionDTO';
 import OptionSetDefinitionDTO from './model/OptionSetDefinitionDTO';
 import RelationshipDTO from './model/RelationshipDTO';
 import SettingDTO from './model/SettingDTO';
@@ -215,6 +216,12 @@ export {
      * @property {module:model/ODataTypeAnnotation}
      */
     ODataTypeAnnotation,
+
+    /**
+     * The OptionDTO model constructor.
+     * @property {module:model/OptionDTO}
+     */
+    OptionDTO,
 
     /**
      * The OptionSetDefinitionDTO model constructor.

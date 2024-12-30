@@ -7,7 +7,7 @@ import { mount } from "svelte"
  * @param {Promise<any>} awaitedPromise
  * @param {HTMLElement | null} container
  **/
-const assignBlockingLoader = (loaderTitle, awaitedPromise, container) => {
+const assignBlockingLoader = (loaderTitle, awaitedPromise, container = null) => {
   const prop = {
     target: container ?? document.body,
     props: { msg: loaderTitle, awaitedPromise: awaitedPromise }

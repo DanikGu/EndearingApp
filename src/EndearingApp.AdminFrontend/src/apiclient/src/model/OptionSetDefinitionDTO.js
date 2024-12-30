@@ -13,6 +13,7 @@
  *
  */
 import ApiClient from '../ApiClient';
+import OptionDTO from './OptionDTO';
 
 /**
  * The OptionSetDefinitionDTO model module.
@@ -42,6 +43,8 @@ export default class OptionSetDefinitionDTO {
         obj.id = ApiClient.convertToType(data['id'], 'String');
       if (data.hasOwnProperty('name'))
         obj.name = ApiClient.convertToType(data['name'], 'String');
+      if (data.hasOwnProperty('options'))
+        obj.options = ApiClient.convertToType(data['options'], [OptionDTO]);
       if (data.hasOwnProperty('isGlobal'))
         obj.isGlobal = ApiClient.convertToType(data['isGlobal'], 'Boolean');
     }
@@ -58,6 +61,11 @@ OptionSetDefinitionDTO.prototype.id = undefined;
  * @member {String} name
  */
 OptionSetDefinitionDTO.prototype.name = undefined;
+
+/**
+ * @member {Array.<module:model/OptionDTO>} options
+ */
+OptionSetDefinitionDTO.prototype.options = undefined;
 
 /**
  * @member {Boolean} isGlobal

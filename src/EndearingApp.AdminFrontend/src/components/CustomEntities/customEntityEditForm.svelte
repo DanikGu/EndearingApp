@@ -19,22 +19,19 @@
     PlusOutline,
   } from "flowbite-svelte-icons";
   import FieldEditForm from "./fieldEditForm.svelte";
-  import {
-    ActionApi,
-    CustomEntitiesApi,
-    FieldDto,
-    FieldsApi,
-    RelationshipDTO,
-    RelationshipsApi,
-  } from "@apiclients/src";
-  import {
-    assignLoader,
-    assignBlockingLoader,
-    alertError,
-    alertSuccsess,
-  } from "../../utils/uiutils";
+  import { FieldDto, RelationshipDTO } from "@apiclients/src";
+  import { assignLoader, assignBlockingLoader } from "../../utils/uiutils";
   import { onMount } from "svelte";
   import RelationshipEditForm from "./relationshipEditForm.svelte";
+  import {
+    applyChangesToDbApi,
+    deleteCustomEntityApi,
+    deleteFieldApi,
+    deleteRelationshipApi,
+    saveCustomEntityApi,
+    saveFieldApi,
+    saveRelationshipApi,
+  } from "../../apiClientsWrapper";
 
   /** @typedef {import('../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
   /** @typedef {import('../../apiclient/src/model/FieldDto').default} FieldEntity */
@@ -106,215 +103,56 @@
   };
 
   /** @param {string} id */
-  const deleteRelationship = (id) => {
-    console.log(id);
-    const prom = new Promise((res, rej) => {
-      const api = new RelationshipsApi();
-      // @ts-ignore
-      let callBack = (error) => {
-        if (error) {
-          alertError(
-            "Error while deleteing field. Changes didn't applied",
-            null,
-          );
-        } else {
-          alertSuccsess("Succsess while deleting relationship", null);
-        }
-        res(true);
-        reloadParentData();
-      };
-      try {
-        api.apiRelationshipsIdDelete(id, callBack);
-      } catch (ex) {
-        rej(ex);
-      }
-    });
-    assignLoader("Deleting field", prom);
+  const deleteRelationship = async (id) => {
+    const prom = deleteRelationshipApi(id);
+    assignLoader("Deleting relationship", prom);
+    await prom;
+    reloadParentData();
   };
 
   /** @param {string} id */
-  const deleteField = (id) => {
-    console.log(id);
-    const prom = new Promise((res, rej) => {
-      const api = new FieldsApi();
-      // @ts-ignore
-      let callBack = (error) => {
-        if (error) {
-          alertError(
-            "Error while deleteing field. Changes didn't applied",
-            null,
-          );
-        } else {
-          alertSuccsess("Succsess while deleting field", null);
-        }
-        res(true);
-        reloadParentData();
-      };
-      try {
-        api.apiFieldsIdDelete(id, callBack);
-      } catch (ex) {
-        rej(ex);
-      }
-    });
+  const deleteField = async (id) => {
+    const prom = deleteFieldApi(id);
     assignLoader("Deleting field", prom);
+    await prom;
+    reloadParentData();
   };
 
-  const saveField = () => {
-    const prom = new Promise((res, rej) => {
-      const api = new FieldsApi();
-      // @ts-ignore
-      let callBack = (error, response) => {
-        if (error) {
-          alertError("Error while saving field. Changes didn't applied", null);
-        } else {
-          alertSuccsess("Succsess while saving field", null);
-        }
-        res(true);
-        reloadParentData();
-      };
-      try {
-        if (editedField?.id) {
-          api.apiFieldsPatch(
-            { id: editedField?.id, fieldDelta: JSON.stringify(editedField) },
-            callBack,
-          );
-        } else {
-          // @ts-ignore
-          editedField.CustomEntityId = customEntity.id;
-          api.apiFieldsPost({ body: editedField }, callBack);
-        }
-      } catch (ex) {
-        rej(ex);
-      }
-    });
+  const saveField = async () => {
+    if (!editedField) {
+      return;
+    }
+    const prom = saveFieldApi(editedField, customEntity);
     assignLoader("Saving field", prom);
+    await prom;
+    reloadParentData();
   };
-  const saveRelationship = () => {
-    const prom = new Promise((res, rej) => {
-      const api = new RelationshipsApi();
-      // @ts-ignore
-      let callBack = (error, response) => {
-        if (error) {
-          alertError("Error while saving field. Changes didn't applied", null);
-        } else {
-          alertSuccsess("Succsess while saving field", null);
-        }
-        res(true);
-        reloadParentData();
-      };
-      try {
-        // @ts-ignore
-        editedRelationship.CustomEntityId = customEntity.id;
-        api.apiRelationshipsPost({ body: editedRelationship }, callBack);
-      } catch (ex) {
-        rej(ex);
-      }
-    });
+  const saveRelationship = async () => {
+    if (!editedRelationship) {
+      return;
+    }
+    const prom = saveRelationshipApi(editedRelationship, customEntity);
     assignLoader("Saving relationship", prom);
+    await prom;
+    reloadParentData();
   };
 
-  const deleteCustomEntity = () => {
-    const prom = new Promise((res, rej) => {
-      const api = new CustomEntitiesApi();
-      // @ts-ignore
-      let callBack = function (error, response) {
-        try {
-          if (error) {
-            alertError(
-              "Error while deleting custom entity. Changes didn't applied",
-              null,
-            );
-          } else {
-            alertSuccsess("Succsess while deleting custom entity", null);
-          }
-          if (reloadParentData) {
-            reloadParentData();
-          }
-          res(true);
-        } catch (ex) {
-          rej(ex);
-        }
-      };
-      try {
-        api.apiCustomEntitiesIdDelete(customEntity.id, callBack);
-      } catch (ex) {
-        rej(ex);
-      }
-    });
-
+  const deleteCustomEntity = async () => {
+    const prom = deleteCustomEntityApi(customEntity);
     assignBlockingLoader("Deleteing Entity", prom, form);
+    await prom;
+    reloadParentData();
   };
 
-  const saveCustomEntity = () => {
-    const prom = new Promise((res, rej) => {
-      const api = new CustomEntitiesApi();
-      // @ts-ignore
-      let callBack = function (error, response) {
-        try {
-          if (error) {
-            alertError(
-              "Error while saving custom entity. Changes didn't applied",
-            );
-          } else {
-            alertSuccsess("Succsess while saving custom entity");
-          }
-          if (response) {
-            if (isNew) {
-              customEntity = response;
-              isNew = false;
-            }
-          }
-          if (reloadParentData) {
-            reloadParentData();
-          }
-          res(true);
-        } catch (ex) {
-          rej(ex);
-        }
-      };
-      try {
-        if (isNew) {
-          let newEtn = {
-            Name: customEntity.name,
-            DisplayName: customEntity.displayName,
-            Description: customEntity.description,
-          };
-          api.apiCustomEntitiesPost({ body: newEtn }, callBack);
-        } else {
-          api.apiCustomEntitiesIdPut(
-            customEntity.id,
-            { body: customEntity },
-            callBack,
-          );
-        }
-      } catch (ex) {
-        rej(ex);
-      }
-    });
-
+  const saveCustomEntity = async () => {
+    const prom = saveCustomEntityApi(isNew, customEntity);
     assignBlockingLoader("Saving entity", prom, form);
-    console.log("Saving entity", prom);
+    await prom;
+    reloadParentData();
   };
   const applyChangesToDb = () => {
-    const prom = new Promise((res, rej) => {
-      try {
-        // @ts-ignore
-        let callBack = (error, response) => {
-          if (error) {
-            alertError("Db Update Failed");
-          } else {
-            alertSuccsess("Db Structure Update Succsessfully");
-          }
-          res(true);
-        };
-        let api = new ActionApi();
-        api.apiActionUpdateDbStructurePost(callBack);
-      } catch {
-        rej();
-      }
-    });
-
-    assignBlockingLoader("Updating Db", prom, document.body);
+    const prom = applyChangesToDbApi();
+    assignBlockingLoader("Updating Db", prom);
   };
 
   onMount(() => {});
@@ -473,8 +311,8 @@
   {/if}
   <svelte:fragment slot="footer">
     <Button color="dark">Cancel</Button>
-    <Button on:click={saveRelationship} disabled={!isNewRelationship}
-      >Save</Button
-    >
+    <Button on:click={saveRelationship} disabled={!isNewRelationship}>
+      Save
+    </Button>
   </svelte:fragment>
 </Modal>

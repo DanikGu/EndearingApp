@@ -102,7 +102,24 @@
                 </svelte:fragment>
               </SidebarItem>
             </SidebarDropdownWrapper>
-            <SidebarItem label="Option Sets" />
+            <SidebarDropdownWrapper label="Option Sets">
+              {#key customEntities}
+                {#each customEntities as elem}
+                  <SidebarDropdownItem
+                    on:click={() => editCustomEntity(elem)}
+                    label={elem.displayName}
+                  />
+                {/each}
+              {/key}
+              <SidebarItem
+                on:click={() => addCustomEntity()}
+                label="Option Set"
+              >
+                <svelte:fragment slot="icon">
+                  <PlusOutline></PlusOutline>
+                </svelte:fragment>
+              </SidebarItem>
+            </SidebarDropdownWrapper>
             <SidebarItem label="Forms" />
           </SidebarGroup>
         </SidebarGroup>

@@ -31,6 +31,7 @@
   <NavUl>
     <NavLi href="/">Home</NavLi>
     <NavLi href="/DataCustomizations">Data Customizations</NavLi>
+    <NavLi href="/OdataExplorer">Odata Explorer</NavLi>
   </NavUl>
   <DarkMode btnClass={darkmodebtn}></DarkMode>
 </Navbar>

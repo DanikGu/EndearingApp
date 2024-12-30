@@ -36,18 +36,18 @@ export default class MetadataApi {
     }
 
     /**
-     * Callback function to receive the result of the odata operation.
-     * @callback moduleapi/MetadataApi~odataCallback
+     * Callback function to receive the result of the apiodata operation.
+     * @callback moduleapi/MetadataApi~apiodataCallback
      * @param {String} error Error message, if any.
      * @param {module:model/ODataServiceDocument{ data The data returned by the service call.
      * @param {String} response The complete HTTP response.
      */
 
     /**
-     * @param {module:api/MetadataApi~odataCallback} callback The callback function, accepting three arguments: error, data, response
+     * @param {module:api/MetadataApi~apiodataCallback} callback The callback function, accepting three arguments: error, data, response
      * data is of type: {@link <&vendorExtensions.x-jsdoc-type>}
      */
-    odata(callback) {
+    apiodata(callback) {
       
       let postBody = null;
 
@@ -70,24 +70,24 @@ export default class MetadataApi {
       let returnType = ODataServiceDocument;
 
       return this.apiClient.callApi(
-        '/odata', 'GET',
+        '/api/odata', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );
     }
     /**
-     * Callback function to receive the result of the odatametadata operation.
-     * @callback moduleapi/MetadataApi~odatametadataCallback
+     * Callback function to receive the result of the apiodatametadata operation.
+     * @callback moduleapi/MetadataApi~apiodatametadataCallback
      * @param {String} error Error message, if any.
      * @param {module:model/IEdmModel{ data The data returned by the service call.
      * @param {String} response The complete HTTP response.
      */
 
     /**
-     * @param {module:api/MetadataApi~odatametadataCallback} callback The callback function, accepting three arguments: error, data, response
+     * @param {module:api/MetadataApi~apiodatametadataCallback} callback The callback function, accepting three arguments: error, data, response
      * data is of type: {@link <&vendorExtensions.x-jsdoc-type>}
      */
-    odatametadata(callback) {
+    apiodatametadata(callback) {
       
       let postBody = null;
 
@@ -110,7 +110,7 @@ export default class MetadataApi {
       let returnType = IEdmModel;
 
       return this.apiClient.callApi(
-        '/odata/$metadata', 'GET',
+        '/api/odata/$metadata', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, callback
       );

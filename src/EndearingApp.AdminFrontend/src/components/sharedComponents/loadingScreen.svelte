@@ -44,7 +44,7 @@
 </script>
 
 <div
-  class="flex gap-10 h-full w-full absolute bg-black bg-opacity-15 rounded dark:bg-gray-100 dark:bg-opacity-15"
+  class="flex gap-10 h-full w-full absolute top-0 bg-black bg-opacity-15 rounded dark:bg-gray-100 dark:bg-opacity-15"
   bind:this={thisCompElem}
 >
   <div

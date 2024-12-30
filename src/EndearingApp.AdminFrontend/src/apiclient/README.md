@@ -99,8 +99,8 @@ Class | Method | HTTP request | Description
 *EndearingAppweb.FieldsApi* | [**apiFieldsIdPut**](docs/FieldsApi.md#apiFieldsIdPut) | **PUT** /api/Fields/{id} | 
 *EndearingAppweb.FieldsApi* | [**apiFieldsPatch**](docs/FieldsApi.md#apiFieldsPatch) | **PATCH** /api/Fields | 
 *EndearingAppweb.FieldsApi* | [**apiFieldsPost**](docs/FieldsApi.md#apiFieldsPost) | **POST** /api/Fields | 
-*EndearingAppweb.MetadataApi* | [**odata**](docs/MetadataApi.md#odata) | **GET** /odata | 
-*EndearingAppweb.MetadataApi* | [**odatametadata**](docs/MetadataApi.md#odatametadata) | **GET** /odata/$metadata | 
+*EndearingAppweb.MetadataApi* | [**apiodata**](docs/MetadataApi.md#apiodata) | **GET** /api/odata | 
+*EndearingAppweb.MetadataApi* | [**apiodatametadata**](docs/MetadataApi.md#apiodatametadata) | **GET** /api/odata/$metadata | 
 *EndearingAppweb.OptionSetDefinitionsApi* | [**apiOptionSetDefinitionsGet**](docs/OptionSetDefinitionsApi.md#apiOptionSetDefinitionsGet) | **GET** /api/OptionSetDefinitions | 
 *EndearingAppweb.OptionSetDefinitionsApi* | [**apiOptionSetDefinitionsIdDelete**](docs/OptionSetDefinitionsApi.md#apiOptionSetDefinitionsIdDelete) | **DELETE** /api/OptionSetDefinitions/{id} | 
 *EndearingAppweb.OptionSetDefinitionsApi* | [**apiOptionSetDefinitionsIdGet**](docs/OptionSetDefinitionsApi.md#apiOptionSetDefinitionsIdGet) | **GET** /api/OptionSetDefinitions/{id} | 
@@ -137,6 +137,7 @@ Class | Method | HTTP request | Description
  - [EndearingAppweb.ODataServiceDocument](docs/ODataServiceDocument.md)
  - [EndearingAppweb.ODataSingletonInfo](docs/ODataSingletonInfo.md)
  - [EndearingAppweb.ODataTypeAnnotation](docs/ODataTypeAnnotation.md)
+ - [EndearingAppweb.OptionDTO](docs/OptionDTO.md)
  - [EndearingAppweb.OptionSetDefinitionDTO](docs/OptionSetDefinitionDTO.md)
  - [EndearingAppweb.RelationshipDTO](docs/RelationshipDTO.md)
  - [EndearingAppweb.SettingDTO](docs/SettingDTO.md)
