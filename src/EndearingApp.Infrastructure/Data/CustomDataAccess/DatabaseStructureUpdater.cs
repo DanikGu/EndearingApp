@@ -84,7 +84,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             await CallDotnetCli("dotnet publish", folderPath);
             if (GetIsDatabaseUpToDate())
             {
-                ClearInitialMigration(folderPath + "\\Migrations\\");
+                ClearInitialMigration(folderPath + "/Migrations/");
             }
             try
             {
@@ -98,15 +98,15 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                 );
             }
         }
-        if (File.Exists(folderPath + "\\AppContext.cs"))
+        if (File.Exists(folderPath + "/AppContext.cs"))
         {
-            var currDbContext = File.ReadAllText(folderPath + "\\AppContext.cs");
+            var currDbContext = File.ReadAllText(folderPath + "/AppContext.cs");
             if (currDbContext == appContext)
             {
                 return;
             }
         }
-        File.WriteAllText(folderPath + "\\AppContext.cs", appContext);
+        File.WriteAllText(folderPath + "/AppContext.cs", appContext);
         await CallDotnetCli("ef migrations add " + GetNewMigrationName(), folderPath);
         await CallDotnetCli("ef database update", folderPath);
         await CallDotnetCli("dotnet publish", folderPath);
