@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: endearingapp_postgres
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "endearingappdb"
+    ports:
+      - "5500:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    image: mcr.microsoft.com/dotnet/aspnet:8.0
+    container_name: endearingapp_backend
+    build:
+      context: ./
+      dockerfile: ./src/EndearingApp.Web/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=endearingappdb;Username=postgres;Password=postgres"
+      DOTNET_ROOT: "/usr/share/dotnet"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  frontend:
+    image: node:22.7.0
+    container_name: endearingapp_frontend
+    build:
+      context: ./src/EndearingApp.AdminFrontend
+      dockerfile: Dockerfile
+    environment:
+      VITE_API_URL: "http://backend:8080"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+

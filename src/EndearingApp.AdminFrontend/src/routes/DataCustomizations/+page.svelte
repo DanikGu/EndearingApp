@@ -1,19 +1,25 @@
 <script>
-  /**
-   * @typedef {import('../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity
-   */
+  /** @typedef {import('../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
+  /** @typedef {import('../../apiclient/src/model/OptionSetDefinitionDTO').default} OptionSetDefinitionDTO */
+  import {
+    CustomeEntityDTO,
+    CustomEntitiesApi,
+    OptionSetDefinitionDTO,
+    OptionSetDefinitionsApi,
+  } from "@apiclients";
+  import { alertError } from "@utils/uiutils";
   import {
     Sidebar,
-    SidebarWrapper,
-    SidebarItem,
-    SidebarGroup,
-    SidebarDropdownWrapper,
     SidebarDropdownItem,
+    SidebarDropdownWrapper,
+    SidebarGroup,
+    SidebarItem,
+    SidebarWrapper,
   } from "flowbite-svelte";
-  import { CustomeEntityDTO, CustomEntitiesApi } from "@apiclients";
+  import { PlusOutline } from "flowbite-svelte-icons";
   import { onMount } from "svelte";
   import CustomEntityEditForm from "../../components/CustomEntities/customEntityEditForm.svelte";
-  import { PlusOutline } from "flowbite-svelte-icons";
+  import OptionSetDefinitionEditForm from "../../components/CustomEntities/optionSetDefinitionEditForm.svelte";
 
   /** @type {CustomEntity[]} */
   let customEntities = [];
@@ -24,27 +30,72 @@
   /** @type { boolean } */
   let isNewEntity = false;
 
+  /** @type {OptionSetDefinitionDTO[]} */
+  let optionSetDefinitions = [];
+
+  /** @type { OptionSetDefinitionDTO? } */
+  let selectedOptionSet = null;
+
+  /** @type { boolean } */
+  let isNewOptionSet = false;
+
   let loadData = () => {
+    loadCustomEntities();
+    loadOptionSets();
+  };
+
+  let loadOptionSets = () => {
+    let api = new OptionSetDefinitionsApi();
+    api.apiOptionSetDefinitionsGet(
+      (
+        /** @type {string} */ error,
+        /** @type {OptionSetDefinitionDTO[]} */ elems,
+      ) => {
+        if (error) {
+          handleError(error);
+        } else if (elems) {
+          setOptionSetDefinitions(elems);
+        }
+      },
+    );
+  };
+
+  let loadCustomEntities = () => {
     let api = new CustomEntitiesApi();
-    // @ts-ignore
-    api.apiCustomEntitiesGet((error, elems) => {
-      if (error) {
-        handleError(error);
-      } else if (elems) {
-        handleElems(elems);
-      }
-    });
+    api.apiCustomEntitiesGet(
+      (/** @type {string} */ error, /** @type {CustomEntity[]} */ elems) => {
+        if (error) {
+          handleError(error);
+        } else if (elems) {
+          setCustomEntities(elems);
+        }
+      },
+    );
   };
 
   onMount(() => {
     loadData();
   });
 
+  /** @param {OptionSetDefinitionDTO[]} elems */
+  let setOptionSetDefinitions = (elems) => {
+    optionSetDefinitions = elems;
+    if (!selectedOptionSet || !selectedOptionSet.id) {
+      return;
+    }
+    const isOptionSetExists = optionSetDefinitions.some(
+      (x) => x.id == selectedOptionSet?.id,
+    );
+    if (isOptionSetExists) {
+      selectedOptionSet =
+        optionSetDefinitions.find((x) => x.id == selectedOptionSet?.id) ?? null;
+    } else {
+      selectedOptionSet = null;
+    }
+  };
+
   /** @param {CustomEntity[]} elems */
-  let handleElems = (elems) => {
-    elems.forEach((value) => {
-      console.log(value.name);
-    });
+  let setCustomEntities = (elems) => {
     customEntities = elems;
     if (!selectedEntity || !selectedEntity.id) {
       return;
@@ -63,18 +114,34 @@
   /** @param {string} error */
   let handleError = (error) => {
     console.error(error);
+    alertError("Error occured: " + error);
   };
 
   /** @param {CustomEntity} entity */
   let editCustomEntity = (entity) => {
+    selectedOptionSet = null;
     isNewEntity = false;
     selectedEntity = entity;
   };
 
   let addCustomEntity = () => {
+    selectedOptionSet = null;
     let newEntity = new CustomeEntityDTO();
     isNewEntity = true;
     selectedEntity = newEntity;
+  };
+
+  /** @param {OptionSetDefinitionDTO} optionSet */
+  let editOptionSet = (optionSet) => {
+    selectedEntity = null;
+    isNewOptionSet = false;
+    selectedOptionSet = optionSet;
+  };
+
+  let addOptionSet = () => {
+    selectedEntity = null;
+    let newOptionSet = new OptionSetDefinitionDTO();
+    selectedOptionSet = newOptionSet;
   };
 </script>
 
@@ -103,18 +170,15 @@
               </SidebarItem>
             </SidebarDropdownWrapper>
             <SidebarDropdownWrapper label="Option Sets">
-              {#key customEntities}
-                {#each customEntities as elem}
+              {#key optionSetDefinitions}
+                {#each optionSetDefinitions as elem}
                   <SidebarDropdownItem
-                    on:click={() => editCustomEntity(elem)}
-                    label={elem.displayName}
+                    on:click={() => editOptionSet(elem)}
+                    label={elem.name}
                   />
                 {/each}
               {/key}
-              <SidebarItem
-                on:click={() => addCustomEntity()}
-                label="Option Set"
-              >
+              <SidebarItem on:click={() => addOptionSet()} label="Option Set">
                 <svelte:fragment slot="icon">
                   <PlusOutline></PlusOutline>
                 </svelte:fragment>
@@ -134,6 +198,15 @@
           bind:isNew={isNewEntity}
           reloadParentData={loadData}
           {customEntities}
+        />
+      {/if}
+    {/key}
+    {#key optionSetDefinitions}
+      {#if selectedOptionSet !== null}
+        <OptionSetDefinitionEditForm
+          bind:optionSet={selectedOptionSet}
+          bind:isNew={isNewOptionSet}
+          reloadParentData={loadData}
         />
       {/if}
     {/key}

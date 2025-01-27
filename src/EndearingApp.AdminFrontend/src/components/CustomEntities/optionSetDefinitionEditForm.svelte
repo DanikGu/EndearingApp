@@ -1,124 +1,53 @@
 <script>
-  import {
-    Label,
-    Button,
-    Table,
-    TableHead,
-    TableHeadCell,
-    TableBody,
-    TableBodyRow,
-    TableBodyCell,
-    Modal,
-    Input,
-  } from "flowbite-svelte";
+  import { Button, Input, Label } from "flowbite-svelte";
+  import { applyChangesToDbApi } from "../../apiClientsWrapper";
+  import { assignBlockingLoader } from "@utils/uiutils";
 
-  import {
-    PlusOutline,
-    EditOutline,
-    TrashBinOutline,
-  } from "flowbite-svelte-icons";
+  /** @typedef {import('../../apiclient/src/model/OptionSetDefinitionDTO').default} OptionSetDefinitionDTO */
+  /** @type {OptionSetDefinitionDTO} */
 
-  export let optionSetDefinition = {
-    id: "",
-    name: "",
-    isGlobal: false,
-    options: [],
+  export let optionSet;
+  /** @type {boolean} */
+
+  export let isNew;
+
+  /** @type {Function} */
+  export let reloadParentData;
+
+  const applyChangesToDb = () => {
+    const prom = applyChangesToDbApi();
+    assignBlockingLoader("Updating Db", prom);
   };
-
-  let showEditModal = false;
-
-  let editForm = {
-    id: "",
-    value: 0,
-    displayName: "",
-    name: "",
-    description: "",
-  };
-
-  function addNewOption() {
-    console.log("Add new option");
-  }
-
-  function editOption(option) {
-    editForm = { ...option };
-    showEditModal = true;
-  }
-
-  function closeEditModal() {
-    showEditModal = false;
-  }
-
-  function saveRelationship() {
-    const index = optionSetDefinition.options.findIndex(
-      (o) => o.id === editForm.id,
-    );
-    if (index !== -1) {
-      optionSetDefinition.options[index] = { ...editForm };
+  const saveOptionSet = () => {
+    if (isNew) {
+    } else {
     }
-
-    showEditModal = false;
-
-    console.log("Saved:", editForm);
-  }
-
-  function deleteOption(optionId) {
-    console.log("Delete option with id:", optionId);
-  }
+  };
+  const deleteOptionSet = () => {};
 </script>
 
-<div class="flex max-w-full justify-between mb-4">
-  <Label class="text-xl">{optionSetDefinition.name}</Label>
-  <Button color="alternative" size="xs" on:click={addNewOption}>
-    <PlusOutline class="text-xl" />
-  </Button>
-</div>
-
-{#key optionSetDefinition.id}
-  <Table hoverable={true} shadow items={optionSetDefinition.options}>
-    <TableHead>
-      <TableHeadCell class="sticky top-0">Value</TableHeadCell>
-      <TableHeadCell class="sticky top-0">Display Name</TableHeadCell>
-      <TableHeadCell class="sticky top-0">Name</TableHeadCell>
-      <TableHeadCell class="sticky top-0">Description</TableHeadCell>
-      <TableHeadCell class="sticky top-0">Actions</TableHeadCell>
-    </TableHead>
-    <TableBody tableBodyClass="divide-y">
-      <TableBodyRow slot="row" let:item>
-        <TableBodyCell>{item.value}</TableBodyCell>
-        <TableBodyCell>{item.displayName}</TableBodyCell>
-        <TableBodyCell>{item.name}</TableBodyCell>
-        <TableBodyCell>{item.description}</TableBodyCell>
-        <TableBodyCell>
-          <div class="flex flex-row space-x-2">
-            <button on:click={() => editOption(item)}>
-              <EditOutline />
-            </button>
-            <button on:click={() => deleteOption(item.id)}>
-              <TrashBinOutline />
-            </button>
-          </div>
-        </TableBodyCell>
-      </TableBodyRow>
-    </TableBody>
-  </Table>
-{/key}
-
-<Modal bind:open={showEditModal} on:close={closeEditModal} title="Edit Option">
-  <div class="space-y-4">
-    <Label>Value</Label>
-    <Input type="number" bind:value={editForm.value} />
-    <Label>Display Name</Label>
-    <Input bind:value={editForm.displayName} />
-    <Label>Name</Label>
-    <Input bind:value={editForm.name} />
-    <Label>Description</Label>
-    <Input bind:value={editForm.description} />
+<div class="relative flex flex-col">
+  <div class="flex flex-row justify-between">
+    <div class="grid grid-cols-2 gap-4">
+      <div class="mb-6 max-w-48 p-2">
+        <Label for="large-input" class="block mb-2">Name</Label>
+        <Input placeholder="Name of Option Set" bind:value={optionSet.name} />
+      </div>
+    </div>
+    <div class="flex flex-row gap-3 p-2 mb-auto">
+      <Button
+        on:click={applyChangesToDb}
+        class="h-10 mx-0"
+        outline
+        color="purple"
+        >Apply to DB
+      </Button>
+      <Button on:click={saveOptionSet} class="h-10 mx-0" outline color="green">
+        Save
+      </Button>
+      <Button on:click={deleteOptionSet} class="h-10 mx-0" outline color="red">
+        Delete
+      </Button>
+    </div>
   </div>
-
-  <svelte:fragment slot="footer">
-    <Button color="dark" on:click={closeEditModal}>Cancel</Button>
-    <Button on:click={saveRelationship} disabled={!isNewRelationship}>
-      Save
-    </Button>
-  </svelte:fragment>
-</Modal>
+</div>

@@ -23,13 +23,14 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
     public DatabaseStructureUpdater(
         AppDbContext appDbContext,
         ICustomEntityQueryProvider customEntityQueryDataProvider,
-        DbContextAssemblyLoader contextAssemblyLoader
+        DbContextAssemblyLoader contextAssemblyLoader,
+        ILogger<DatabaseStructureUpdater> logger
     )
     {
         _appDbContext = appDbContext;
         _customEntityQueryDataProvider = customEntityQueryDataProvider;
         _contextAssemblyLoader = contextAssemblyLoader;
-        _logger = null;
+        _logger = logger;
     }
 
     public async Task UpdateDbStructure(DbStructure dbStructure)
@@ -76,8 +77,8 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             await CallDotnetCli("new tool-manifest", folderPath);
             DisableWarningsAsErrors(folderPath);
             await CallDotnetCli("tool install dotnet-ef", folderPath);
-            File.WriteAllText(folderPath + "\\AppContext.cs", appContext);
-            File.Delete(folderPath + "\\Class1.cs");
+            File.WriteAllText(folderPath + "/AppContext.cs", appContext);
+            File.Delete(folderPath + "/Class1.cs");
 
             await CallDotnetCli("ef migrations add InitialCreate", folderPath);
             await CallDotnetCli("dotnet publish", folderPath);

@@ -1,26 +1,24 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
 import { loadEnv } from 'vite';
-import path from 'path';
 // @ts-ignore
 export default ({ mode }) => {
-
   return defineConfig({
     plugins: [sveltekit()],
     server: {
       proxy: {
         '/api': {
           target: loadEnv(mode, process.cwd()).VITE_API_URL,
-          //rewrite: path => path.replace(/^\/api/, ''),
           configure: (proxy, _options) => {
+            let log = console.log;
             if (mode !== "development") {
-              return;
+              log = () => { };
             }
             proxy.on("error", (err, _req, _res) => {
-              console.log("proxy error", err);
+              log("proxy error", err);
             });
             proxy.on("proxyReq", (proxyReq, req, _res) => {
-              console.log(
+              log(
                 "Sending Request:",
                 req.method,
                 req.url,
@@ -29,15 +27,13 @@ export default ({ mode }) => {
                 proxyReq.protocol,
                 proxyReq.host,
                 proxyReq.path,
-                //JSON.stringify(proxyReq.getHeaders()),
               );
             });
             proxy.on("proxyRes", (proxyRes, req, _res) => {
-              console.log(
+              log(
                 "Received Response from the Target:",
                 proxyRes.statusCode,
                 req.url,
-                //JSON.stringify(proxyRes.headers),
               );
             });
           },

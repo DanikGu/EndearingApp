@@ -3,8 +3,6 @@ using System.Net.NetworkInformation;
 using System.Text;
 using CliWrap;
 using Npgsql;
-using SqlForSchemaGenerator.Core;
-using SqlForSchemaGenrator.Postgres;
 using Xunit;
 
 namespace EndearingApp.IntegrationTests;

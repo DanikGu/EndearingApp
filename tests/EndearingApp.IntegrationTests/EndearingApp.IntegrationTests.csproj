@@ -38,13 +38,4 @@
     <Folder Include="Data\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="SqlForSchemaGenerator.Core">
-      <HintPath>..\..\..\SqlForSchemaGenerator\SqlForSchemaGenrator.Postgres\bin\Debug\net8.0\SqlForSchemaGenerator.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SqlForSchemaGenrator.Postgres">
-      <HintPath>..\..\..\SqlForSchemaGenerator\SqlForSchemaGenrator.Postgres\bin\Debug\net8.0\SqlForSchemaGenrator.Postgres.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

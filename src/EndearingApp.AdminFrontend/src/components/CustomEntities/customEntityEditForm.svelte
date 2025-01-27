@@ -154,8 +154,6 @@
     const prom = applyChangesToDbApi();
     assignBlockingLoader("Updating Db", prom);
   };
-
-  onMount(() => {});
 </script>
 
 <div class="relative flex flex-col" bind:this={form}>
