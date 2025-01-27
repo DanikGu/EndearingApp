@@ -17,9 +17,6 @@
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
     "@tailwindcss/typography": "^0.5.14",
     "autoprefixer": "^10.4.20",
-    "flowbite": "^2.5.2",
-    "flowbite-svelte": "^0.47.2",
-    "flowbite-svelte-icons": "^2.0.2",
     "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
     "tailwindcss": "^3.4.9",
@@ -27,6 +24,9 @@
     "vite": "^5.0.3"
   },
   "dependencies": {
+    "flowbite": "^2.5.2",
+    "flowbite-svelte": "^0.47.2",
+    "flowbite-svelte-icons": "^2.0.2",
     "@sveltejs/adapter-node": "^5.2.12",
     "@sveltejs/kit": "^2.0.0",
     "superagent": "^10.1.1",
