@@ -10,24 +10,21 @@ on:
   workflow_dispatch:
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v2 
 
-      - name: Set up SSH key
+      - name: SSH and run commands
+        env:
+          PRIVATE_KEY: ${{ secrets.ARTIFACT_SSH_KEY }} 
         run: |
-          env
-          mkdir -p ~/.ssh
-          echo "${{ secrets.ARTIFACT_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.ARTIFACT_HOST }} >> ~/.ssh/known_hosts
-          sudo apt-get install sshpass
-
-      - name: Deploy to server
-        run: |
-          sshpass -p '${{ secrets.PSWD }}' ssh -p ${{ secrets.SSH_PORT }} -v -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} <<'ENDSSH'
-          cd ${{ secrets.APP_PATH }}
-          git pull
-          docker-compose up --build
-          ENDSSH
+          echo "$PRIVATE_KEY" > private_key.pem # Write the private key to a file
+          chmod 600 private_key.pem # Set the appropriate permissions for the key file
+          ssh -o -p ${{SSH_PORT}} StrictHostKeyChecking=no -i private_key.pem ${{ secrets.USER }}@${{ secrets.HOST }} <<EOF
+          EOF
+          rm -f private_key.pem # Remove the private key file after use for security
+    permissions:
+      contents: read
+      actions: write
+      id-token: write
