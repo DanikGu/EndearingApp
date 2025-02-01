@@ -21,7 +21,8 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key.pem # Write the private key to a file
           chmod 600 private_key.pem # Set the appropriate permissions for the key file
-          ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.USER }}@${{ secrets.HOST }} <<EOF
+          ssh -v -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.USER }}@${{ secrets.HOST }} <<EOF
+            echo test
           EOF
           rm -f private_key.pem # Remove the private key file after use for security
     permissions:
