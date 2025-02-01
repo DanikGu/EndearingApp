@@ -29,5 +29,4 @@ jobs:
           cd ${{ secrets.APP_PATH }}
           git pull
           docker-compose up --build
-          export ${{ secrets.API_KEY_NAME }}=${{ secrets.API_KEY }}
           ENDSSH
