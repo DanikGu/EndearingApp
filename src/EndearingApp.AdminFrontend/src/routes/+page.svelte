@@ -1,5 +1,5 @@
-<h1 class="text-3xl dark:text-white">Welcome to SvelteKit</h1>
-<p class="dark:text-white">
-  Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
+<p>
+  This is the demo of my project <a
+    href="https://github.com/DanikGu/EndearingApp">github</a
+  >
 </p>
-<p class="dark:text-white">Test Deploy</p>
