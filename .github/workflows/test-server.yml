@@ -22,7 +22,8 @@ jobs:
           echo "$PRIVATE_KEY" | tr -d '\r' > private_key.pem # Write the private key to a file
           chmod 600 private_key.pem # Set the appropriate permissions for the key file
           ssh -vvv -T -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.USER }}@${{ secrets.HOST }} <<EOF
-            echo test
+            cd ${{ secrets.APP_PATH }}
+            docker-compose up --build
           EOF
           rm -f private_key.pem # Remove the private key file after use for security
     permissions:
