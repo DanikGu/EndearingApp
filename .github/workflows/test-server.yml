@@ -26,7 +26,7 @@ jobs:
             git pull origin test
             docker container prune -f
             docker compose pull
-            docker compose up --build
+            docker compose up --build --force-recreate --detach
           EOF
           rm -f private_key.pem # Remove the private key file after use for security
     permissions:
