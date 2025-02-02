@@ -140,6 +140,7 @@
 
   let addOptionSet = () => {
     selectedEntity = null;
+    isNewOptionSet = true;
     let newOptionSet = new OptionSetDefinitionDTO();
     selectedOptionSet = newOptionSet;
   };

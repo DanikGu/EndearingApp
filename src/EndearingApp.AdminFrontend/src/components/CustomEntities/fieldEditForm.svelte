@@ -1,6 +1,6 @@
 <script>
   import { OptionSetDefinitionDTO, OptionSetDefinitionsApi } from "@apiclients";
-  import { getTypesArray } from "@utils/fieldtypesutils";
+  import { getTypesArray, getTypeId } from "@utils/fieldtypesutils";
   /** @typedef {import('../../apiclient/src/model/FieldDto').default} FieldEntity */
   import { Input, Select, Label, Checkbox, Button } from "flowbite-svelte";
 
@@ -61,7 +61,8 @@
     <Label>Type</Label>
     <Select bind:value={fieldType} items={typesItems} disabled={isReadOnlyForm}
     ></Select>
-    {#if !!editedField.optionSetDefinitionId}
+    <!-- TODO: fix this, add an type key so do not filter by display Name -->
+    {#if editedField.type == getTypeId("Option Set") || editedField.type == getTypeId("Option Set MultiSelect")}
       {#await getOptionSetPromise() then data}
         <Label>Option Set Definition</Label>
         <Select
