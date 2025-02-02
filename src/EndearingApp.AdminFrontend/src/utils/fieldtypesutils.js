@@ -9,7 +9,18 @@ const getTypeName = (typeId) => {
   }
   return typesConfig[`${typeId}`].Name;
 };
-
+/** @param {string} name
+ ** @returns {number} */
+const getTypeId = (name) => {
+  // @ts-ignore
+  let typesConfig = window.endearing_app?.typeConfig;
+  if (!typesConfig) {
+    return -1;
+  }
+  // @ts-ignore
+  return parseInt(Object.entries(window.endearing_app?.typeConfig).
+    find(([key, value]) => value.Name === name)[0]);
+};
 const ensureTypeConfig = () => {
   /** @returns {Promise<any>} */
   const retriveTypeConfig = () => {
@@ -54,5 +65,5 @@ const getTypesArray = () => {
   }));
   return arr;
 }
-export { getTypeName, ensureTypeConfig, getTypesArray };
-export default { getTypeName, ensureTypeConfig, getTypesArray }
+export { getTypeName, ensureTypeConfig, getTypesArray, getTypeId };
+export default { getTypeName, ensureTypeConfig, getTypesArray, getTypeId }

@@ -1,7 +1,8 @@
 <script>
   import { Button, Input, Label } from "flowbite-svelte";
   import { applyChangesToDbApi } from "../../apiClientsWrapper";
-  import { assignBlockingLoader } from "@utils/uiutils";
+  import { assignBlockingLoader, assignLoader } from "@utils/uiutils";
+  import { OptionSetDefinitionsApi } from "@apiclients/src";
 
   /** @typedef {import('../../apiclient/src/model/OptionSetDefinitionDTO').default} OptionSetDefinitionDTO */
   /** @type {OptionSetDefinitionDTO} */
@@ -18,9 +19,36 @@
     const prom = applyChangesToDbApi();
     assignBlockingLoader("Updating Db", prom);
   };
-  const saveOptionSet = () => {
+  const saveOptionSet = async () => {
+    var api = new OptionSetDefinitionsApi();
+    console.log("0");
     if (isNew) {
+      console.log("1");
+      var prom = new Promise((res, rej) => {
+        // @ts-ignore
+        const callback = (error, data) => {
+          reloadParentData();
+          if (data) {
+            res(data);
+          } else if (error) {
+            rej(error);
+          }
+        };
+        api.apiOptionSetDefinitionsPost(
+          {
+            /** @type { Partial<OptionSetDefinitionDTO> } */
+            body: {
+              name: optionSet.name,
+            },
+          },
+          callback,
+        );
+      });
+
+      assignLoader("Saving Option set", prom);
+      await prom;
     } else {
+      console.log("2");
     }
   };
   const deleteOptionSet = () => {};
