@@ -1,4 +1,3 @@
-import { error } from "@sveltejs/kit";
 import { env } from "$env/dynamic/private";
 
 const MY_API_BASE_URL = env.VITE_API_URL;

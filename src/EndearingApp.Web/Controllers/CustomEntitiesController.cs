@@ -93,10 +93,9 @@ public class CustomEntitiesController : ControllerBase
     {
         var etn = customEntity.Adapt<CustomEntity>();
         etn.AddCreateEvent();
-        _context.CustomEntities.Add(etn);
+        var entry = _context.CustomEntities.Add(etn);
         await _context.SaveChangesAsync();
-
-        return CreatedAtAction("GetCustomEntity", new { id = customEntity.Id }, customEntity);
+        return CreatedAtAction("GetCustomEntity", new { id = entry.Entity.Id }, entry.Entity);
     }
 
     // DELETE: api/CustomEntities/5

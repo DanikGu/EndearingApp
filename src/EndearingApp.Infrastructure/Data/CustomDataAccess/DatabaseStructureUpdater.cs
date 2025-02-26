@@ -314,6 +314,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                             break;
 
                         case EntityState.Modified:
+                            entry.Property(nameof(BaseEntity.CreatedOn)).IsModified = false;
                             ((BaseEntity)entry.Entity).ModifiedOn = DateTime.UtcNow;
                             break;
                     }

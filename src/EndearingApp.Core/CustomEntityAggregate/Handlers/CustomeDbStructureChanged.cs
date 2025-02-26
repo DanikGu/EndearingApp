@@ -50,6 +50,7 @@ public class CustomeDbStructureChangedHandler : INotificationHandler<CustomDbStr
             .SelectMany(x => x.Fields)
             .Select(x => x.OptionSetDefinition)
             .Where(x => x != null)
+            .DistinctBy(x => x!.Id)
             .ToList();
         var optDefToOptModel = new Dictionary<Guid, OptionSet>();
         dbStructure.OptionSets = optSets

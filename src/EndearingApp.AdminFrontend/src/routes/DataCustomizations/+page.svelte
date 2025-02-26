@@ -1,6 +1,5 @@
 <script>
   /** @typedef {import('../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
-  /** @typedef {import('../../apiclient/src/model/OptionSetDefinitionDTO').default} OptionSetDefinitionDTO */
   import {
     CustomeEntityDTO,
     CustomEntitiesApi,
@@ -97,7 +96,11 @@
   /** @param {CustomEntity[]} elems */
   let setCustomEntities = (elems) => {
     customEntities = elems;
-    if (!selectedEntity || !selectedEntity.id) {
+    if (!selectedEntity) {
+      return;
+    }
+    if (!selectedEntity.id) {
+      selectedEntity = null;
       return;
     }
     const isSlelectedEntityExists = customEntities.some(
@@ -206,6 +209,7 @@
       {#if selectedOptionSet !== null}
         <OptionSetDefinitionEditForm
           bind:optionSet={selectedOptionSet}
+          bind:optionSets={optionSetDefinitions}
           bind:isNew={isNewOptionSet}
           reloadParentData={loadData}
         />
