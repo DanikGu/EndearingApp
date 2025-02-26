@@ -82,6 +82,12 @@ public class DbContextAssemblyLoader
         var memStream = new MemoryStream(File.ReadAllBytes(assemblyFile));
         var dbContextAssembly = _loadContext.LoadFromStream(memStream);
         var references = dbContextAssembly.GetReferencedAssemblies();
+        _loadContext.Resolving += (context, name) =>
+        {
+            var refAssemb = deaultContext.Assemblies.First(x => x.GetName().Name == name.Name);
+            _logger.LogWarning("Assembly {0} resolved with {1}, possible errors because of downgrade", name.FullName, refAssemb.FullName);
+            return refAssemb;
+        };
         foreach (var refAss in references)
         {
             if (deaultContext.Assemblies.Any(x => x.GetName().FullName == refAss.FullName))

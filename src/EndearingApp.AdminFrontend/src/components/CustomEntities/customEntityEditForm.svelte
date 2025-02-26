@@ -148,6 +148,7 @@
     const prom = saveCustomEntityApi(isNew, customEntity);
     assignBlockingLoader("Saving entity", prom, form);
     await prom;
+    isNew = false;
     reloadParentData();
   };
   const applyChangesToDb = () => {
