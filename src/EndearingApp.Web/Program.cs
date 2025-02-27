@@ -50,7 +50,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 });
 builder
     .Services.AddControllers()
-    .AddOData(opt => opt.Count().Filter().Expand().Select().OrderBy().SetMaxTop(null));
+    .AddOData(opt => opt.Count().Filter().Expand().Select().OrderBy().SkipToken().SetMaxTop(int.MaxValue));
 builder.Services.TryAddEnumerable(
     ServiceDescriptor.Transient<IApplicationModelProvider, EdmApplicationModelProvider>()
 );

@@ -1,6 +1,4 @@
 <script>
-  // @ts-nocheck
-
   import {
     CustomeEntityDTO,
     CustomEntitiesApi,
@@ -9,13 +7,13 @@
     OptionSetDefinitionDTO,
     OptionSetDefinitionsApi,
   } from "@apiclients";
-  import { alertError, alertSuccsess } from "@utils/uiutils";
+  import { alertError, alertSuccsess, assignLoader } from "@utils/uiutils";
   import { A, Label, Select, Button, Input } from "flowbite-svelte";
   import { onMount } from "svelte";
   import { getTypeId } from "@utils/fieldtypesutils";
   import { browser } from "$app/environment";
   import { JSONEditor } from "svelte-jsoneditor";
-  /** @typedef  {{ name: string, type: string | null | undefined, options: any}} SchemaItem */
+  /** @typedef {import('svelte-jsoneditor').Mode} Mode */
   /** @type {CustomeEntityDTO | null} */
   let selectedEntity = null;
   $: typesItems = customEntities.map((x) => ({ value: x.id, name: x.name }));
@@ -66,10 +64,6 @@
   onMount(() => {
     loadData();
   });
-  // @ts-ignore
-  const onSubmit = (data) => {
-    console.log(data);
-  };
   $: selectedEntity, createJsonEditorSchema();
   $: resourceUrl = selectedEntity
     ? window.location.origin +
@@ -80,10 +74,16 @@
     ? resourceUrl + "?orderby=createdon%20desc"
     : "";
   $: firstPageUrl, getFirstPage();
+  let getUrlValue = "";
   let content = {
     json: {},
   };
 
+  const reloadFromInput = async () => {
+    firstPageUrl = getUrlValue;
+    let prom = getFirstPage();
+    assignLoader("Load data from: " + firstPageUrl, prom);
+  };
   const getFirstPage = async () => {
     if (!browser || !selectedEntity) {
       return;
@@ -103,7 +103,7 @@
     let items = await response.json();
     items = items.value;
     content.json = items;
-    console.log(items);
+    getUrlValue = firstPageUrl;
   };
   /**
    * Creates a JSON Editor schema from your custom entity fields.
@@ -193,7 +193,6 @@
       // @ts-ignore
       schema.properties[field.name] = property;
     });
-    console.log(schema);
 
     // @ts-ignore
     document
@@ -201,53 +200,38 @@
       // @ts-ignore
       .contentWindow.postMessage({ schema: schema }, "*");
   };
-  const createEntity = () => {
-    function cleanBase64Javascript(obj) {
-      if (typeof obj === "object" && obj !== null) {
-        for (let key in obj) {
-          if (obj.hasOwnProperty(key)) {
-            if (
-              typeof obj[key] === "string" &&
-              obj[key].startsWith("data:text/javascript;base64,")
-            ) {
-              obj[key] = obj[key].replace("data:text/javascript;base64,", "");
-            }
+
+  const cleanBase64Data = (/** @type {{ [x: string]: any; } | null} */ obj) => {
+    if (typeof obj === "object" && obj !== null) {
+      for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          if (typeof obj[key] === "string") {
+            // Remove any prefix like "data:[any type];base64," from the string.
+            obj[key] = obj[key].replace(/^data:[^;]+;base64,/, "");
+          } else if (typeof obj[key] === "object" && obj[key] !== null) {
+            // Recursively clean nested objects or arrays.
+            cleanBase64Data(obj[key]);
           }
         }
       }
     }
+  };
+  const createEntity = () => {
     // @ts-ignore
     let etnToCreate = document
       .getElementById("formPrev")
       // @ts-ignore
       .contentWindow.editorVar.getValue();
-    console.log(etnToCreate);
-    cleanBase64Javascript(etnToCreate);
-
+    cleanBase64Data(etnToCreate);
     postData(resourceUrl, etnToCreate);
   };
   const editEntity = () => {
-    function cleanBase64Javascript(obj) {
-      if (typeof obj === "object" && obj !== null) {
-        for (let key in obj) {
-          if (obj.hasOwnProperty(key)) {
-            if (
-              typeof obj[key] === "string" &&
-              obj[key].startsWith("data:text/javascript;base64,")
-            ) {
-              obj[key] = obj[key].replace("data:text/javascript;base64,", "");
-            }
-          }
-        }
-      }
-    }
     // @ts-ignore
     let etnToUpdate = document
       .getElementById("formPrev")
       // @ts-ignore
       .contentWindow.editorVar.getValue();
-    console.log(etnToUpdate);
-    cleanBase64Javascript(etnToUpdate);
+    cleanBase64Data(etnToUpdate);
 
     putData(resourceUrl + `(${etnToUpdate.Id})`, etnToUpdate);
   };
@@ -313,13 +297,16 @@
       // @ts-ignore
       .contentWindow.postMessage({ value: item }, "*");
   };
+  /** @returns {Mode} */
+  // @ts-ignore
+  const getMode = () => "table";
 </script>
 
 <div class="p-3 w-full">
-  <Label
-    >Page for testing and exploring odata resources generated from data
-    structure defined in Data Customizations tab</Label
-  >
+  <Label>
+    Page for testing and exploring odata resources generated from data structure
+    defined in Data Customizations tab
+  </Label>
   <Label>Odata Metadata</Label>
   <A href="/api/odata/$metadata" target="response">/api/odata/$metadata</A>
   <Label>Add new entity</Label>
@@ -338,11 +325,13 @@
       <div class="dark:text-white">{resourceUrl}</div>
     </div>
     <div class="flex flex-row gap-3 w-1/2">
-      <Button disabled={!selectedEntity} onclick={getFirstPage}>Reload</Button>
+      <Button disabled={!selectedEntity} onclick={reloadFromInput}>
+        Reload
+      </Button>
       <Input
         class="dark:text-white"
         readonly={!selectedEntity}
-        bind:value={firstPageUrl}
+        bind:value={getUrlValue}
       ></Input>
     </div>
   </div>
@@ -358,7 +347,7 @@
     </div>
     <div class="w-1/2">
       {#key content}
-        <JSONEditor bind:content mode="table"></JSONEditor>
+        <JSONEditor bind:content mode={getMode()}></JSONEditor>
       {/key}
     </div>
   </div>
