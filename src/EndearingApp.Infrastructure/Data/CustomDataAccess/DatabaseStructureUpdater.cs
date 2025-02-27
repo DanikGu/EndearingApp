@@ -351,10 +351,11 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         var result = new StringBuilder();
 
         result.AppendLine("[Select(SelectType = SelectExpandType.Allowed)]");
+        result.AppendLine("[Expand(ExpandType = SelectExpandType.Allowed)]");
         result.AppendLine("[Filter]");
         result.AppendLine("[Count]");
-        result.AppendLine("[Expand(ExpandType = SelectExpandType.Allowed)]");
         result.AppendLine("[OrderBy]");
+        result.AppendLine("[Page(MaxTop = int.MaxValue)]");
         result.AppendFormat("[Table(\"{0}\")]\n", table.Name);
         result.Append("public class ").Append(table.Name).Append(":BaseEntity\n{\n");
         foreach (var field in table.Fields.Where(x => !x.IsSystemField))
