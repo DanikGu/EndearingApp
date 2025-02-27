@@ -48,9 +48,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         new DefaultInfrastructureModule(builder.Environment.EnvironmentName == "Development")
     );
 });
-builder
-    .Services.AddControllers()
-    .AddOData(opt => opt.EnableQueryFeatures(int.MaxValue));
+builder.Services.AddControllers();
 builder.Services.TryAddEnumerable(
     ServiceDescriptor.Transient<IApplicationModelProvider, EdmApplicationModelProvider>()
 );
