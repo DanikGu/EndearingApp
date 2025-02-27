@@ -77,7 +77,7 @@
       customEntities.find((x) => x.id === selectedEntity)?.name
     : "";
   $: firstPageUrl = resourceUrl
-    ? resourceUrl + "?top=10&$orderby=createdon%20desc"
+    ? resourceUrl + "?orderby=createdon%20desc"
     : "";
   $: firstPageUrl, getFirstPage();
   let content = {
