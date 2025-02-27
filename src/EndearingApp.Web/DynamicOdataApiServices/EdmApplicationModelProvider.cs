@@ -16,11 +16,12 @@ public partial class EdmApplicationModelProvider : IApplicationModelProvider
 
     public EdmApplicationModelProvider(IOptions<ODataOptions> options)
     {
-        options.Value.AddRouteComponents(
-            prefix,
-            EdmCoreModel.Instance,
-            new DefaultODataBatchHandler()
-        );
+        options.Value.EnableQueryFeatures(null).
+            AddRouteComponents(
+                prefix,
+                EdmCoreModel.Instance,
+                new DefaultODataBatchHandler()
+            );
     }
 
     /// <summary>
