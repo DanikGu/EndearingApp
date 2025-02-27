@@ -10,8 +10,10 @@ using EndearingApp.Web.DynamicOdataApiServices;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Batch;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.OData.Edm;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,7 +50,12 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         new DefaultInfrastructureModule(builder.Environment.EnvironmentName == "Development")
     );
 });
-builder.Services.AddControllers().AddOData();
+builder.Services.AddControllers().AddOData(opt => opt.EnableQueryFeatures(null).
+            AddRouteComponents(
+                OdataConstants.OdataRoute,
+                EdmCoreModel.Instance,
+                new DefaultODataBatchHandler()
+            ));
 builder.Services.TryAddEnumerable(
     ServiceDescriptor.Transient<IApplicationModelProvider, EdmApplicationModelProvider>()
 );
