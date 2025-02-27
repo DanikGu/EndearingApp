@@ -1,13 +1,8 @@
-Base App
+# Endearing App
 
-A base application to create tables and relationships and manage this data via OData API, with plans for some generic frontend capabilities in the future.
-
-Overview
-
-The Base App provides a foundational structure for managing database tables and relationships through an API. This setup will facilitate seamless data management and retrieval, and future updates aim to include a generic frontend for more accessible interaction.
-Features
-
-    Table Creation: Easily define and create database tables.
-    Relationship Management: Establish and manage relationships between different tables.
-    OData API: Manage your data through a robust OData API interface.
-    Future Enhancements: Plans to incorporate a generic frontend for enhanced data interaction and visualization.
+Application that was inspired by Power Apps and Creatio, where you can create a database structure and user interface with low effort.
+## What can you do in the app right now
+- You can create a database structure in the [Data Customization tab](https://testserver.danikgu.com/DataCustomizations).
+- Then, you can interact with the OData API in the [OData Explorer tab](https://testserver.danikgu.com/OdataExplorer).
+- The OData API supports all CRUD operations on tables created in the [Data Customization tab](https://testserver.danikgu.com/DataCustomizations).
+- The OData API supports all querying operations from the OData specifications, and also supports batch requests.
