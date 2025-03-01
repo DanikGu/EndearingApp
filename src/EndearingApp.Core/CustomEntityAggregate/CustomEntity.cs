@@ -47,5 +47,5 @@ public class CustomEntity : EntityBase, IAggregateRoot
     public void AddCreateEvent()
     {
         RegisterDomainEvent(new CustomEntityCreated() { Id = Id });
-    }
+    }   
 }

@@ -13,6 +13,7 @@ using EndearingApp.SharedKernel;
 using EndearingApp.SharedKernel.Interfaces;
 using Module = Autofac.Module;
 using EndearingApp.Core.CustomEntityAggregate.Interfaces;
+using FluentValidation;
 
 namespace EndearingApp.Infrastructure;
 
@@ -116,6 +117,9 @@ public class DefaultInfrastructureModule : Module
                 .AsClosedTypesOf(mediatrOpenType)
                 .AsImplementedInterfaces();
         }
+        builder.RegisterAssemblyTypes(_assemblies.ToArray())
+           .Where(t => t.IsClosedTypeOf(typeof(IValidator<>)))
+           .AsImplementedInterfaces();
     }
 
     private void RegisterDevelopmentOnlyDependencies(ContainerBuilder builder)

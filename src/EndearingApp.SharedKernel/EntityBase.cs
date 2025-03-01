@@ -16,4 +16,5 @@ public abstract class EntityBase
         _domainEvents.Add(domainEvent);
 
     internal void ClearDomainEvents() => _domainEvents.Clear();
+
 }
