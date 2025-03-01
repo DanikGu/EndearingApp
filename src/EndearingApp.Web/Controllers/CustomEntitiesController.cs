@@ -4,7 +4,7 @@ using EndearingApp.Core.CustomEntityAggregate;
 using EndearingApp.Core.CustomEntityAggregate.Commands.CustomEntityCommands.Create;
 using EndearingApp.Core.CustomEntityAggregate.Commands.CustomEntityCommands.Delete;
 using EndearingApp.Core.CustomEntityAggregate.Commands.CustomEntityCommands.Update;
-using EndearingApp.Infrastructure.Data;
+using EndearingApp.Core.CustomEntityAggregate.Specifications;
 using EndearingApp.SharedKernel.Interfaces;
 using EndearingApp.Web.Models;
 using Mapster;
@@ -29,7 +29,7 @@ public class CustomEntitiesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CustomeEntityDTO>>> GetCustomEntities()
     {
-        var etns = await _repository.ListAsync();
+        var etns = await _repository.ListAsync(new GetAllSpec());
         return etns.Select(x => x.Adapt<CustomeEntityDTO>()).ToList();
     }
     [TranslateResultToActionResult]
@@ -41,19 +41,19 @@ public class CustomEntitiesController : ControllerBase
     }
     [TranslateResultToActionResult]
     [HttpPut("{id}")]
-    public async Task<Result<CustomEntity>> PutCustomEntity(Guid id, CustomeEntityDTO customEntityDto)
+    public async Task<Result<CustomeEntityDTO>> PutCustomEntity(Guid id, CustomeEntityDTO customEntityDto)
     {
         var result = await _mediator.Send(new CustomEntityUpdateCommand(customEntityDto.Adapt<CustomEntity>()));
-        return result;
+        return result.Map(x => x.Adapt<CustomeEntityDTO>());
     }
     [TranslateResultToActionResult]
     [HttpPost]
-    public async Task<Result<CustomEntity>> PostCustomEntity(
+    public async Task<Result<CustomeEntityDTO>> PostCustomEntity(
         CustomeEntityDTO customEntityDto
     )
     {
         var result = await _mediator.Send(new CustomEntityCreateCommand(customEntityDto.Adapt<CustomEntity>()));
-        return result;
+        return result.Map(x => x.Adapt<CustomeEntityDTO>());
     }
     [TranslateResultToActionResult]
     [HttpDelete("{id}")]

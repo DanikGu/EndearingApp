@@ -11,8 +11,9 @@ public static class FluentValidatorExstensions
 {
     public static IEnumerable<ValidationError> ToValidationError(this IEnumerable<ValidationFailure> validationResult)
     {
-        return validationResult.Select(e => new ValidationError() { 
-            ErrorMessage =  e.ErrorMessage,
+        return validationResult.Select(e => new ValidationError() {
+            Identifier = e.PropertyName,
+            ErrorMessage = e.ErrorMessage,
             ErrorCode = e.ErrorCode,
             Severity = ValidationSeverity.Error
         }).ToList();

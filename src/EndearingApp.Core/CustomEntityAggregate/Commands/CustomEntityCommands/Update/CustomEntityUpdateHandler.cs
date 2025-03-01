@@ -33,7 +33,8 @@ public class CustomEntityUpdateHandler : IRequestHandler<CustomEntityUpdateComma
             return Result<CustomEntity>.Invalid(validationResult.Errors.ToValidationError());
         }
 
-        var existingEntity = await _customEntityRepository.GetByIdAsync(command.CustomEntity.Id, cancellationToken);
+        var existingEntity = await _customEntityRepository.FirstOrDefaultAsync(new GetById(command.CustomEntity.Id), cancellationToken);
+
         if (existingEntity == null)
         {
             return Result<CustomEntity>.NotFound();
@@ -43,7 +44,7 @@ public class CustomEntityUpdateHandler : IRequestHandler<CustomEntityUpdateComma
         {
             return Result<CustomEntity>.Invalid(new ValidationError("Changing Name is Unsupprted Operation"));
         }
-        command.CustomEntity.Adapt(existingEntity);
+        existingEntity.UpdateCustomeEntity(existingEntity);
         try
         {
             await _customEntityRepository.UpdateAsync(existingEntity, cancellationToken);

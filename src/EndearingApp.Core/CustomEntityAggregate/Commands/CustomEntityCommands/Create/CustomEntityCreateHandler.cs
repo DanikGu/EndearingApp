@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Ardalis.Result;
+﻿using Ardalis.Result;
 using EndearingApp.Core.CustomEntityAggregate.Specifications;
 using EndearingApp.Core.Exstensions;
 using EndearingApp.SharedKernel.Interfaces;
@@ -40,6 +35,7 @@ public class CustomEntityCreateHandler(ILogger<CustomEntityCreateHandler> logger
         }
         try
         {
+            command.CustomEntity.AddCreateEvent();
             var result = await _customEntityRepository.AddAsync(command.CustomEntity);
             return Result.Created(result);
         }
