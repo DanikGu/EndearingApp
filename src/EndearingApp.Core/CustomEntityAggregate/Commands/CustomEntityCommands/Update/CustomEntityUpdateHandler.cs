@@ -1,5 +1,6 @@
 ﻿using Ardalis.Result;
 using EndearingApp.Core.CustomEntityAggregate.Specifications;
+using EndearingApp.Core.Exstensions;
 using EndearingApp.SharedKernel.Interfaces;
 using FluentValidation;
 using Mapster;
@@ -29,7 +30,7 @@ public class CustomEntityUpdateHandler : IRequestHandler<CustomEntityUpdateComma
         var validationResult = await _validator.ValidateAsync(command, cancellationToken);
         if (!validationResult.IsValid)
         {
-            return Result<CustomEntity>.Invalid(new ValidationError(validationResult.ToString()));
+            return Result<CustomEntity>.Invalid(validationResult.Errors.ToValidationError());
         }
 
         var existingEntity = await _customEntityRepository.GetByIdAsync(command.CustomEntity.Id, cancellationToken);

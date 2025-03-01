@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
 using EndearingApp.Core.CustomEntityAggregate;
 using EndearingApp.Core.CustomEntityAggregate.Commands.CustomEntityCommands.Create;
 using EndearingApp.Core.CustomEntityAggregate.Commands.CustomEntityCommands.Delete;
@@ -18,34 +19,34 @@ public class CustomEntitiesController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly IRepository<CustomEntity> _repository;
-    private readonly AppDbContext _context;
-    private readonly ILogger<CustomEntitiesController> _logger;
 
-    public CustomEntitiesController(IMediator mediator, IRepository<CustomEntity> repository, AppDbContext context, ILogger<CustomEntitiesController> logger)
+    public CustomEntitiesController(IMediator mediator, IRepository<CustomEntity> repository)
     {
         _mediator = mediator;
         _repository = repository;
-        _context = context;
-        _logger = logger;
     }
+    [TranslateResultToActionResult]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CustomeEntityDTO>>> GetCustomEntities()
     {
         var etns = await _repository.ListAsync();
         return etns.Select(x => x.Adapt<CustomeEntityDTO>()).ToList();
     }
+    [TranslateResultToActionResult]
     [HttpGet("{id}")]
     public async Task<ActionResult<CustomeEntityDTO>> GetCustomEntity(Guid id)
     {
         var customEntity = await _repository.GetByIdAsync(id);
         return customEntity.Adapt<CustomeEntityDTO>();
     }
+    [TranslateResultToActionResult]
     [HttpPut("{id}")]
     public async Task<Result<CustomEntity>> PutCustomEntity(Guid id, CustomeEntityDTO customEntityDto)
     {
         var result = await _mediator.Send(new CustomEntityUpdateCommand(customEntityDto.Adapt<CustomEntity>()));
         return result;
     }
+    [TranslateResultToActionResult]
     [HttpPost]
     public async Task<Result<CustomEntity>> PostCustomEntity(
         CustomeEntityDTO customEntityDto
@@ -54,6 +55,7 @@ public class CustomEntitiesController : ControllerBase
         var result = await _mediator.Send(new CustomEntityCreateCommand(customEntityDto.Adapt<CustomEntity>()));
         return result;
     }
+    [TranslateResultToActionResult]
     [HttpDelete("{id}")]
     public async Task<Result> DeleteCustomEntity(Guid id)
     {

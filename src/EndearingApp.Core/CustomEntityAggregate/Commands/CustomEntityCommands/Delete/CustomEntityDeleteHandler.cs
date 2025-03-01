@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result;
+using EndearingApp.Core.Exstensions;
 using EndearingApp.SharedKernel.Interfaces;
 using FluentValidation;
 using MediatR;
@@ -27,7 +28,7 @@ public class CustomEntityDeleteHandler : IRequestHandler<CustomEntityDeleteComma
         var validationResult = await _validator.ValidateAsync(command, cancellationToken);
         if (!validationResult.IsValid)
         {
-            return Result.Invalid(new ValidationError(validationResult.ToString()));
+            return Result.Invalid(validationResult.Errors.ToValidationError());
         }
 
         var existingEntity = await _customEntityRepository.GetByIdAsync(command.Id, cancellationToken);

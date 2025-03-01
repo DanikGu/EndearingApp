@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ardalis.Result;
 using EndearingApp.Core.CustomEntityAggregate.Specifications;
+using EndearingApp.Core.Exstensions;
 using EndearingApp.SharedKernel.Interfaces;
 using FluentValidation;
 using MediatR;
@@ -22,7 +23,7 @@ public class CustomEntityCreateHandler(ILogger<CustomEntityCreateHandler> logger
         var validationResult = await _validator.ValidateAsync(command, cancellationToken);
         if (!validationResult.IsValid)
         {
-            return Result<CustomEntity>.Invalid(new ValidationError(validationResult.ToString()));
+            return Result<CustomEntity>.Invalid(validationResult.Errors.ToValidationError());
         }
         var isNameExist = await _customEntityRepository.AnyAsync(new GetByNameSpec(command.CustomEntity.Name));
         if (isNameExist) 
