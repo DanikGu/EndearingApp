@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using CliWrap;
@@ -67,13 +68,22 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                 $"new classlib --name {projectName} --output \"{folderPath}\" ",
                 folderPath
             );
-            await CallDotnetCli("add package Microsoft.EntityFrameworkCore -v 8.0.10", folderPath);
-            await CallDotnetCli(
-                "add package Npgsql.EntityFrameworkCore.PostgreSQL -v 8.0.4",
-                folderPath
-            );
-            await CallDotnetCli("add package Microsoft.OData.ModelBuilder -v 1.0.9", folderPath);
-            await CallDotnetCli("add package Microsoft.EntityFrameworkCore.Design", folderPath);
+            var packagesToInstall = new List<string>
+            {
+                "Microsoft.EntityFrameworkCore",
+                "Npgsql.EntityFrameworkCore.PostgreSQL",
+                "Microsoft.OData.ModelBuilder",
+                "Microsoft.EntityFrameworkCore.Design",
+            };
+            foreach (var package in packagesToInstall)
+            {
+                var version = GetPackageVersion(package);
+                if (!string.IsNullOrEmpty(version))
+                {
+                    version = "-v " + version;
+                }
+                await CallDotnetCli($"add package {package} " + version, folderPath);
+            }
             await CallDotnetCli("new tool-manifest", folderPath);
             DisableWarningsAsErrors(folderPath);
             await CallDotnetCli("tool install dotnet-ef", folderPath);
@@ -111,7 +121,19 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         await CallDotnetCli("ef database update", folderPath);
         await CallDotnetCli("dotnet publish", folderPath);
     }
+    private string GetPackageVersion(string packageName)
+    {
+        string version = "";
+        var infrastructureAssembly = Assembly.GetAssembly(typeof(DatabaseStructureUpdater));
+        var packageAssembly = infrastructureAssembly?.
+            GetReferencedAssemblies().FirstOrDefault(x => x.Name == packageName);
+        if (packageAssembly is not null) 
+        {
+            version = packageAssembly.Version?.ToString(3) ?? "";
+        }
 
+        return version;
+    }
     private void DisableWarningsAsErrors(string folderPath)
     {
         //<TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -250,7 +272,6 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         result.AppendLine("using System.Linq;");
 
         result.Append("namespace ").Append(ns).Append(";\n");
-        //add modified on
         result.Append(
             """
                 public abstract class BaseEntity 
