@@ -2,9 +2,9 @@
 
 namespace EndearingApp.Core.CustomEntityAggregate.Commands.FieldCommands.Update;
 
-public class FieldUpdateCommandValidator : AbstractValidator<FieldUpdateCommand>
+public class RelationshipUpdateCommandValidator : AbstractValidator<FieldUpdateCommand>
 {
-    public FieldUpdateCommandValidator()
+    public RelationshipUpdateCommandValidator()
     {
         RuleFor(x => x.Field.Id)
             .NotEmpty().WithMessage("Id is required for update");

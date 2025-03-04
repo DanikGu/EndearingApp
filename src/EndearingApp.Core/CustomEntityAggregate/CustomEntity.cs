@@ -95,4 +95,34 @@ public class CustomEntity : EntityBase, IAggregateRoot
         }
         return Result.NotFound("Field with such id does not exists.");
     }
+    public Result AddRelationship(Relationship relationship)
+    {
+        if (_relationships.Any(f => f.Id == relationship.Id))
+        {
+            return Result.NotFound("Field with such Id already exists.");
+        }
+        return Result.Success();
+    }
+    public Result RemoveRelationship(Guid relationshipId)
+    {
+        var foundedRelationship = _relationships.FirstOrDefault(f => f.Id == relationshipId);
+
+        if (foundedRelationship is null)
+        {
+            return Result.NotFound("Relationship with such id does not exists.");
+        }
+        _relationships.Remove(foundedRelationship);
+        return Result.Success();
+    }
+
+    public Result UpdateRelationship(Relationship updatedRelationship)
+    {
+        var index = _relationships.FindIndex(f => f.Id == updatedRelationship.Id);
+        if (index >= 0)
+        {
+            _relationships[index] = updatedRelationship;
+            return Result.Success();
+        }
+        return Result.NotFound("Field with such id does not exists.");
+    }
 }

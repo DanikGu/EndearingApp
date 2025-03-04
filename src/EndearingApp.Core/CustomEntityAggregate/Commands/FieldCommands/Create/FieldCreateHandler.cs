@@ -9,13 +9,13 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace EndearingApp.Core.CustomEntityAggregate.Commands.FieldCommands.Create;
-public class FieldCreateHandler : IRequestHandler<FieldCreateCommand, Result<Field>>
+public class RelationshipCreateHandler : IRequestHandler<FieldCreateCommand, Result<Field>>
 {
-    private readonly ILogger<FieldCreateHandler> _logger;
+    private readonly ILogger<RelationshipCreateHandler> _logger;
     private readonly IRepository<CustomEntity> _customEntityRepository;
     private readonly IValidator<FieldCreateCommand> _validator;
 
-    public FieldCreateHandler(ILogger<FieldCreateHandler> logger,
+    public RelationshipCreateHandler(ILogger<RelationshipCreateHandler> logger,
                               IRepository<CustomEntity> customEntityRepository,
                               IValidator<FieldCreateCommand> validator)
     {

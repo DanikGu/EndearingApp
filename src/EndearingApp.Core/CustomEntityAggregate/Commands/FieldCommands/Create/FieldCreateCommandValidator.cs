@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
 
 namespace EndearingApp.Core.CustomEntityAggregate.Commands.FieldCommands.Create;
-public class FieldCreateCommandValidator : AbstractValidator<FieldCreateCommand>
+public class RelationshipCreateCommandValidator : AbstractValidator<FieldCreateCommand>
 {
-    public FieldCreateCommandValidator()
+    public RelationshipCreateCommandValidator()
     {
         RuleFor(x => x.Field.Name)
             .NotEmpty().WithMessage("Name is required")

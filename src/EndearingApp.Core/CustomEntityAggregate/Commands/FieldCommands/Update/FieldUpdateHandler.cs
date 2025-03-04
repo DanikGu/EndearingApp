@@ -9,14 +9,14 @@ using Microsoft.Extensions.Logging;
 
 namespace EndearingApp.Core.CustomEntityAggregate.Commands.FieldCommands.Update;
 
-public class FieldUpdateHandler : IRequestHandler<FieldUpdateCommand, Result<Field>>
+public class RelationshipUpdateHandler : IRequestHandler<FieldUpdateCommand, Result<Field>>
 {
-    private readonly ILogger<FieldUpdateHandler> _logger;
+    private readonly ILogger<RelationshipUpdateHandler> _logger;
     private readonly IRepository<CustomEntity> _customEntityRepository;
     private readonly IValidator<FieldUpdateCommand> _validator;
 
-    public FieldUpdateHandler(
-        ILogger<FieldUpdateHandler> logger,
+    public RelationshipUpdateHandler(
+        ILogger<RelationshipUpdateHandler> logger,
         IRepository<CustomEntity> customEntityRepository,
         IValidator<FieldUpdateCommand> validator)
     {
@@ -55,7 +55,7 @@ public class FieldUpdateHandler : IRequestHandler<FieldUpdateCommand, Result<Fie
         try
         {
             await _customEntityRepository.UpdateAsync(existingEntity, cancellationToken);
-            return Result.Success();
+            return Result.Success(command.Field);
         }
         catch (Exception ex)
         {
