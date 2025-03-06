@@ -38,7 +38,7 @@ const applyChangesToDbApi = () => {
  *
  * @param {boolean} isNew - Indicates if the custom entity is new.
  * @param {CustomEntity} customEntity - The custom entity data.
- * @returns {Promise<[boolean, string | null]>} A promise that resolves to true if successful.
+ * @returns {Promise<[CustomEntity | null, string | null]>} A promise that resolves to true if successful.
  */
 const saveCustomEntityApi = (isNew, customEntity) => {
   return new Promise((resolve) => {
@@ -51,7 +51,7 @@ const saveCustomEntityApi = (isNew, customEntity) => {
       try {
         if (error) {
           alertError("Error while saving custom entity. Changes didn't apply.");
-          resolve([false, error]);
+          resolve([null, error]);
           return;
         }
 
@@ -64,9 +64,9 @@ const saveCustomEntityApi = (isNew, customEntity) => {
           }
         }
 
-        resolve([true, null]);
+        resolve([response ?? null, null]);
       } catch (exception) {
-        resolve([false, String(exception)]);
+        resolve([null, String(exception)]);
       }
     };
 

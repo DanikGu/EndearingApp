@@ -2,7 +2,7 @@
 
 namespace EndearingApp.Core.OptionSetDefinitionAggregate.Commands.OptionSetCommands.Delete;
 
-public class OptionSetDefinitionDeleteCommandValidator : AbstractValidator<OptionSetDefinition>
+public class OptionSetDefinitionDeleteCommandValidator : AbstractValidator<OptionSetDefinitionDeleteCommand>
 {
     public OptionSetDefinitionDeleteCommandValidator()
     {

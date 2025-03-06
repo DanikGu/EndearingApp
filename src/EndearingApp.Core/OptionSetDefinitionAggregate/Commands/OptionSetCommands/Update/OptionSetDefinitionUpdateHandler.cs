@@ -44,7 +44,7 @@ public class OptionSetDefinitionUpdateHandler : IRequestHandler<OptionSetDefinit
         {
             return Result<OptionSetDefinition>.Invalid(new ValidationError("Changing Name is Unsupprted Operation"));
         }
-        existingEntity.UpdateOptionSetDefinition(existingEntity);
+        existingEntity.UpdateOptionSetDefinition(command.OptionSetDefinition);
         try
         {
             await _optionSetDefinitionRepository.UpdateAsync(existingEntity, cancellationToken);

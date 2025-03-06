@@ -1,5 +1,6 @@
 ﻿using EndearingApp.Core.CustomEntityAggregate.DbStructureModels;
 using EndearingApp.Core.CustomEntityAggregate.Events;
+using EndearingApp.Core.CustomEntityAggregate.Specifications;
 using EndearingApp.SharedKernel.Interfaces;
 using MediatR;
 
@@ -19,13 +20,13 @@ namespace EndearingApp.Core.CustomEntityAggregate.Handlers
             CancellationToken cancellationToken
         )
         {
-            var etn = await _customEntityRepository.GetByIdAsync(notification.Id);
+            var etn = await _customEntityRepository.FirstOrDefaultAsync(new GetById(notification.Id));
             if (etn is null)
             {
                 throw new InvalidOperationException("Event fired for entity that don't exists");
             }
             AddSystemFields(etn);
-            await _customEntityRepository.SaveChangesAsync();
+            await _customEntityRepository.UpdateAsync(etn);
         }
 
         // This method adds fields that will be read-only for the user
@@ -44,9 +45,7 @@ namespace EndearingApp.Core.CustomEntityAggregate.Handlers
         //
         private void AddSystemFields(CustomEntity etn)
         {
-            var fields = etn.Fields.ToList();
-
-            fields.Add(
+            etn.AddField(
                 new Field()
                 {
                     Name = "Id",
@@ -59,7 +58,7 @@ namespace EndearingApp.Core.CustomEntityAggregate.Handlers
                     CustomEntityId = etn.Id,
                 }
             );
-            fields.Add(
+            etn.AddField(
                 new Field()
                 {
                     Name = "CreatedOn",
@@ -72,7 +71,7 @@ namespace EndearingApp.Core.CustomEntityAggregate.Handlers
                     CustomEntityId = etn.Id,
                 }
             );
-            fields.Add(
+            etn.AddField(
                 new Field()
                 {
                     Name = "ModifiedOn",
@@ -85,8 +84,6 @@ namespace EndearingApp.Core.CustomEntityAggregate.Handlers
                     CustomEntityId = etn.Id,
                 }
             );
-            var chnageSet = new CustomEntity(etn.Id, etn.Name, fields, etn.Relationships.ToList());
-            etn.UpdateCustomeEntity(chnageSet);
         }
     }
 }

@@ -44,7 +44,7 @@ public class CustomEntityUpdateHandler : IRequestHandler<CustomEntityUpdateComma
         {
             return Result<CustomEntity>.Invalid(new ValidationError("Changing Name is Unsupprted Operation"));
         }
-        existingEntity.UpdateCustomeEntity(existingEntity);
+        existingEntity.UpdateCustomeEntity(command.CustomEntity);
         try
         {
             await _customEntityRepository.UpdateAsync(existingEntity, cancellationToken);

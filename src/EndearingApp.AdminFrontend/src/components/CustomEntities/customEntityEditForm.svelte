@@ -147,7 +147,10 @@
   const saveCustomEntity = async () => {
     const prom = saveCustomEntityApi(isNew, customEntity);
     assignBlockingLoader("Saving entity", prom, form);
-    await prom;
+    const [updatedEntity, error] = await prom;
+    if (updatedEntity) {
+      customEntity.id = updatedEntity.id;
+    }
     isNew = false;
     reloadParentData();
   };

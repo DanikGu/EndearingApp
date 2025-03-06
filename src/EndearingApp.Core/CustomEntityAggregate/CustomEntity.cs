@@ -58,10 +58,6 @@ public class CustomEntity : EntityBase, IAggregateRoot
         {
             return Result.NotFound("Field with such Id already exists.");
         }
-        if (field.IsSystemField)
-        {
-            return Result.Forbidden();
-        }
         _fields.Add(field);
         return Result.Success();
     }
