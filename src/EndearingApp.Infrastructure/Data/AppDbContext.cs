@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using EndearingApp.Core.CustomEntityAggregate;
+using EndearingApp.Core.OptionSetDefinitionAggregate;
 using EndearingApp.SharedKernel;
 using EndearingApp.SharedKernel.Interfaces;
 using Microsoft.EntityFrameworkCore;

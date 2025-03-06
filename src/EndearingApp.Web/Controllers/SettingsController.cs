@@ -20,9 +20,9 @@ public class SettingsController : Controller
     // GET: api/Fields/name
     [HttpGet("{name}")]
 
-    public async Task <ActionResult<SettingDTO>>Index(string name)
+    public async Task <ActionResult<SettingDTO>>Index(string name, CancellationToken cancellationToken)
     {
-        var settings = await _repository.ListAsync(new GetByNameSpec(name));
+        var settings = await _repository.ListAsync(new GetByNameSpec(name), cancellationToken);
         var result = settings.FirstOrDefault();
         var response = result.Adapt<SettingDTO>();
         return Ok(response);

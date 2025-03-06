@@ -29,16 +29,16 @@ public class RelationshipsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<RelationshipDTO>>> GetRelationships()
+    public async Task<ActionResult<IEnumerable<RelationshipDTO>>> GetRelationships(CancellationToken cancellationToken)
     {
-        var entities = await _repository.ListAsync(new GetAllSpec());
+        var entities = await _repository.ListAsync(new GetAllSpec(), cancellationToken);
         return entities.Select(x => x.Adapt<RelationshipDTO>()).ToList();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<RelationshipDTO>> GetRelationship(Guid id)
+    public async Task<ActionResult<RelationshipDTO>> GetRelationship(Guid id, CancellationToken cancellationToken)
     {
-        var relationship = await _repository.FirstOrDefaultAsync(new GetByRelationshipId(id));
+        var relationship = await _repository.FirstOrDefaultAsync(new GetByRelationshipId(id), cancellationToken);
 
         if (relationship == null)
         {
@@ -50,25 +50,25 @@ public class RelationshipsController : ControllerBase
 
     [TranslateResultToActionResult]
     [HttpPut("{id}")]
-    public async Task<Result<RelationshipDTO>> PutRelationship(Guid id, RelationshipDTO relationship)
+    public async Task<Result<RelationshipDTO>> PutRelationship(Guid id, RelationshipDTO relationship, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new RelationshipUpdateCommand(relationship.Adapt<Relationship>()));
+        var result = await _mediator.Send(new RelationshipUpdateCommand(relationship.Adapt<Relationship>()), cancellationToken);
         return result.Map(x => x.Adapt<RelationshipDTO>());
     }
 
     [TranslateResultToActionResult]
     [HttpPost]
-    public async Task<Result<RelationshipDTO>> PostRelationship(RelationshipDTO relationship)
+    public async Task<Result<RelationshipDTO>> PostRelationship(RelationshipDTO relationship, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new RelationshipCreateCommand(relationship.Adapt<Relationship>()));
+        var result = await _mediator.Send(new RelationshipCreateCommand(relationship.Adapt<Relationship>()), cancellationToken);
         return result.Map(x => x.Adapt<RelationshipDTO>());
     }
 
     [TranslateResultToActionResult]
     [HttpDelete("{id}")]
-    public async Task<Result> DeleteRelationship(Guid id)
+    public async Task<Result> DeleteRelationship(Guid id, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new RelationshipDeleteCommand(id));
+        var result = await _mediator.Send(new RelationshipDeleteCommand(id), cancellationToken);
         return result;
     }
 }

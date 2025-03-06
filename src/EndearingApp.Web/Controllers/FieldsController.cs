@@ -1,21 +1,16 @@
 ﻿using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 using EndearingApp.Core.CustomEntityAggregate;
-using EndearingApp.Core.CustomEntityAggregate.Commands.CustomEntityCommands.Create;
 using EndearingApp.Core.CustomEntityAggregate.Commands.FieldCommands.Create;
 using EndearingApp.Core.CustomEntityAggregate.Commands.FieldCommands.Delete;
 using EndearingApp.Core.CustomEntityAggregate.Commands.FieldCommands.Update;
 using EndearingApp.Core.CustomEntityAggregate.Specifications;
-using EndearingApp.Infrastructure.Data;
 using EndearingApp.SharedKernel.Interfaces;
 using EndearingApp.Web.Models;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Deltas;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using NuGet.Protocol.Core.Types;
 
 namespace EndearingApp.Web.Controllers;
 
@@ -34,9 +29,9 @@ public class FieldsController : ControllerBase
 
     [TranslateResultToActionResult]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<FieldDto>>> GetFields()
+    public async Task<ActionResult<IEnumerable<FieldDto>>> GetFields(CancellationToken cancellationToken)
     {
-        var entities = await _repository.ListAsync(new GetAllSpec());
+        var entities = await _repository.ListAsync(new GetAllSpec(), cancellationToken);
         return entities
             .SelectMany(x => x.Fields)
             .Select(x => x.Adapt<FieldDto>())
@@ -45,9 +40,9 @@ public class FieldsController : ControllerBase
 
     [TranslateResultToActionResult]
     [HttpGet("{id}")]
-    public async Task<ActionResult<FieldDto>> GetField(Guid id)
+    public async Task<ActionResult<FieldDto>> GetField(Guid id, CancellationToken cancellationToken)
     {
-        var customEntity = await _repository.FirstOrDefaultAsync(new GetByFieldId(id));
+        var customEntity = await _repository.FirstOrDefaultAsync(new GetByFieldId(id), cancellationToken);
         if (customEntity is null)
         {
             return NotFound();
@@ -63,25 +58,25 @@ public class FieldsController : ControllerBase
 
     [TranslateResultToActionResult]
     [HttpPut("{id}")]
-    public async Task<Result<FieldDto>> PutField(Guid id, FieldDto fieldDto)
+    public async Task<Result<FieldDto>> PutField(Guid id, FieldDto fieldDto, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new FieldUpdateCommand(fieldDto.Adapt<Field>()));
+        var result = await _mediator.Send(new FieldUpdateCommand(fieldDto.Adapt<Field>()), cancellationToken);
         return result.Map(x => x.Adapt<FieldDto>());
     }
 
     [TranslateResultToActionResult]
     [HttpPost]
-    public async Task<Result<FieldDto>> PostField(FieldDto @field)
+    public async Task<Result<FieldDto>> PostField(FieldDto @field, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new FieldCreateCommand(@field.Adapt<Field>()));
+        var result = await _mediator.Send(new FieldCreateCommand(@field.Adapt<Field>()), cancellationToken);
         return result.Map(x => x.Adapt<FieldDto>());
     }
 
     [TranslateResultToActionResult]
     [HttpPatch]
-    public async Task<Result<FieldDto>> PatchField(Guid id, string fieldDelta)
+    public async Task<Result<FieldDto>> PatchField(Guid id, string fieldDelta, CancellationToken cancellationToken)
     {
-        var customEntity = await _repository.FirstOrDefaultAsync(new GetByFieldId(id));
+        var customEntity = await _repository.FirstOrDefaultAsync(new GetByFieldId(id), cancellationToken);
         if (customEntity is null)
         {
             return Result.NotFound();
@@ -97,15 +92,15 @@ public class FieldsController : ControllerBase
             return Result.Error("Invalid json");
         }
         fieldDeltaObj.Patch(@field);
-        var result = await _mediator.Send(new FieldUpdateCommand(@field));
+        var result = await _mediator.Send(new FieldUpdateCommand(@field), cancellationToken);
         return result.Map(x => x.Adapt<FieldDto>());
     }
 
     [TranslateResultToActionResult]
     [HttpDelete("{id}")]
-    public async Task<Result> DeleteField(Guid id)
+    public async Task<Result> DeleteField(Guid id, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new FieldDeleteCommand(id));
+        var result = await _mediator.Send(new FieldDeleteCommand(id), cancellationToken);
         return result;
     }
 

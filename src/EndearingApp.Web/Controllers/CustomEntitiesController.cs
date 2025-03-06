@@ -1,4 +1,5 @@
-﻿using Ardalis.Result;
+﻿using System.Threading;
+using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 using EndearingApp.Core.CustomEntityAggregate;
 using EndearingApp.Core.CustomEntityAggregate.Commands.CustomEntityCommands.Create;
@@ -27,39 +28,40 @@ public class CustomEntitiesController : ControllerBase
     }
     [TranslateResultToActionResult]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CustomeEntityDTO>>> GetCustomEntities()
+    public async Task<ActionResult<IEnumerable<CustomeEntityDTO>>> GetCustomEntities(CancellationToken cancellationToken)
     {
-        var etns = await _repository.ListAsync(new GetAllSpec());
+        var etns = await _repository.ListAsync(new GetAllSpec(), cancellationToken);
         return etns.Select(x => x.Adapt<CustomeEntityDTO>()).ToList();
     }
     [TranslateResultToActionResult]
     [HttpGet("{id}")]
-    public async Task<ActionResult<CustomeEntityDTO>> GetCustomEntity(Guid id)
+    public async Task<ActionResult<CustomeEntityDTO>> GetCustomEntity(Guid id, CancellationToken cancellationToken)
     {
-        var customEntity = await _repository.GetByIdAsync(id);
+        var customEntity = await _repository.GetByIdAsync(id, cancellationToken);
         return customEntity.Adapt<CustomeEntityDTO>();
     }
     [TranslateResultToActionResult]
     [HttpPut("{id}")]
-    public async Task<Result<CustomeEntityDTO>> PutCustomEntity(Guid id, CustomeEntityDTO customEntityDto)
+    public async Task<Result<CustomeEntityDTO>> PutCustomEntity(Guid id, CustomeEntityDTO customEntityDto, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new CustomEntityUpdateCommand(customEntityDto.Adapt<CustomEntity>()));
+        var result = await _mediator.Send(new CustomEntityUpdateCommand(customEntityDto.Adapt<CustomEntity>()), cancellationToken);
         return result.Map(x => x.Adapt<CustomeEntityDTO>());
     }
     [TranslateResultToActionResult]
     [HttpPost]
     public async Task<Result<CustomeEntityDTO>> PostCustomEntity(
-        CustomeEntityDTO customEntityDto
+        CustomeEntityDTO customEntityDto, 
+        CancellationToken cancellationToken
     )
     {
-        var result = await _mediator.Send(new CustomEntityCreateCommand(customEntityDto.Adapt<CustomEntity>()));
+        var result = await _mediator.Send(new CustomEntityCreateCommand(customEntityDto.Adapt<CustomEntity>()), cancellationToken);
         return result.Map(x => x.Adapt<CustomeEntityDTO>());
     }
     [TranslateResultToActionResult]
     [HttpDelete("{id}")]
-    public async Task<Result> DeleteCustomEntity(Guid id)
+    public async Task<Result> DeleteCustomEntity(Guid id, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new CustomEntityDeleteCommand(id));
+        var result = await _mediator.Send(new CustomEntityDeleteCommand(id), cancellationToken);
         return result;
     }
 }

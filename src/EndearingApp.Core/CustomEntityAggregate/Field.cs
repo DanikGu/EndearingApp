@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using EndearingApp.Core.CustomEntityAggregate.DbStructureModels;
+using EndearingApp.Core.OptionSetDefinitionAggregate;
 
 namespace EndearingApp.Core.CustomEntityAggregate;
 

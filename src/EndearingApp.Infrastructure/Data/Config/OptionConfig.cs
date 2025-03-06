@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using EndearingApp.Core.CustomEntityAggregate;
+using EndearingApp.Core.OptionSetDefinitionAggregate;
 
 namespace EndearingApp.Infrastructure.Data.Config;
 

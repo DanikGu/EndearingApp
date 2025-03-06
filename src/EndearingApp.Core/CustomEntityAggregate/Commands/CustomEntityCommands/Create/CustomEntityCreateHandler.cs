@@ -20,14 +20,14 @@ public class CustomEntityCreateHandler(ILogger<CustomEntityCreateHandler> logger
         {
             return Result<CustomEntity>.Invalid(validationResult.Errors.ToValidationError());
         }
-        var isNameExist = await _customEntityRepository.AnyAsync(new GetByNameSpec(command.CustomEntity.Name));
+        var isNameExist = await _customEntityRepository.AnyAsync(new GetByNameSpec(command.CustomEntity.Name), cancellationToken);
         if (isNameExist) 
         {
             return Result<CustomEntity>.Invalid(new ValidationError("Custom Entity with such name already exists"));
         }
         if (command.CustomEntity.Id != default(Guid)) 
         {
-            var isIdExist = (await _customEntityRepository.GetByIdAsync(command.CustomEntity.Id)) is not null;
+            var isIdExist = (await _customEntityRepository.GetByIdAsync(command.CustomEntity.Id, cancellationToken)) is not null;
             if (isIdExist) 
             {
                 return Result<CustomEntity>.Invalid(new ValidationError("Custom Entity with such Id already exists"));
@@ -36,7 +36,7 @@ public class CustomEntityCreateHandler(ILogger<CustomEntityCreateHandler> logger
         try
         {
             command.CustomEntity.AddCreateEvent();
-            var result = await _customEntityRepository.AddAsync(command.CustomEntity);
+            var result = await _customEntityRepository.AddAsync(command.CustomEntity, cancellationToken);
             return Result.Created(result);
         }
         catch (Exception ex)
