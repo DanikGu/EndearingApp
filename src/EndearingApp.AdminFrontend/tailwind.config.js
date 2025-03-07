@@ -1,4 +1,4 @@
-import type { Config } from 'tailwindcss';
+import { Config } from 'tailwindcss';
 import flowbitePlugin from 'flowbite/plugin'
 
 export default {
@@ -7,7 +7,6 @@ export default {
   theme: {
     extend: {
       colors: {
-        // flowbite-svelte
         primary: {
           50: '#FFF5F2',
           100: '#FFF1EE',
@@ -24,4 +23,4 @@ export default {
     }
   },
   plugins: [flowbitePlugin]
-} as Config;
+};

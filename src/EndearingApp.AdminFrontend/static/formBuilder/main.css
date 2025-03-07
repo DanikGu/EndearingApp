@@ -1,0 +1,28 @@
+:root {
+  --bs-body-bg: var(--bs-body-bg-custom);
+  --bs-body-bg-rgb: var(--bs-body-bg-rgb-custom);
+}
+[data-bs-theme=dark] {
+  --bs-body-bg: var(--bs-body-bg-custom);
+  --bs-body-bg-rgb: var(--bs-body-bg-rgb-custom);
+}
+body {
+  overflow: hidden;
+}
+.formio-dialog.formio-dialog-theme-default .formio-dialog-content,
+.choices[data-type*=select-one] .choices__input, 
+.choices__list--dropdown, .choices__list[aria-expanded]
+{
+  background-color: var(--bs-body-bg)
+}
+.choices__list--dropdown .choices__item--selectable.is-highlighted, .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
+
+  background-color: var(--bs-secondary-color)
+}
+.bg-light {
+  background-color: var(--bs-body-bg) !important
+}
+.formio.builder.row.formbuilder
+{
+  margin: 0;
+}

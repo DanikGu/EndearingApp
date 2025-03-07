@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using Ardalis.Result;
 using EndearingApp.Core.CustomEntityAggregate.Events;
+using EndearingApp.Core.FormAggregate;
 using EndearingApp.SharedKernel;
 using EndearingApp.SharedKernel.Interfaces;
 
@@ -34,6 +35,9 @@ public class CustomEntity : EntityBase, IAggregateRoot
     private List<Relationship> _relationships = new List<Relationship>();
 
     public IReadOnlyCollection<Relationship> Relationships => _relationships;
+
+    private List<Form> _forms = new List<Form>();
+    public IReadOnlyCollection<Form> Forms => _forms;
 
     [ForeignKey("CustomEntityMetadata")]
     public Guid? CustomEntityMetadataId { get; set; }

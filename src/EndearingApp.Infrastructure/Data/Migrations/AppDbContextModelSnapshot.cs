@@ -17,7 +17,7 @@ namespace EndearingApp.Infrastructure.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -148,55 +148,6 @@ namespace EndearingApp.Infrastructure.Data.Migrations
                     b.ToTable("FormMetadata", "customization");
                 });
 
-            modelBuilder.Entity("EndearingApp.Core.CustomEntityAggregate.Option", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("OptionSetId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OptionSetId");
-
-                    b.ToTable("Option", "customization");
-                });
-
-            modelBuilder.Entity("EndearingApp.Core.CustomEntityAggregate.OptionSetDefinition", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsGlobal")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OptionSetDefinition", "customization");
-                });
-
             modelBuilder.Entity("EndearingApp.Core.CustomEntityAggregate.Relationship", b =>
                 {
                     b.Property<Guid>("Id")
@@ -235,6 +186,86 @@ namespace EndearingApp.Infrastructure.Data.Migrations
                     b.ToTable("Relationship", "customization");
                 });
 
+            modelBuilder.Entity("EndearingApp.Core.FormAggregate.Form", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CustomEntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("JsonSchema")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomEntityId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Form", "customization");
+                });
+
+            modelBuilder.Entity("EndearingApp.Core.OptionSetDefinitionAggregate.Option", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OptionSetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OptionSetId");
+
+                    b.ToTable("Option", "customization");
+                });
+
+            modelBuilder.Entity("EndearingApp.Core.OptionSetDefinitionAggregate.OptionSetDefinition", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsGlobal")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OptionSetDefinition", "customization");
+                });
+
             modelBuilder.Entity("EndearingApp.Core.SystemSettingsAggregate.SystemSetting", b =>
                 {
                     b.Property<Guid>("Id")
@@ -265,7 +296,7 @@ namespace EndearingApp.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EndearingApp.Core.CustomEntityAggregate.OptionSetDefinition", "OptionSetDefinition")
+                    b.HasOne("EndearingApp.Core.OptionSetDefinitionAggregate.OptionSetDefinition", "OptionSetDefinition")
                         .WithMany()
                         .HasForeignKey("OptionSetDefinitionId");
 
@@ -283,17 +314,6 @@ namespace EndearingApp.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("CustomEntity");
-                });
-
-            modelBuilder.Entity("EndearingApp.Core.CustomEntityAggregate.Option", b =>
-                {
-                    b.HasOne("EndearingApp.Core.CustomEntityAggregate.OptionSetDefinition", "OptionSet")
-                        .WithMany("Options")
-                        .HasForeignKey("OptionSetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OptionSet");
                 });
 
             modelBuilder.Entity("EndearingApp.Core.CustomEntityAggregate.Relationship", b =>
@@ -331,9 +351,33 @@ namespace EndearingApp.Infrastructure.Data.Migrations
                     b.Navigation("SourceField");
                 });
 
+            modelBuilder.Entity("EndearingApp.Core.FormAggregate.Form", b =>
+                {
+                    b.HasOne("EndearingApp.Core.CustomEntityAggregate.CustomEntity", "CustomEntity")
+                        .WithMany("Forms")
+                        .HasForeignKey("CustomEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CustomEntity");
+                });
+
+            modelBuilder.Entity("EndearingApp.Core.OptionSetDefinitionAggregate.Option", b =>
+                {
+                    b.HasOne("EndearingApp.Core.OptionSetDefinitionAggregate.OptionSetDefinition", "OptionSet")
+                        .WithMany("Options")
+                        .HasForeignKey("OptionSetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OptionSet");
+                });
+
             modelBuilder.Entity("EndearingApp.Core.CustomEntityAggregate.CustomEntity", b =>
                 {
                     b.Navigation("Fields");
+
+                    b.Navigation("Forms");
 
                     b.Navigation("Relationships");
                 });
@@ -345,7 +389,7 @@ namespace EndearingApp.Infrastructure.Data.Migrations
                     b.Navigation("SourcedRelationshipByThis");
                 });
 
-            modelBuilder.Entity("EndearingApp.Core.CustomEntityAggregate.OptionSetDefinition", b =>
+            modelBuilder.Entity("EndearingApp.Core.OptionSetDefinitionAggregate.OptionSetDefinition", b =>
                 {
                     b.Navigation("Options");
                 });

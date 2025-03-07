@@ -188,7 +188,6 @@
                 </svelte:fragment>
               </SidebarItem>
             </SidebarDropdownWrapper>
-            <SidebarItem label="Forms" />
           </SidebarGroup>
         </SidebarGroup>
       </SidebarWrapper>
