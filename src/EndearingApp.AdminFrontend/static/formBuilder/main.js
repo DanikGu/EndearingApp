@@ -1,3 +1,5 @@
+let currentSchema = null;
+let currentComponents = null;
 const onInit = () => {
   setupColors();
   setupBuilder();
@@ -7,24 +9,39 @@ const listenMessages = () => {
   window.addEventListener('message', (event) => {
     const data = event.data;  // The object the parent sent
     console.log('Received message from parent:', data);
-    setupBuilder(data);
+    setupBuilder(data.currentSchema, data.components);
   });
 }
-const setupBuilder = (components) => {
-  Formio.builder(document.getElementById('builder'), {},
+const setupBuilder = (newSchema, newComponents) => {
+  if (
+    JSON.stringify(newSchema) === JSON.stringify(currentSchema) &&
+    JSON.stringify(newComponents) === JSON.stringify(currentComponents)
+  ) {
+    return;
+  }
+  currentSchema = newSchema;
+  currentComponents = newComponents;
+  Formio.builder(document.getElementById('builder'),
+    newSchema ?? {},
     {
       display: "form",
-      editForm: getEditForm(),
+      editForm: {}, //getEditForm(),
       noNewEdit: true,
       builder: {
         resource: false,
         advanced: false,
         premium: false,
-        basic: false,
-        custom: components ?? getCustomSchemaForBuilder()
+        custom: newComponents ?? {}
       }
+    }).then(function (instance) {
+      var onBuild = function (build) {
+        currentSchema = instance.schema;
+        let schema = instance.schema;
+        window.parent.postMessage({ type: 'formSchemaChanged', content: schema }, '*');
+      };
+      instance.on('change', onBuild);
     });
-}
+};
 const setupColors = () => {
   window.addEventListener("storage", () => {
     checkMode();
@@ -58,56 +75,6 @@ const getEditForm = () => {
   return resultObject;
 }
 
-const getCustomSchemaForBuilder = () => {
-  return {
-    title: 'Person Field',
-    weight: 10,
-    components: {
-      firstName: {
-        title: 'First Name',
-        key: 'firstName',
-        icon: 'terminal',
-        schema: {
-          label: 'First Name',
-          type: 'textfield',
-          key: 'firstName',
-          input: true
-        }
-      },
-      lastName: {
-        title: 'Last Name',
-        key: 'lastName',
-        icon: 'terminal',
-        schema: {
-          label: 'Last Name',
-          type: 'textfield',
-          key: 'lastName',
-          input: true
-        }
-      },
-      email: {
-        title: 'Email',
-        key: 'email',
-        icon: 'at',
-        schema: {
-          label: 'Email',
-          type: 'email',
-          key: 'email',
-          input: true
-        }
-      },
-      phoneNumber: {
-        title: 'Mobile Phone',
-        key: 'mobilePhone',
-        icon: 'phone-square',
-        schema: {
-          label: 'Mobile Phone',
-          type: 'phoneNumber',
-          key: 'mobilePhone',
-          input: true
-        }
-      }
-    }
-  }
-}
+
+
 onInit();

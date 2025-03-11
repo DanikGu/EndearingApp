@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.OData.Batch;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.OData;
 using Microsoft.OData.Edm;
 using Serilog;
 
@@ -56,8 +57,13 @@ builder.Services.AddControllers(mvcOptions => mvcOptions.AddDefaultResultConvent
     .AddRouteComponents(
             OdataConstants.OdataRoute,
             EdmCoreModel.Instance,
-            new DefaultODataBatchHandler()
+            configureServices: services =>
+            {
+                services.AddSingleton((IServiceProvider sp) => new DefaultODataBatchHandler());
+
+            }
         ));
+
 builder.Services.TryAddEnumerable(
     ServiceDescriptor.Transient<IApplicationModelProvider, EdmApplicationModelProvider>()
 );
@@ -84,7 +90,6 @@ else
 }
 app.UseODataBatching();
 app.UseRouting();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -15,6 +15,7 @@
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="Dapper" Version="2.1.66" />
     <PackageVersion Include="EfCore.SchemaCompare" Version="9.0.0" />
+    <PackageVersion Include="FactoryMind.AspNetCore.OData.UriResolution" Version="5.0.19" />
     <PackageVersion Include="FastEndpoints" Version="5.22.0" />
     <PackageVersion Include="FastEndpoints.ApiExplorer" Version="2.3.0" />
     <PackageVersion Include="FastEndpoints.Swagger" Version="5.10.0" />

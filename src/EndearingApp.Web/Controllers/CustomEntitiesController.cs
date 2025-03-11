@@ -37,7 +37,7 @@ public class CustomEntitiesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<CustomeEntityDTO>> GetCustomEntity(Guid id, CancellationToken cancellationToken)
     {
-        var customEntity = await _repository.GetByIdAsync(id, cancellationToken);
+        var customEntity = await _repository.FirstOrDefaultAsync(new GetById(id), cancellationToken);
         return customEntity.Adapt<CustomeEntityDTO>();
     }
     [TranslateResultToActionResult]

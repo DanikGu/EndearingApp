@@ -17,6 +17,7 @@ const assignBlockingLoader = (loaderTitle, awaitedPromise, container = null) => 
 /**
  * @param {string | null} loaderTitle
  * @param {Promise<any>} awaitedPromise
+ * @returns {Promise<any>}
  * */
 const assignLoader = (loaderTitle, awaitedPromise) => {
   const container = document.querySelector(".globalToastContainer");
@@ -25,6 +26,7 @@ const assignLoader = (loaderTitle, awaitedPromise) => {
     props: { msg: loaderTitle, awaitedPromise: awaitedPromise }
   };
   const component = mount(LoaderToast, prop);
+  return awaitedPromise;
 }
 /** @param {string} msg
  *  @param {number | null | undefined} showMs */

@@ -1,12 +1,13 @@
 <script>
   import {
     CustomEntitiesApi,
+    FieldDto,
     FormApi,
     FormDTO,
     OptionSetDefinitionDTO,
     OptionSetDefinitionsApi,
   } from "@apiclients/src";
-  import { alertError } from "@utils/uiutils";
+  import { alertError, alertSuccsess, assignLoader } from "@utils/uiutils";
   import {
     Sidebar,
     SidebarWrapper,
@@ -20,7 +21,7 @@
   // @ts-ignore
   import { Input, Select, Label, Checkbox, Button } from "flowbite-svelte";
   import { getTypeId } from "@utils/fieldtypesutils";
-  /** @typedef {import('../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
+  /** @typedef {import('../../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
 
   /** @type {OptionSetDefinitionDTO[]} */
   let optionSetDefinitions = [];
@@ -37,22 +38,44 @@
 
   let editForEntity = "";
 
+  /** @type {HTMLIFrameElement} */
+  let builderFrame;
+  $: editedForm, builderFrame, updateBuilder();
+
+  const updateBuilder = () => {
+    console.log("Update builder called");
+    const customEntity = customEntities.find(
+      (x) => x.id == editedForm?.customEntityId,
+    );
+    if (!customEntity || !builderFrame) {
+      console.log("Update short curcuit");
+      return;
+    }
+    let obj = convertToFormioComponents(customEntity, optionSetDefinitions);
+    builderFrame?.contentWindow?.postMessage(
+      {
+        components: obj,
+        currentSchema: JSON.parse(editedForm?.jsonSchema ?? "{}"),
+      },
+      "*",
+    );
+    builderFrame?.addEventListener("load", () => {
+      builderFrame?.contentWindow?.postMessage(
+        {
+          components: obj,
+          currentSchema: JSON.parse(editedForm?.jsonSchema ?? "{}"),
+        },
+        "*",
+      );
+    });
+  };
+
   /** @param {CustomEntity} customEntity*/
   const addForm = (customEntity) => {
     isNewForm = true;
     editedForm = new FormDTO();
     editedForm.customEntityId = customEntity.id;
     editForEntity = customEntity.displayName;
-    let obj = convertToFormioComponents(customEntity, optionSetDefinitions);
-    console.log(obj);
-    // @ts-ignore
-    const iframe = document.getElementById("builderFrame");
-    // @ts-ignore
-    iframe.contentWindow.postMessage(obj, "*");
-    iframe?.addEventListener("load", () => {
-      // @ts-ignore
-      iframe.contentWindow.postMessage(obj, "*");
-    });
   };
 
   /**
@@ -63,50 +86,48 @@
     isNewForm = false;
     editedForm = form;
     editForEntity = customEntity.displayName;
-    let obj = convertToFormioComponents(customEntity, optionSetDefinitions);
-    console.log(obj);
-    debugger;
-    // @ts-ignore
-    const iframe = document.getElementById("builderFrame");
-    // @ts-ignore
-    iframe.contentWindow.postMessage(obj, "*");
-    iframe?.addEventListener("load", () => {
-      // @ts-ignore
-      iframe.contentWindow.postMessage(obj, "*");
-    });
   };
+
   const saveForm = async () => {
     const api = new FormApi();
-    const form = await new Promise((res) => {
-      const callback = (
-        /** @type {String} */ error,
-        /** @type {FormDTO} */ result,
-      ) => {
-        if (error) {
-          alertError("Error while saving form: " + error);
+    const form = await assignLoader(
+      "Saving Form",
+      new Promise((res) => {
+        const callback = (
+          /** @type {String} */ error,
+          /** @type {FormDTO} */ result,
+        ) => {
+          if (error) {
+            alertError("Error while saving form: " + error);
+          }
+          res(result);
+        };
+        if (isNewForm) {
+          api.apiFormPost(
+            {
+              body: editedForm,
+            },
+            callback,
+          );
+        } else {
+          api.apiFormIdPut(
+            editedForm?.id,
+            {
+              body: editedForm,
+            },
+            callback,
+          );
         }
-        res(result);
-      };
-      if (isNewForm) {
-        api.apiFormPost(
-          {
-            body: editedForm,
-          },
-          callback,
-        );
-      } else {
-        api.apiFormIdPut(
-          editedForm?.id,
-          {
-            body: editedForm,
-          },
-          callback,
-        );
-      }
-    });
-    editedForm = form;
+      }),
+    );
+    if (form) {
+      editedForm = form;
+    }
+    if (isNewForm) {
+      await reloadData();
+    }
     isNewForm = false;
-    await reloadData();
+    alertSuccsess("Form Saved");
   };
   const deleteForm = async () => {
     const api = new FormApi();
@@ -121,6 +142,7 @@
     });
     await reloadData();
     editedForm = null;
+    alertSuccsess("Form Deleted");
   };
   const getForms = async () => {
     const api = new FormApi();
@@ -196,6 +218,7 @@
    * - The CustomEntity DTO (imported as CustomEntity) has properties "fields" (array) and "relationships" (array).
    * - For "Option Set" and "Option Set MultiSelect" field types, the field object includes an "optionSetId" property.
    * - For "Limited Text", if you wish to enforce maximum length, the field object includes a "size" property (or something similar).
+      {/key}
    *
    * @param {CustomEntity} customEntity - The custom entity DTO.
    * @param {OptionSetDefinitionDTO[]} optionSets - Array of option set definitions.
@@ -206,15 +229,20 @@
     // @ts-ignore
     const components = {};
     if (customEntity.fields && Array.isArray(customEntity.fields)) {
-      customEntity.fields.forEach((field) => {
+      customEntity.fields.forEach((/** @type{FieldDto} */ field) => {
         let componentType = mapFieldTypeToFormioComponent(field.type);
         const component = {
-          type: componentType,
-          input: true,
+          title: field.displayName,
           key: field.name,
-          label: field.displayName || field.name,
-          validate: {
-            required: !!field.required,
+          icon: "terminal",
+          schema: {
+            label: field.displayName || field.name,
+            type: componentType,
+            key: field.name,
+            input: true,
+            validate: {
+              required: !!field.isRequired,
+            },
           },
         };
 
@@ -223,12 +251,12 @@
           typeof field.size === "number"
         ) {
           // @ts-ignore
-          component.validate.maxLength = field.size;
+          component.schema.validate.maxLength = field.size;
         }
 
         if (field.type === getTypeId("Option Set MultiSelect")) {
           // @ts-ignore
-          component.multiple = true;
+          component.schema.multiple = true;
         }
 
         if (field.type === getTypeId("Binary Data")) {
@@ -237,10 +265,10 @@
         if (
           (field.type === getTypeId("Option Set") ||
             field.type === getTypeId("Option Set MultiSelect")) &&
-          field.optionSetId
+          field.optionSetDefinitionId
         ) {
           const optionSet = optionSets.find(
-            (os) => os.id === field.optionSetId,
+            (os) => os.id === field.optionSetDefinitionId,
           );
           if (
             optionSet &&
@@ -336,6 +364,14 @@
   };
   onMount(async () => {
     await reloadData();
+    window.addEventListener("message", (event) => {
+      if (event.data.type === "formSchemaChanged") {
+        if (editedForm) {
+          editedForm.jsonSchema = JSON.stringify(event.data.content);
+          console.log(editedForm.jsonSchema);
+        }
+      }
+    });
   });
 </script>
 
@@ -420,6 +456,7 @@
         class="h-full w-full"
         title="Builder"
         src="/formBuilder/index.html"
+        bind:this={builderFrame}
       >
       </iframe>
     </div>

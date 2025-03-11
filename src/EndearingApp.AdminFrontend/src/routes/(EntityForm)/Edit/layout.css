@@ -1,0 +1,4 @@
+.bg-white {
+    --bs-bg-opacity: 1;
+    background-color: var(--bs-body-bg) !important;
+}

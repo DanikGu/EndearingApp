@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using EndearingApp.Core.CustomDataAccsess.Interfaces;
-using Microsoft.AspNetCore.OData.Deltas;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace EndearingApp.Infrastructure.Data.CustomDataAccess;
@@ -24,9 +18,18 @@ public class CustomDataEditor : ICustomDataEditor
         var dbSet = _customEntityQueryProvider.GetDbSet(tableName);
         var modelType = Utils.GetTableModelType(dbSet);
         var entity = JsonConvert.DeserializeObject(jsonEntity, modelType);
-        if (entity is null) 
+        if (entity is null)
         {
             throw new ArgumentException($"Cannot parse entity {modelType.Name} from inputJson");
+        }
+        var keyProp = Utils.GetKeyProp(modelType, dbContext).PropertyInfo;
+        if (keyProp is not null && keyProp.PropertyType == typeof(Guid))
+        {
+            if (keyProp.GetValue(entity) is not null && (keyProp.GetValue(entity) as Guid?) != Guid.Empty)
+            {
+                throw new ArgumentException("Cannot create entity with predefined Key");
+            }
+            keyProp.SetValue(entity, Guid.CreateVersion7());
         }
         dbContext.Add(entity!);
         dbContext.SaveChanges();
@@ -38,7 +41,7 @@ public class CustomDataEditor : ICustomDataEditor
         var dbContext = _customEntityQueryProvider.GetDbContext();
         var query = _customEntityQueryProvider.GetByKey(tableName, key);
         var etn = Utils.InvokeSingleOrDefaultMethod(query, Utils.GetTableModelType(query));
-        if (etn is null) 
+        if (etn is null)
         {
             throw new ArgumentException($"Entity with name {tableName} and key {key} wasn't found");
         }
@@ -56,10 +59,8 @@ public class CustomDataEditor : ICustomDataEditor
         {
             throw new ArgumentException($"Entity with name {tableName} and key {key} wasn't found");
         }
-        var deltaType = typeof(Delta<>).MakeGenericType(modelType);
-        var deltaObj = JsonConvert.
-            DeserializeObject(jsonChangedValues, deltaType);
-        Utils.CallMethodByName(deltaObj!, "Patch", new object[] { etn });
+        var deltaObj = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonChangedValues);
+        ApplyPatch(etn, deltaObj!);
         dbContext.Update(etn!);
         dbContext.SaveChanges();
         return etn;
@@ -82,5 +83,54 @@ public class CustomDataEditor : ICustomDataEditor
         dbContext.SaveChanges();
         return etn;
     }
-    
+    public static void ApplyPatch(object entity, Dictionary<string, object> delta)
+    {
+        if (entity == null)
+            throw new ArgumentNullException(nameof(entity));
+
+        if (delta == null || !delta.Any())
+            return;
+
+        Type entityType = entity.GetType();
+        foreach (var entry in delta)
+        {
+            PropertyInfo? property = entityType.GetProperty(entry.Key, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+            if (property == null || !property.CanWrite)
+                continue;
+
+            object? value = ConvertValue(property.PropertyType, entry.Value);
+            property.SetValue(entity, value);
+        }
+    }
+
+    private static object? ConvertValue(Type targetType, object value)
+    {
+        if (value == null)
+            return null;
+
+        if (targetType.IsAssignableFrom(value.GetType()))
+            return value;
+
+        try
+        {
+
+            if (targetType == typeof(Guid) && value.GetType() == typeof(string))
+            {
+                value = new Guid((string)value);
+            }
+            else if (targetType!.IsEnum)
+            {
+                value = Enum.ToObject(targetType, value);
+            }
+            else
+            {
+                value = Convert.ChangeType(value, targetType);
+            }
+            return value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }

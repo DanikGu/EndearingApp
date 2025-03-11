@@ -9,7 +9,7 @@ public class CustomeEntityDTO : BaseDto<CustomeEntityDTO, CustomEntity>
     public CustomeEntityDTO() { }
 
     public const string Route = "/CustomEntity";
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.CreateVersion7();
     public string? Name { get; set; }
     public string DisplayName { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;

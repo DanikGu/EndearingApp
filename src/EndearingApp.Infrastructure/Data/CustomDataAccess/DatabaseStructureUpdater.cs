@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -367,6 +366,8 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         return result;
     }
 
+
+ 
     private StringBuilder GetDbModelClass(Table table, Relationship[] toThisTable)
     {
         var result = new StringBuilder();
@@ -381,12 +382,15 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         result.Append("public class ").Append(table.Name).Append(":BaseEntity\n{\n");
         foreach (var field in table.Fields.Where(x => !x.IsSystemField))
         {
-            var relationship = table.Relationships.FirstOrDefault(x => x.Field == field);
+
+            
             result.AppendFormat(
                 "public {0} {1} {{ get; set; }}\n",
                 MapSystemTypeToCSharpType(field),
                 field.Name
             );
+            
+            var relationship = table.Relationships.FirstOrDefault(x => x.Field == field);
             if (relationship is not null)
             {
                 result.AppendFormat(
@@ -509,8 +513,8 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             SystemTypesEnum.Boolean => "bool",
             SystemTypesEnum.Binary => "byte[]",
             SystemTypesEnum.UUID => "Guid",
-            SystemTypesEnum.OptionSet => field.OptionSet!.Name,
-            SystemTypesEnum.OptionSetMutiSelect => field.OptionSet!.Name + "[]",
+            SystemTypesEnum.OptionSet => "int",
+            SystemTypesEnum.OptionSetMutiSelect => "int[]",
             _ => throw new ArgumentOutOfRangeException(nameof(systemType), systemType, null),
         };
         if (field.IsNullable)

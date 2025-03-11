@@ -9,7 +9,7 @@ public class Field
 {
     public Field() { }
 
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.CreateVersion7();
 
     public string? Name { get; set; }
 

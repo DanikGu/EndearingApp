@@ -30,7 +30,7 @@ public class Relationship
         this.ConstraintName = constraintName;
     }
 
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.CreateVersion7();
     public Guid SourceCustomEntityId { get; set; } = default(Guid);
 
     public CustomEntity? SourceCustomEntity { get; set; } = default;

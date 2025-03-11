@@ -1,5 +1,5 @@
 <script>
-  /** @typedef {import('../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
+  /** @typedef {import('../../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
   import {
     CustomeEntityDTO,
     CustomEntitiesApi,
@@ -17,8 +17,8 @@
   } from "flowbite-svelte";
   import { PlusOutline } from "flowbite-svelte-icons";
   import { onMount } from "svelte";
-  import CustomEntityEditForm from "../../components/CustomEntities/customEntityEditForm.svelte";
-  import OptionSetDefinitionEditForm from "../../components/CustomEntities/optionSetDefinitionEditForm.svelte";
+  import CustomEntityEditForm from "../../../components/CustomEntities/customEntityEditForm.svelte";
+  import OptionSetDefinitionEditForm from "../../../components/CustomEntities/optionSetDefinitionEditForm.svelte";
 
   /** @type {CustomEntity[]} */
   let customEntities = [];
