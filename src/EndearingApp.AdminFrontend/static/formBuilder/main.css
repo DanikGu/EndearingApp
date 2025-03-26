@@ -15,14 +15,77 @@ body {
 {
   background-color: var(--bs-body-bg)
 }
-.choices__list--dropdown .choices__item--selectable.is-highlighted, .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
 
-  background-color: var(--bs-secondary-color)
-}
 .bg-light {
   background-color: var(--bs-body-bg) !important
+}
+.bg-white {
+    --bs-bg-opacity: 1;
+    background-color: var(--bs-body-bg) !important;
 }
 .formio.builder.row.formbuilder
 {
   margin: 0;
+}
+
+.choices__list--dropdown 
+.choices__item--selectable.is-highlighted, 
+.choices__list[aria-expanded] 
+.choices__item--selectable.is-highlighted {
+  border: none;
+  background-color: var(--bs-secondary-bg) 
+}
+.is-open .choices__list--dropdown, .is-open .choices__list[aria-expanded] {
+    border: var(--bs-border-width) solid var(--bs-border-color);
+}
+.choices__list--dropdown .choices__list, .choices__list[aria-expanded] .choices__list {
+    border: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+.choices__list .choices__list--dropdown .is-active {
+    border: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+.choices[data-type*="select-one"] .choices__input {
+    border: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+.formio-error-wrapper {
+    color: var(--bs-danger-text-emphasis);
+    background-color: var(--bs-danger-bg-subtle);
+    border-color: var(--bs-danger-bg-subtle);
+}
+.form-control.is-invalid.dropdown{
+  background-position: right calc(.375em + 1.1875rem) center;
+}
+.choices__input {
+  background-color: var(--bs-body-bg)
+}
+.formio-choices[data-type=select-multiple] .form-control {
+    border: var(--bs-border-width) solid var(--bs-border-color);
+}
+.choices__list--multiple .choices__item 
+{
+  background-color: var(--bs-secondary-bg);
+  border: 1px solid var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+}
+.choices__list--multiple .choices__item.is-highlighted 
+{
+  background-color: var(--bs-dark-bg-subtle);
+  border: 1px solid var(--bs-dark-bg-subtle);
+}
+}
+.formio-component-multiple :not(.is-invalid) 
+{
+  border-color: none;
+}
+.choices[data-type*=select-multiple] .choices__button {
+  border-left: 1px solid var(--bs-secondary-bg);
+}
+[data-bs-theme=light] .choices[data-type*=select-multiple] .choices__button {
+  filter: invert(1);
+}
+.choices__inner {
+  background-color: var(--bs-body-bg)
 }

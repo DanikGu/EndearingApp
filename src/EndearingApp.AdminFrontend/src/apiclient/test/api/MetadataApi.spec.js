@@ -34,12 +34,12 @@
 
   describe('(package)', function() {
     describe('MetadataApi', function() {
-      describe('odata', function() {
-        it('should call odata successfully', function(done) {
-          // TODO: uncomment odata call and complete the assertions
+      describe('apiodata', function() {
+        it('should call apiodata successfully', function(done) {
+          // TODO: uncomment apiodata call and complete the assertions
           /*
 
-          instance.odata(function(error, data, response) {
+          instance.apiodata(function(error, data, response) {
             if (error) {
               done(error);
               return;
@@ -54,12 +54,12 @@
           done();
         });
       });
-      describe('odatametadata', function() {
-        it('should call odatametadata successfully', function(done) {
-          // TODO: uncomment odatametadata call and complete the assertions
+      describe('apiodatametadata', function() {
+        it('should call apiodatametadata successfully', function(done) {
+          // TODO: uncomment apiodatametadata call and complete the assertions
           /*
 
-          instance.odatametadata(function(error, data, response) {
+          instance.apiodatametadata(function(error, data, response) {
             if (error) {
               done(error);
               return;

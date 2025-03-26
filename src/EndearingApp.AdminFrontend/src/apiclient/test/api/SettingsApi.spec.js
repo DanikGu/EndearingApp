@@ -36,7 +36,7 @@
     describe('SettingsApi', function() {
       describe('apiSettingsNameGet', function() {
         it('should call apiSettingsNameGet successfully', function(done) {
-          // TODO: uncomment, update parameter values for apiSettingsNameGet call
+          // TODO: uncomment, update parameter values for apiSettingsNameGet call and complete the assertions
           /*
 
           instance.apiSettingsNameGet(name, function(error, data, response) {
@@ -44,6 +44,8 @@
               done(error);
               return;
             }
+            // TODO: update response assertions
+            expect(data).to.be.a(EndearingAppweb.SettingDTO);
 
             done();
           });

@@ -14,8 +14,6 @@
   export let form;
   /** @type {HTMLElement} */
   let formElem;
-  /** @type {Function | null} */
-  export let onFormSubmit = null;
   /** @type {Form | null}*/
   let formioForm = null;
 
@@ -27,17 +25,14 @@
     if (!formioForm) {
       return;
     }
-    formioForm.options.noAlerts = false;
     // @ts-ignore
     formioForm.setAlert("warning", msg, {});
-    formioForm.options.noAlerts = true;
   };
   /** @param { string } msg */
   const alertSuccsess = (msg) => {
     if (!formioForm) {
       return;
     }
-    formioForm.options.noAlerts = false;
     // @ts-ignore
     formioForm.setAlert("success", msg, {});
     formioForm.options.noAlerts = true;
@@ -47,10 +42,8 @@
     if (!formioForm) {
       return;
     }
-    formioForm.options.noAlerts = false;
     // @ts-ignore
     formioForm.setAlert("info", msg, {});
-    formioForm.options.noAlerts = true;
   };
   /** @param { string } msg */
   const alertError = (msg) => {
@@ -60,7 +53,6 @@
     formioForm.options.noAlerts = false;
     // @ts-ignore
     formioForm.setAlert("danger", msg, {});
-    formioForm.options.noAlerts = true;
   };
 
   /**
@@ -145,16 +137,51 @@
     }
     const url = `/api/odata/${customEntity.name}(${entityData.Id})`;
     const response = await fetch(url);
-    const etn = response.json();
+    const etn = await response.json();
     entityData = etn;
+  };
+
+  /** @param {any} dateStr */
+  const reverseConvertDateFormat = (dateStr) => {
+    const isString = typeof dateStr === "string" || dateStr instanceof String;
+    if (!isString || !dateStr) {
+      return dateStr;
+    }
+    const regex = /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+    // @ts-ignore
+    if (!regex.test(dateStr)) {
+      return dateStr;
+    }
+    const [year, month, day] = dateStr.split("-");
+    return `${month}/${day}/${year}`;
+  };
+  /** @param {any} dateStr */
+  const convertDateFormat = (dateStr) => {
+    const isString = typeof dateStr === "string" || dateStr instanceof String;
+    if (!isString || !dateStr) {
+      return dateStr;
+    }
+    const regex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/;
+    // @ts-ignore
+    if (!regex.test(dateStr)) {
+      return dateStr;
+    }
+
+    const [month, day, year] = dateStr.split("/");
+    return `${year}-${month}-${day}`;
   };
   const updateFormFromEntityData = () => {
     Object.keys(entityData).forEach((key) => {
       // @ts-ignore
       let component = formioForm.getComponent(key);
-      console.log(entityData, key, component);
+
       if (component) {
-        component.setValue(entityData[key]);
+        const isDate = component.type === "day";
+        let value = entityData[key];
+        if (isDate) {
+          value = reverseConvertDateFormat(value);
+        }
+        component.setValue(value);
       }
     });
   };
@@ -225,6 +252,9 @@
   };
   onMount(async () => {
     const { Formio } = await import("@formio/js");
+    // @ts-ignore
+    window.Formio = Formio;
+    await import("/formBuilder/components/ActionButtons.js?url");
     customEntity = await getCustomEntity(form.customEntityId);
 
     if (form?.jsonSchema) {
@@ -241,23 +271,31 @@
       if (formioForm) {
         // @ts-ignore
         formioForm.nosubmit = true;
-        formioForm.options.noAlerts = true;
       }
       // @ts-ignore
       formioForm?.on("EntityDelete", function (eventData) {
         delteCurrentEntity();
       });
+
       // bind form to entityData
       // @ts-ignore
       formioForm?.on("change", function (eventData) {
+        // @ts-ignore
+        formioForm?.alert?.remove();
         Object.keys(eventData.data).forEach((key) => {
           const isField = customEntity.fields.find(
-            (/** @type {FieldDto} */ x) => x.name == key && !x.isSystemField,
+            (/** @type {FieldDto} */ x) => x.name == key,
           );
           if (!isField) {
             return;
           }
-          entityData[key] = eventData.data[key];
+          // @ts-ignore
+          const isDate = formioForm?.getComponent(key)?.type === "day";
+          let value = eventData.data[key];
+          if (isDate) {
+            value = convertDateFormat(value);
+          }
+          entityData[key] = value;
         });
       });
       formioForm?.on(
@@ -265,18 +303,16 @@
         async function (/** @type {any} */ eventData) {
           const removeLoader = showLoader(formElem, "Saving...");
           try {
-            if (onFormSubmit) {
-              onFormSubmit(eventData);
-              return;
+            // @ts-ignore
+            const isValid = formioForm.checkValidity(null, true, null, false);
+            // @ts-ignore
+            formioForm.checkData();
+            if (isValid) {
+              await saveEntity();
             }
-
-            // await new Promise((res) => setTimeout(res, 2000));
-            await saveEntity();
           } catch (ex) {
             console.log(ex);
-            formioForm?.emit("submitError", [
-              "Unhandaled error while submiting",
-            ]);
+            alertError("Unhandaled error while saving");
           } finally {
             removeLoader();
           }

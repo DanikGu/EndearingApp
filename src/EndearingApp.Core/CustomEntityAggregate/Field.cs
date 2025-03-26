@@ -29,6 +29,7 @@ public class Field
     public bool IsUnique { get; set; }
     public bool IsRequired { get; set; }
     public bool IsSystemField { get; set; } = false;
+    public bool IsFullTextSearch { get; set; } = false;
 
     [ForeignKey("CustomEntity")]
     public Guid CustomEntityId { get; set; }

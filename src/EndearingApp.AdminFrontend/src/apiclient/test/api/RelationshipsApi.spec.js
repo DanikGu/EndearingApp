@@ -100,7 +100,7 @@
       });
       describe('apiRelationshipsIdPut', function() {
         it('should call apiRelationshipsIdPut successfully', function(done) {
-          // TODO: uncomment, update parameter values for apiRelationshipsIdPut call
+          // TODO: uncomment, update parameter values for apiRelationshipsIdPut call and complete the assertions
           /*
           var opts = {};
 
@@ -109,6 +109,8 @@
               done(error);
               return;
             }
+            // TODO: update response assertions
+            expect(data).to.be.a(EndearingAppweb.RelationshipDTO);
 
             done();
           });

@@ -49,6 +49,7 @@ public class FieldDto
     public bool IsIndexed { get; set; }
     public bool IsUnique { get; set; }
     public bool IsRequired { get; set; }
+    public bool IsFullTextSearch { get; set; }
     public Guid? OptionSetDefinitionId { get; set; }
 }
 

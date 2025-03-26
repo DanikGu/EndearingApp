@@ -1,11 +1,14 @@
 <script>
   import {
+    CustomeEntityDTO,
     CustomEntitiesApi,
     FieldDto,
     FormApi,
     FormDTO,
+    OptionDTO,
     OptionSetDefinitionDTO,
     OptionSetDefinitionsApi,
+    RelationshipDTO,
   } from "@apiclients/src";
   import { alertError, alertSuccsess, assignLoader } from "@utils/uiutils";
   import {
@@ -208,160 +211,164 @@
     const optsProm = loadOptionSets();
     await Promise.all([formProm, etnsProm, optsProm]);
   };
+  /**
+   * Converts entity fields and relationships to Form.io builder components structure
+   * @param {CustomEntity} customEntity - The custom entity configuration
+   * @param {OptionSetDefinitionDTO[]} optionSets - Available option sets
+   * @returns {Object} Form.io builder components configuration
+   */
+  function convertToFormioComponents(customEntity, optionSets) {
+    /** @type {any} */
+    const componentsConfig = {
+      title: customEntity.displayName || "Entity Form",
+      weight: 10,
+      components: {},
+    };
+
+    // Process entity fields
+    if (customEntity.fields?.length) {
+      customEntity.fields.forEach((/** @type {FieldDto} */ field) => {
+        componentsConfig.components[field.name] = createFieldComponent(
+          field,
+          optionSets,
+        );
+      });
+    }
+
+    // Process relationships
+    if (customEntity.relationships?.length) {
+      customEntity.relationships.forEach(
+        (/** @type {RelationshipDTO} */ relationship) => {
+          componentsConfig.components[relationship.sourceFieldId] =
+            createRelationshipComponent(relationship);
+        },
+      );
+    }
+
+    return componentsConfig;
+  }
 
   /**
-   * Converts a CustomEntity DB structure and its related option sets into an array of Form.io components.
-   *
-   * Assumes that:
-   * - Each field's type is an integer.
-   * - A helper function `getTypeId(typeName)` is available that returns the integer ID for a given type name.
-   * - The CustomEntity DTO (imported as CustomEntity) has properties "fields" (array) and "relationships" (array).
-   * - For "Option Set" and "Option Set MultiSelect" field types, the field object includes an "optionSetId" property.
-   * - For "Limited Text", if you wish to enforce maximum length, the field object includes a "size" property (or something similar).
-      {/key}
-   *
-   * @param {CustomEntity} customEntity - The custom entity DTO.
-   * @param {OptionSetDefinitionDTO[]} optionSets - Array of option set definitions.
-   * @returns {Object[]} Array of Form.io component configuration objects.
+   * Creates individual field component configuration
+   * @private
+   * @param {FieldDto} field - Field definition
+   * @param {OptionSetDefinitionDTO[]} optionSets - Available option sets
+   * @returns {Object} Form.io component configuration
    */
-  // @ts-ignore
-  const convertToFormioComponents = (customEntity, optionSets) => {
-    // @ts-ignore
-    const components = {};
-    if (customEntity.fields && Array.isArray(customEntity.fields)) {
-      customEntity.fields.forEach((/** @type{FieldDto} */ field) => {
-        let componentType = mapFieldTypeToFormioComponent(field.type);
-        const component = {
-          title: field.displayName,
-          key: field.name,
-          icon: "terminal",
-          schema: {
-            label: field.displayName || field.name,
-            type: componentType,
-            key: field.name,
-            input: true,
-            validate: {
-              required: !!field.isRequired,
-            },
-          },
-        };
+  function createFieldComponent(field, optionSets) {
+    const componentType = mapFieldType(field.type);
+    const icon = mapFieldIcon(field.type);
 
-        if (
-          field.type === getTypeId("Limited Text") &&
-          typeof field.size === "number"
-        ) {
-          // @ts-ignore
+    /** @type {any} */
+    const component = {
+      title: field.displayName || field.name,
+      key: field.name,
+      icon: icon,
+      schema: {
+        label: field.displayName || field.name,
+        type: componentType,
+        key: field.name,
+        input: true,
+        validate: {
+          required: !field.isNullable,
+        },
+      },
+    };
+
+    switch (componentType) {
+      case "textfield":
+        if (field.size) {
           component.schema.validate.maxLength = field.size;
         }
+        break;
 
-        if (field.type === getTypeId("Option Set MultiSelect")) {
-          // @ts-ignore
-          component.schema.multiple = true;
-        }
-
-        if (field.type === getTypeId("Binary Data")) {
-        }
-
-        if (
-          (field.type === getTypeId("Option Set") ||
-            field.type === getTypeId("Option Set MultiSelect")) &&
-          field.optionSetDefinitionId
-        ) {
+      case "select":
+        component.schema.multiple =
+          field.type === getTypeId("Option Set MultiSelect");
+        if (field.optionSetDefinitionId) {
           const optionSet = optionSets.find(
             (os) => os.id === field.optionSetDefinitionId,
           );
-          if (
-            optionSet &&
-            optionSet.options &&
-            Array.isArray(optionSet.options)
-          ) {
-            // @ts-ignore
-            component.data = {
-              values: optionSet.options.map((opt) => ({
-                label: opt.displayName,
+          if (optionSet) {
+            component.schema.data = {
+              values: optionSet.options.map((/** @type {OptionDTO} */ opt) => ({
+                label: opt.name,
                 value: opt.value,
               })),
             };
           }
         }
-
-        // @ts-ignore
-        components[field.name] = component;
-      });
+        break;
     }
 
-    if (
-      customEntity.relationships &&
-      Array.isArray(customEntity.relationships)
-    ) {
-      customEntity.relationships.forEach((rel) => {
-        const relationshipComponent = {
-          type: "select",
-          input: true,
-          key: rel.sourceFieldId,
-          label: rel.constraintName || rel.sourceFieldId,
-          placeholder: "Select a related entity",
-        };
-
-        // @ts-ignore
-        components[rel.constraintName] = relationshipComponent;
-      });
-    }
-
-    // @ts-ignore
-    return {
-      // @ts-ignore
-      title: customEntity.displayName,
-      components: components,
-    };
-  };
+    return component;
+  }
 
   /**
-   * Maps an integer field type to a corresponding Form.io component type.
-   *
-   * @param {number} fieldType - The integer ID of the field type.
-   * @returns {string} The Form.io component type.
+   * Creates relationship component configuration
+   * @private
+   * @param {RelationshipDTO} relationship - Relationship definition
+   * @returns {Object} Form.io component configuration
    */
-  const mapFieldTypeToFormioComponent = (fieldType) => {
-    switch (fieldType) {
-      case getTypeId("Unlimited Text"):
-        return "textarea";
+  function createRelationshipComponent(relationship) {
+    return {
+      title: relationship.constraintName || relationship.sourceFieldId,
+      key: relationship.sourceFieldId,
+      icon: "link",
+      schema: {
+        label: relationship.constraintName || relationship.sourceFieldId,
+        type: "select",
+        key: relationship.sourceFieldId,
+        input: true,
+        dataSrc: "url",
+        data: {
+          url: `/api/entities/${relationship.referencedCustomEntityId}/items`,
+        },
+        valueProperty: "id",
+        template: "{{ item.name }}",
+      },
+    };
+  }
 
-      case getTypeId("Limited Text"):
-        return "textfield";
+  /** @param { number } typeId */
+  function mapFieldType(typeId) {
+    const mappings = {
+      [getTypeId("Unlimited Text")]: "textarea",
+      [getTypeId("Limited Text")]: "textfield",
+      [getTypeId("Whole Number")]: "number",
+      [getTypeId("Whole Number (Small)")]: "number",
+      [getTypeId("Whole Number (Big)")]: "number",
+      [getTypeId("Decimal Number")]: "number",
+      [getTypeId("Date and Time")]: "datetime",
+      [getTypeId("Date")]: "day",
+      [getTypeId("Time")]: "time",
+      [getTypeId("Yes/No")]: "checkbox",
+      [getTypeId("Binary Data")]: "file",
+      [getTypeId("Unique Identifier")]: "textfield",
+      [getTypeId("Option Set")]: "select",
+      [getTypeId("Option Set MultiSelect")]: "select",
+    };
+    return mappings[typeId] || "textfield";
+  }
 
-      case getTypeId("Whole Number"):
-      case getTypeId("Whole Number (Small)"):
-      case getTypeId("Whole Number (Big)"):
-      case getTypeId("Decimal Number"):
-      case getTypeId("Real Number"):
-      case getTypeId("Double Precision Number"):
-        return "number";
-
-      case getTypeId("Date"):
-      case getTypeId("Date and Time"):
-        return "datetime";
-
-      case getTypeId("Time"):
-        return "time";
-
-      case getTypeId("Yes/No"):
-        return "checkbox";
-
-      case getTypeId("Binary Data"):
-        return "file";
-
-      case getTypeId("Unique Identifier"):
-        return "hidden";
-
-      case getTypeId("Option Set"):
-      case getTypeId("Option Set MultiSelect"):
-        return "select";
-
-      default:
-        return "textfield";
-    }
-  };
+  /** @param { number } typeId */
+  function mapFieldIcon(typeId) {
+    const icons = {
+      [getTypeId("Unlimited Text")]: "terminal",
+      [getTypeId("Limited Text")]: "terminal",
+      [getTypeId("Whole Number")]: "hashtag",
+      [getTypeId("Whole Number (Small)")]: "hashtag",
+      [getTypeId("Whole Number (Big)")]: "hashtag",
+      [getTypeId("Decimal Number")]: "calculator",
+      [getTypeId("Date and Time")]: "calendar",
+      [getTypeId("Yes/No")]: "check-square",
+      [getTypeId("Binary Data")]: "file",
+      [getTypeId("Unique Identifier")]: "key",
+      [getTypeId("Option Set")]: "list",
+      [getTypeId("Option Set MultiSelect")]: "list",
+    };
+    return icons[typeId] || "pencil";
+  }
   onMount(async () => {
     await reloadData();
     window.addEventListener("message", (event) => {

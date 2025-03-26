@@ -62,7 +62,7 @@
       });
       describe('apiFormIdDelete', function() {
         it('should call apiFormIdDelete successfully', function(done) {
-          // TODO: uncomment, update parameter values for apiFormIdDelete call and complete the assertions
+          // TODO: uncomment, update parameter values for apiFormIdDelete call
           /*
 
           instance.apiFormIdDelete(id, function(error, data, response) {
@@ -70,8 +70,6 @@
               done(error);
               return;
             }
-            // TODO: update response assertions
-            expect(data).to.be.a(EndearingAppweb.Result);
 
             done();
           });
@@ -112,7 +110,7 @@
               return;
             }
             // TODO: update response assertions
-            expect(data).to.be.a(EndearingAppweb.FormDTOResult);
+            expect(data).to.be.a(EndearingAppweb.FormDTO);
 
             done();
           });
@@ -133,7 +131,7 @@
               return;
             }
             // TODO: update response assertions
-            expect(data).to.be.a(EndearingAppweb.FormDTOResult);
+            expect(data).to.be.a(EndearingAppweb.FormDTO);
 
             done();
           });

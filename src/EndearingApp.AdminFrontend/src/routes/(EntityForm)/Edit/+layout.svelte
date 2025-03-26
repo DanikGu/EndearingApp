@@ -1,22 +1,39 @@
 <script>
   import { onMount } from "svelte";
-
   onMount(() => {
-    checkMode();
-    window.addEventListener("storage", () => {
-      checkMode();
-    });
+    setupColors();
   });
 
-  const checkMode = () => {
-    let isDarkMode = window.localStorage.getItem("color-theme") === "dark";
-    let attrValue = isDarkMode ? "dark" : "light";
-    document.body.dataset["bsTheme"] = attrValue;
+  const setupColors = () => {
+    window.addEventListener("storage", () => {
+      checkMode();
+      updateColorSchma();
+    });
+    const checkMode = () => {
+      let isDarkMode = window.localStorage.getItem("color-theme") === "dark";
+      let attrValue = isDarkMode ? "dark" : "light";
+      document.body.dataset["bsTheme"] = attrValue;
+    };
+    const updateColorSchma = () => {
+      /** @type { HTMLElement | null } */
+      const r = document.querySelector(":root");
+      const mainBgColor = getComputedStyle(
+        parent.document.body,
+      ).backgroundColor;
+      console.log("bg-color:", mainBgColor);
+      if (mainBgColor) {
+        r?.style.setProperty("--bs-body-bg-custom", mainBgColor);
+        r?.style.setProperty("--bs-body-bg-rgb-custom", mainBgColor);
+      }
+    };
+    checkMode();
+    updateColorSchma();
   };
 </script>
 
-<slot></slot>
-
+<div id="form-container">
+  <slot></slot>
+</div>
 <div class="bg-white"></div>
 
 <style>

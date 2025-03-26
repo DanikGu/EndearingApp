@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.OData.Batch;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.OData;
 using Microsoft.OData.Edm;
 using Serilog;
 

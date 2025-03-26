@@ -34,6 +34,8 @@ public class Field
 
     [DataMember]
     public bool IsSystemField { get; set; }
+    [DataMember]
+    public bool IsFullTextSearch{ get; set; }
 
     [DataMember]
     public OptionSet? OptionSet { get; set; }

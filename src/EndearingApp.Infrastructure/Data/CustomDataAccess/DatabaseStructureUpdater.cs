@@ -9,6 +9,8 @@ using EndearingApp.Core.CustomEntityAggregate.DbStructureModels;
 using EndearingApp.Core.CustomEntityAggregate.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace EndearingApp.Infrastructure.Data.CustomDataAccess;
 
@@ -126,7 +128,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         var infrastructureAssembly = Assembly.GetAssembly(typeof(DatabaseStructureUpdater));
         var packageAssembly = infrastructureAssembly?.
             GetReferencedAssemblies().FirstOrDefault(x => x.Name == packageName);
-        if (packageAssembly is not null) 
+        if (packageAssembly is not null)
         {
             version = packageAssembly.Version?.ToString(3) ?? "";
         }
@@ -269,6 +271,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         result.AppendLine("using System;");
         result.AppendLine("using Microsoft.OData.ModelBuilder;");
         result.AppendLine("using System.Linq;");
+        result.AppendLine("using NpgsqlTypes;");
 
         result.Append("namespace ").Append(ns).Append(";\n");
         result.Append(
@@ -278,25 +281,12 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                     public Guid Id { get; set; }
                     public DateTime CreatedOn { get; set; }
                     public DateTime ModifiedOn { get; set; }
+                    public string Name { get; set; } // name that gonna be visible when refernce to this entity presented
+                    public NpgsqlTsVector SearchVector { get; set; }
                 }
             """
         );
 
-        foreach (var optSet in dbStructure?.OptionSets ?? Enumerable.Empty<OptionSet>())
-        {
-            result.AppendLine("public enum " + optSet.Name + "{ \n");
-            foreach (var opt in optSet.Options)
-            {
-                result.AppendFormat(
-                    """
-                        {0} = {1},
-                    """,
-                    opt.Name,
-                    opt.Value
-                );
-            }
-            result.AppendLine("\n}");
-        }
 
         foreach (var table in dbStructure!.Tables!)
         {
@@ -308,7 +298,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         }
         result.Append('\n');
         result.Append(GetDbContext(dbContextName, dbStructure, connectionString));
-        return result.ToString();
+        return ArrangeUsingRoslyn(result.ToString()); ;
     }
 
     private StringBuilder GetDbContext(
@@ -367,7 +357,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
     }
 
 
- 
+
     private StringBuilder GetDbModelClass(Table table, Relationship[] toThisTable)
     {
         var result = new StringBuilder();
@@ -383,13 +373,13 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         foreach (var field in table.Fields.Where(x => !x.IsSystemField))
         {
 
-            
+
             result.AppendFormat(
                 "public {0} {1} {{ get; set; }}\n",
                 MapSystemTypeToCSharpType(field),
                 field.Name
             );
-            
+
             var relationship = table.Relationships.FirstOrDefault(x => x.Field == field);
             if (relationship is not null)
             {
@@ -477,6 +467,16 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             );
             fieldsConfig.Append(";\n");
         }
+        fieldsConfig.Append(";\n");
+        fieldsConfig.AppendFormat("""
+            builder.HasGeneratedTsVectorColumn(
+                p => p.SearchVector,
+                "english",  // Text search config
+                p => new {{ {0} }})  // Included properties
+            .HasIndex(p => p.SearchVector)
+            .HasMethod("GIN");
+            """, string.Join(", ", table.Fields.Where(x => x.IsFullTextSearch).Select(x => "p." + x.Name)));
+        fieldsConfig.Append(";\n");
         result.AppendFormat(
             """
                 public class {0}Configuration : IEntityTypeConfiguration<{0}>
@@ -508,7 +508,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             SystemTypesEnum.UnlimitedText => "string",
             SystemTypesEnum.LimitedText => "string",
             SystemTypesEnum.Date => "DateOnly",
-            SystemTypesEnum.Time => "TimeSpan",
+            SystemTypesEnum.Time => "TimeOnly",
             SystemTypesEnum.Timestamp => "DateTime",
             SystemTypesEnum.Boolean => "bool",
             SystemTypesEnum.Binary => "byte[]",
@@ -533,5 +533,12 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             RelationshipDeleteBehavior.NoAction => "DeleteBehavior.NoAction",
             _ => "DeleteBehavior.SetNull",
         };
+    }
+    public string ArrangeUsingRoslyn(string csCode)
+    {
+        var tree = CSharpSyntaxTree.ParseText(csCode);
+        var root = tree.GetRoot().NormalizeWhitespace();
+        var ret = root.ToFullString();
+        return ret;
     }
 }

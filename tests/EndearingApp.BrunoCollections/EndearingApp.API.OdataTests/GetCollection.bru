@@ -5,7 +5,11 @@ meta {
 }
 
 get {
-  url: {{BaseUrl}}odata/Staff
+  url: {{BaseUrl}}api/odata/Person?filter=name eq 'Danik'
   body: json
   auth: none
+}
+
+params:query {
+  filter: name eq 'Danik'
 }

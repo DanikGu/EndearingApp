@@ -84,5 +84,11 @@
     <Checkbox bind:checked={editedField.isRequired} disabled={isReadOnlyForm}>
       Is Required
     </Checkbox>
+    <Checkbox
+      bind:checked={editedField.isFullTextSearch}
+      disabled={isReadOnlyForm}
+    >
+      Is Full Text Search
+    </Checkbox>
   </div>
 </div>

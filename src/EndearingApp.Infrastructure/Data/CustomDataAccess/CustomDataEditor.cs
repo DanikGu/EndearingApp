@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using EndearingApp.Core.CustomDataAccsess.Interfaces;
 using Newtonsoft.Json;
+using System.Collections;
+using System.Linq;
 
 namespace EndearingApp.Infrastructure.Data.CustomDataAccess;
 public class CustomDataEditor : ICustomDataEditor
@@ -17,7 +19,10 @@ public class CustomDataEditor : ICustomDataEditor
         var dbContext = _customEntityQueryProvider.GetDbContext();
         var dbSet = _customEntityQueryProvider.GetDbSet(tableName);
         var modelType = Utils.GetTableModelType(dbSet);
-        var entity = JsonConvert.DeserializeObject(jsonEntity, modelType);
+        var entity = JsonConvert.DeserializeObject(jsonEntity, modelType, new JsonSerializerSettings()
+        {
+            DateTimeZoneHandling = DateTimeZoneHandling.Utc
+        });
         if (entity is null)
         {
             throw new ArgumentException($"Cannot parse entity {modelType.Name} from inputJson");
@@ -59,7 +64,12 @@ public class CustomDataEditor : ICustomDataEditor
         {
             throw new ArgumentException($"Entity with name {tableName} and key {key} wasn't found");
         }
-        var deltaObj = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonChangedValues);
+        var deltaObj = JsonConvert.DeserializeObject<Dictionary<string, object>>(
+            jsonChangedValues, new JsonSerializerSettings()
+            {
+                DateTimeZoneHandling = DateTimeZoneHandling.Utc
+            }
+        );
         ApplyPatch(etn, deltaObj!);
         dbContext.Update(etn!);
         dbContext.SaveChanges();
@@ -76,7 +86,10 @@ public class CustomDataEditor : ICustomDataEditor
         {
             throw new ArgumentException($"Entity with name {tableName} and key {key} wasn't found");
         }
-        var newEtn = JsonConvert.DeserializeObject(updatedEntity, modelType);
+        var newEtn = JsonConvert.DeserializeObject(updatedEntity, modelType, new JsonSerializerSettings()
+        {
+            DateTimeZoneHandling = DateTimeZoneHandling.Utc
+        });
         var keyProp = Utils.GetKeyProp(modelType, dbContext);
         keyProp.PropertyInfo!.SetValue(newEtn, Utils.ConvertToKeyType(key, keyProp.ClrType));
         dbContext.Update(newEtn!);
@@ -109,8 +122,18 @@ public class CustomDataEditor : ICustomDataEditor
             return null;
 
         if (targetType.IsAssignableFrom(value.GetType()))
+        {
+            if (targetType == typeof(DateTime) && value is not null)
+            {
+                value = ((DateTime)value).ToUniversalTime();
+            }
             return value;
-
+        }
+        targetType =
+            targetType.IsGenericType
+            && targetType.GetGenericTypeDefinition() == typeof(Nullable<>)
+                ? Nullable.GetUnderlyingType(targetType)!
+                : targetType!;
         try
         {
 
@@ -122,10 +145,56 @@ public class CustomDataEditor : ICustomDataEditor
             {
                 value = Enum.ToObject(targetType, value);
             }
+            else if (targetType == typeof(DateTime) && value.GetType() == typeof(string))
+            {
+                if (DateTime.TryParse((string)value, out DateTime date))
+                {
+                    if (date.Kind != DateTimeKind.Utc)
+                    {
+                        date = DateTime.SpecifyKind(date, DateTimeKind.Utc);
+                    }
+                    value = date;
+                }
+            }
+            else if (targetType == typeof(DateOnly) && value.GetType() == typeof(string))
+            {
+                if (DateOnly.TryParse((string)value, out DateOnly date))
+                {
+                    value = date;
+                }
+            }
+            else if (targetType == typeof(TimeOnly) && value.GetType() == typeof(string))
+            {
+                if (TimeOnly.TryParse((string)value, out TimeOnly time))
+                {
+                    value = time;
+                }
+            }
+            else if (1 == 1
+                && typeof(IEnumerable).IsAssignableFrom(value.GetType()) 
+                && targetType.IsArray 
+                && targetType.GetElementType() is not null) 
+            {
+                
+                var elementType = targetType.GetElementType();
+                var list = Activator.CreateInstance(typeof(List<>).MakeGenericType(elementType));
+                foreach (var item in (IEnumerable)value)
+                {
+                    var listValue = ConvertValue(elementType!, item);
+                    if (listValue is not null)
+                        (list as IList).Add(listValue);
+                }
+                value = Utils.CallMethodByName(list, "ToArray", new object[0]);
+            }
             else
             {
                 value = Convert.ChangeType(value, targetType);
             }
+            if (targetType == typeof(DateTime) && value is not null) 
+            {
+                value = DateTime.SpecifyKind((DateTime)value, DateTimeKind.Utc);
+            }
+
             return value;
         }
         catch

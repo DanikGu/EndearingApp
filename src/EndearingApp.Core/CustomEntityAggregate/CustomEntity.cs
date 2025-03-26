@@ -101,6 +101,7 @@ public class CustomEntity : EntityBase, IAggregateRoot
         {
             return Result.NotFound("Field with such Id already exists.");
         }
+        _relationships.Add(relationship);
         return Result.Success();
     }
     public Result RemoveRelationship(Guid relationshipId)

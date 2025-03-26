@@ -27,6 +27,7 @@ const setupBuilder = (newSchema, newComponents) => {
       display: "form",
       editForm: {}, //getEditForm(),
       noNewEdit: true,
+      noDefaultSubmitButton: true,
       builder: {
         resource: false,
         advanced: false,
