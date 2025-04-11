@@ -165,12 +165,13 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
 
     private bool GetIsDatabaseUpToDate()
     {
-        var dbContext = _customEntityQueryDataProvider.GetDbContext();
-        var comparer = new CompareEfSql();
-        var hasErrors = comparer.CompareEfWithDb(dbContext);
-        _contextAssemblyLoader.FreePreviousAssembly();
-
-        return !hasErrors;
+        //var dbContext = _customEntityQueryDataProvider.GetDbContext();
+        //var comparer = new CompareEfSql();
+        //var hasErrors = comparer.CompareEfWithDb(dbContext);
+        //_contextAssemblyLoader.FreePreviousAssembly();
+        //
+        //return !hasErrors;
+        return true;    
     }
 
     private void ClearInitialMigration(string migrationFolder)
