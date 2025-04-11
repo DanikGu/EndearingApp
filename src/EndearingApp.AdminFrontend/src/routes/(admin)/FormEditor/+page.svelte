@@ -1,6 +1,5 @@
 <script>
   import {
-    CustomeEntityDTO,
     CustomEntitiesApi,
     FieldDto,
     FormApi,
@@ -311,21 +310,24 @@
    * @returns {Object} Form.io component configuration
    */
   function createRelationshipComponent(relationship) {
+    let entityName = customEntities.find(
+      (x) => x.id === relationship.referencedCustomEntityId,
+    )?.name;
+    let fieldName = customEntities
+      .find((x) => x.id === relationship.sourceCustomEntityId)
+      ?.fields.find(
+        (/** @type {FieldDto} */ x) => x.id === relationship.sourceFieldId,
+      ).name;
     return {
-      title: relationship.constraintName || relationship.sourceFieldId,
+      title: fieldName,
       key: relationship.sourceFieldId,
       icon: "link",
       schema: {
-        label: relationship.constraintName || relationship.sourceFieldId,
-        type: "select",
+        label: fieldName,
+        type: "lookup",
         key: relationship.sourceFieldId,
-        input: true,
-        dataSrc: "url",
-        data: {
-          url: `/api/entities/${relationship.referencedCustomEntityId}/items`,
-        },
-        valueProperty: "id",
-        template: "{{ item.name }}",
+        odataPath: "api/odata",
+        entityName: entityName,
       },
     };
   }
@@ -458,11 +460,12 @@
           </Button>
         </div>
       </div>
+      <!-- <Builder></Builder> -->
       <iframe
         id="builderFrame"
         class="h-full w-full"
         title="Builder"
-        src="/formBuilder/index.html"
+        src="/Builder"
         bind:this={builderFrame}
       >
       </iframe>

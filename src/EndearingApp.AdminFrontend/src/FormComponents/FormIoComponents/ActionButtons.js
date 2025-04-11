@@ -1,3 +1,5 @@
+// @ts-nocheck
+import { Formio } from "@formio/js";
 
 
 class CustomButtonGroup extends Formio.Components.components.component {

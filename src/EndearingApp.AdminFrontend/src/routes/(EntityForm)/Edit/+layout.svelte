@@ -35,10 +35,3 @@
   <slot></slot>
 </div>
 <div class="bg-white"></div>
-
-<style>
-  @import "https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css";
-  @import "https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css";
-  @import "https://cdn.form.io/formiojs/formio.form.min.css";
-  @import "../Edit/layout.css";
-</style>
