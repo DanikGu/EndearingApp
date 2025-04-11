@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using CliWrap;
@@ -7,6 +7,7 @@ using EfSchemaCompare;
 using EndearingApp.Core.CustomDataAccsess.Interfaces;
 using EndearingApp.Core.CustomEntityAggregate.DbStructureModels;
 using EndearingApp.Core.CustomEntityAggregate.Interfaces;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -67,13 +68,22 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                 $"new classlib --name {projectName} --output \"{folderPath}\" ",
                 folderPath
             );
-            await CallDotnetCli("add package Microsoft.EntityFrameworkCore -v 8.0.10", folderPath);
-            await CallDotnetCli(
-                "add package Npgsql.EntityFrameworkCore.PostgreSQL -v 8.0.4",
-                folderPath
-            );
-            await CallDotnetCli("add package Microsoft.OData.ModelBuilder -v 1.0.9", folderPath);
-            await CallDotnetCli("add package Microsoft.EntityFrameworkCore.Design", folderPath);
+            var packagesToInstall = new List<string>
+            {
+                "Microsoft.EntityFrameworkCore",
+                "Npgsql.EntityFrameworkCore.PostgreSQL",
+                "Microsoft.OData.ModelBuilder",
+                "Microsoft.EntityFrameworkCore.Design",
+            };
+            foreach (var package in packagesToInstall)
+            {
+                var version = GetPackageVersion(package);
+                if (!string.IsNullOrEmpty(version))
+                {
+                    version = "-v " + version;
+                }
+                await CallDotnetCli($"add package {package} " + version, folderPath);
+            }
             await CallDotnetCli("new tool-manifest", folderPath);
             DisableWarningsAsErrors(folderPath);
             await CallDotnetCli("tool install dotnet-ef", folderPath);
@@ -110,6 +120,21 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         await CallDotnetCli("ef migrations add " + GetNewMigrationName(), folderPath);
         await CallDotnetCli("ef database update", folderPath);
         await CallDotnetCli("dotnet publish", folderPath);
+    }
+
+    private string GetPackageVersion(string packageName)
+    {
+        string version = "";
+        var infrastructureAssembly = Assembly.GetAssembly(typeof(DatabaseStructureUpdater));
+        var packageAssembly = infrastructureAssembly
+            ?.GetReferencedAssemblies()
+            .FirstOrDefault(x => x.Name == packageName);
+        if (packageAssembly is not null)
+        {
+            version = packageAssembly.Version?.ToString(3) ?? "";
+        }
+
+        return version;
     }
 
     private void DisableWarningsAsErrors(string folderPath)
@@ -248,9 +273,9 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         result.AppendLine("using System;");
         result.AppendLine("using Microsoft.OData.ModelBuilder;");
         result.AppendLine("using System.Linq;");
+        result.AppendLine("using NpgsqlTypes;");
 
         result.Append("namespace ").Append(ns).Append(";\n");
-        //add modified on
         result.Append(
             """
                 public abstract class BaseEntity 
@@ -258,25 +283,11 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                     public Guid Id { get; set; }
                     public DateTime CreatedOn { get; set; }
                     public DateTime ModifiedOn { get; set; }
+                    public string Name { get; set; } // name that gonna be visible when refernce to this entity presented
+                    public NpgsqlTsVector SearchVector { get; set; }
                 }
             """
         );
-
-        foreach (var optSet in dbStructure?.OptionSets ?? Enumerable.Empty<OptionSet>())
-        {
-            result.AppendLine("public enum " + optSet.Name + "{ \n");
-            foreach (var opt in optSet.Options)
-            {
-                result.AppendFormat(
-                    """
-                        {0} = {1},
-                    """,
-                    opt.Name,
-                    opt.Value
-                );
-            }
-            result.AppendLine("\n}");
-        }
 
         foreach (var table in dbStructure!.Tables!)
         {
@@ -288,6 +299,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         }
         result.Append('\n');
         result.Append(GetDbContext(dbContextName, dbStructure, connectionString));
+        // return ArrangeUsingRoslyn(result.ToString()); ;
         return result.ToString();
     }
 
@@ -360,12 +372,13 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         result.Append("public class ").Append(table.Name).Append(":BaseEntity\n{\n");
         foreach (var field in table.Fields.Where(x => !x.IsSystemField))
         {
-            var relationship = table.Relationships.FirstOrDefault(x => x.Field == field);
             result.AppendFormat(
                 "public {0} {1} {{ get; set; }}\n",
                 MapSystemTypeToCSharpType(field),
                 field.Name
             );
+
+            var relationship = table.Relationships.FirstOrDefault(x => x.Field == field);
             if (relationship is not null)
             {
                 result.AppendFormat(
@@ -452,6 +465,22 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             );
             fieldsConfig.Append(";\n");
         }
+        fieldsConfig.Append(";\n");
+        fieldsConfig.AppendFormat(
+            """
+            builder.HasGeneratedTsVectorColumn(
+                p => p.SearchVector,
+                "english",  // Text search config
+                p => new {{ {0} }})  // Included properties
+            .HasIndex(p => p.SearchVector)
+            .HasMethod("GIN");
+            """,
+            string.Join(
+                ", ",
+                table.Fields.Where(x => x.IsFullTextSearch).Select(x => "p." + x.Name)
+            )
+        );
+        fieldsConfig.Append(";\n");
         result.AppendFormat(
             """
                 public class {0}Configuration : IEntityTypeConfiguration<{0}>
@@ -483,13 +512,13 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             SystemTypesEnum.UnlimitedText => "string",
             SystemTypesEnum.LimitedText => "string",
             SystemTypesEnum.Date => "DateOnly",
-            SystemTypesEnum.Time => "TimeSpan",
+            SystemTypesEnum.Time => "TimeOnly",
             SystemTypesEnum.Timestamp => "DateTime",
             SystemTypesEnum.Boolean => "bool",
             SystemTypesEnum.Binary => "byte[]",
             SystemTypesEnum.UUID => "Guid",
-            SystemTypesEnum.OptionSet => field.OptionSet!.Name,
-            SystemTypesEnum.OptionSetMutiSelect => field.OptionSet!.Name + "[]",
+            SystemTypesEnum.OptionSet => "int",
+            SystemTypesEnum.OptionSetMutiSelect => "int[]",
             _ => throw new ArgumentOutOfRangeException(nameof(systemType), systemType, null),
         };
         if (field.IsNullable)
@@ -509,4 +538,11 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             _ => "DeleteBehavior.SetNull",
         };
     }
+    // public string ArrangeUsingRoslyn(string csCode)
+    // {
+    //     var tree = CSharpSyntaxTree.ParseText(csCode);
+    //     var root = tree.GetRoot().NormalizeWhitespace();
+    //     var ret = root.ToFullString();
+    //     return ret;
+    // }
 }

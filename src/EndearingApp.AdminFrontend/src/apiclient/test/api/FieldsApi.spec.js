@@ -100,7 +100,7 @@
       });
       describe('apiFieldsIdPut', function() {
         it('should call apiFieldsIdPut successfully', function(done) {
-          // TODO: uncomment, update parameter values for apiFieldsIdPut call
+          // TODO: uncomment, update parameter values for apiFieldsIdPut call and complete the assertions
           /*
           var opts = {};
 
@@ -109,6 +109,29 @@
               done(error);
               return;
             }
+            // TODO: update response assertions
+            expect(data).to.be.a(EndearingAppweb.FieldDto);
+
+            done();
+          });
+          */
+          // TODO: uncomment and complete method invocation above, then delete this line and the next:
+          done();
+        });
+      });
+      describe('apiFieldsPatch', function() {
+        it('should call apiFieldsPatch successfully', function(done) {
+          // TODO: uncomment, update parameter values for apiFieldsPatch call and complete the assertions
+          /*
+          var opts = {};
+
+          instance.apiFieldsPatch(opts, function(error, data, response) {
+            if (error) {
+              done(error);
+              return;
+            }
+            // TODO: update response assertions
+            expect(data).to.be.a(EndearingAppweb.FieldDto);
 
             done();
           });

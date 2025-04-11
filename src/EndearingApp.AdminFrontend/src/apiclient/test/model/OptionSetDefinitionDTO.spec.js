@@ -45,6 +45,18 @@
         // expect(instance.id).to.be(expectedValueLiteral);
       });
 
+      it('should have the property name (base name: "name")', function() {
+        // TODO: update the code to test the property name
+        expect(instance).to.have.property('name');
+        // expect(instance.name).to.be(expectedValueLiteral);
+      });
+
+      it('should have the property options (base name: "options")', function() {
+        // TODO: update the code to test the property options
+        expect(instance).to.have.property('options');
+        // expect(instance.options).to.be(expectedValueLiteral);
+      });
+
       it('should have the property isGlobal (base name: "isGlobal")', function() {
         // TODO: update the code to test the property isGlobal
         expect(instance).to.have.property('isGlobal');

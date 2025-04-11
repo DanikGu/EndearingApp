@@ -1,4 +1,5 @@
 ﻿using EndearingApp.Core.CustomEntityAggregate;
+using EndearingApp.Core.OptionSetDefinitionAggregate;
 
 namespace EndearingApp.Web.Models;
 

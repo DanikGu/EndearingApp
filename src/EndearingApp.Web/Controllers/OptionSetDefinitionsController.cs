@@ -1,7 +1,17 @@
-﻿using EndearingApp.Core.CustomEntityAggregate;
+﻿using System.Threading;
+using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
+using EndearingApp.Core.CustomEntityAggregate;
+using EndearingApp.Core.OptionSetDefinitionAggregate;
+using EndearingApp.Core.OptionSetDefinitionAggregate.Commands.OptionSetCommands.Create;
+using EndearingApp.Core.OptionSetDefinitionAggregate.Commands.OptionSetCommands.Delete;
+using EndearingApp.Core.OptionSetDefinitionAggregate.Commands.OptionSetCommands.Update;
+using EndearingApp.Core.OptionSetDefinitionAggregate.Specifications;
 using EndearingApp.Infrastructure.Data;
+using EndearingApp.SharedKernel.Interfaces;
 using EndearingApp.Web.Models;
 using Mapster;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -11,137 +21,85 @@ namespace EndearingApp.Web.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class OptionSetDefinitionsController : ControllerBase
-{
-    private readonly AppDbContext _context;
+{   
     private readonly ILogger<OptionSetDefinitionsController> _logger;
+    private readonly IMediator _mediator;
+    private readonly IRepository<OptionSetDefinition> _repository;
 
-    public OptionSetDefinitionsController(
-        AppDbContext context,
-        ILogger<OptionSetDefinitionsController> logger
-    )
+    public OptionSetDefinitionsController(IMediator mediator, 
+        IRepository<OptionSetDefinition> repository, 
+        ILogger<OptionSetDefinitionsController> logger)
     {
-        _context = context;
+        _mediator = mediator;
+        _repository = repository;
         _logger = logger;
     }
 
-    // GET: api/OptionSetDefinitions
+    [TranslateResultToActionResult]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<OptionSetDefinitionDTO>>> GetOptionSetDefentions()
+    public async Task<ActionResult<IEnumerable<OptionSetDefinitionDTO>>> GetOptionSetDefentions(CancellationToken cancellationToken)
     {
-        var entities = await _context.OptionSetDefentions.Include(x => x.Options).ToListAsync();
+        var entities = await _repository.ListAsync(new GetAllSpec(), cancellationToken);
         return entities.Select(x => x.Adapt<OptionSetDefinitionDTO>()).ToList();
     }
 
-    // GET: api/OptionSetDefinitions/5
+    [TranslateResultToActionResult]
     [HttpGet("{id}")]
-    public async Task<ActionResult<OptionSetDefinitionDTO>> GetOptionSetDefinition(Guid id)
+    public async Task<ActionResult<OptionSetDefinitionDTO>> GetOptionSetDefinition(Guid id, CancellationToken cancellationToken)
     {
-        var optionSetDefinition = await _context
-            .OptionSetDefentions.Include(x => x.Options)
-            .FirstOrDefaultAsync(x => x.Id == id);
-
+        var optionSetDefinition = await _repository.FirstOrDefaultAsync(new GetAllSpec(), cancellationToken);
         if (optionSetDefinition == null)
         {
             return NotFound();
         }
-
         return optionSetDefinition.Adapt<OptionSetDefinitionDTO>();
     }
 
-    // PUT: api/OptionSetDefinitions/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [TranslateResultToActionResult]
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutOptionSetDefinition(
+    public async Task<Result<OptionSetDefinitionDTO>> PutOptionSetDefinition(
         Guid id,
-        OptionSetDefinitionDTO optionSetDefinitionDto
+        OptionSetDefinitionDTO optionSetDefinitionDto, 
+        CancellationToken cancellationToken
     )
     {
         if (id != optionSetDefinitionDto.Id)
         {
-            return BadRequest();
+            return Result.Invalid(new ValidationError("Ids are different"));
         }
-        var optionSetDefinition = optionSetDefinitionDto.Adapt<OptionSetDefinition>();
-        _logger.LogInformation(
-            JsonConvert.SerializeObject(optionSetDefinition, Formatting.Indented)
+        var result = await _mediator.Send(
+            new OptionSetDefinitionUpdateCommand(optionSetDefinitionDto.Adapt<OptionSetDefinition>()),
+            cancellationToken
         );
-        _context.Entry(optionSetDefinition).State = EntityState.Modified;
-        foreach (var option in optionSetDefinition.Options)
-        {
-            option.OptionSetId = optionSetDefinition.Id;
-            if (option.Id == Guid.Empty)
-            {
-                _context.Add(option);
-            }
-            else
-            {
-                if (optionSetDefinition.Options.FirstOrDefault(x => x.Id == option.Id) is null)
-                {
-                    _context.Options.Remove(option);
-                }
-                else
-                {
-                    _context.Options.Update(option);
-                }
-            }
-        }
 
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!OptionSetDefinitionExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return NoContent();
+        return result.Map(x => x.Adapt<OptionSetDefinitionDTO>());
     }
 
-    // POST: api/OptionSetDefinitions
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [TranslateResultToActionResult]
     [HttpPost]
-    public async Task<ActionResult<OptionSetDefinitionDTO>> PostOptionSetDefinition(
-        OptionSetDefinitionDTO optionSetDefinition
+    public async Task<Result<OptionSetDefinitionDTO>> PostOptionSetDefinition(
+        OptionSetDefinitionDTO optionSetDefinitionDto,
+        CancellationToken cancellationToken
     )
     {
-        var entry = _context.OptionSetDefentions.Add(
-            optionSetDefinition.Adapt<OptionSetDefinition>()
+        var result = await _mediator.Send(
+            new OptionSetDefinitionCreateCommand(optionSetDefinitionDto.Adapt<OptionSetDefinition>()),
+            cancellationToken
         );
-        await _context.SaveChangesAsync();
-        entry.Reload();
 
-        return CreatedAtAction(
-            "GetOptionSetDefinition",
-            new { id = entry.Entity.Id },
-            entry.Entity
-        );
+        return result.Map(x => x.Adapt<OptionSetDefinitionDTO>());
     }
 
-    // DELETE: api/OptionSetDefinitions/5
+    [TranslateResultToActionResult]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteOptionSetDefinition(Guid id)
+    public async Task<Result> DeleteOptionSetDefinition(Guid id,
+        CancellationToken cancellationToken)
     {
-        var optionSetDefinition = await _context.OptionSetDefentions.FindAsync(id);
-        if (optionSetDefinition == null)
-        {
-            return NotFound();
-        }
+        var result = await _mediator.Send(
+            new OptionSetDefinitionDeleteCommand(id),
+            cancellationToken
+        );
 
-        _context.OptionSetDefentions.Remove(optionSetDefinition);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    private bool OptionSetDefinitionExists(Guid id)
-    {
-        return _context.OptionSetDefentions.Any(e => e.Id == id);
+        return result;
     }
 }

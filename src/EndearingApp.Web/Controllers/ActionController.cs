@@ -15,9 +15,9 @@ public class ActionController : Controller
         _mediator = mediator;
     }
     [HttpPost("UpdateDbStructure")]
-    public async Task<IActionResult> UpdateDbStructure()
+    public async Task<IActionResult> UpdateDbStructure(CancellationToken cancellationToken)
     {
-        await _mediator.Publish(new CustomDbStructureChangedEvent());
+        await _mediator.Publish(new CustomDbStructureChangedEvent(), cancellationToken);
         return Ok();
     }
 }

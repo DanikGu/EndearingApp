@@ -17,4 +17,5 @@ Name | Type | Description | Notes
 **isIndexed** | **Boolean** |  | [optional] 
 **isUnique** | **Boolean** |  | [optional] 
 **isRequired** | **Boolean** |  | [optional] 
+**isFullTextSearch** | **Boolean** |  | [optional] 
 **optionSetDefinitionId** | **String** |  | [optional] 

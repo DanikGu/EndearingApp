@@ -94,6 +94,7 @@ internal class CustomEdmModelMatcherPolicy : MatcherPolicy, IEndpointSelectorPol
                     odataFeature.Model = model;
                     odataFeature.Path = odataPath;
                     
+                    
                     MergeRouteValues(translatorContext.UpdatedValues, candidate.Values!);
                 }
                 else
@@ -113,9 +114,13 @@ internal class CustomEdmModelMatcherPolicy : MatcherPolicy, IEndpointSelectorPol
         var fullUrl = httpContext.Request.GetDisplayUrl();
         var relativeUrlStartIndex =
             fullUrl.IndexOf(OdataConstants.OdataRoute) + OdataConstants.OdataRoute.Length;
-        var relativeUri = new Uri(fullUrl.Substring(relativeUrlStartIndex), UriKind.Relative);
+        var relativeUriString = fullUrl.Substring(relativeUrlStartIndex);
+        relativeUriString = relativeUriString
+            .Split("/")
+            .Where(x => !string.IsNullOrEmpty(x))
+            .First();
+        var relativeUri = new Uri(relativeUriString, UriKind.Relative);
         var parser = GetParser(relativeUri);
-
         var paths = parser.ParsePath();
         return paths;
     }
@@ -124,7 +129,6 @@ internal class CustomEdmModelMatcherPolicy : MatcherPolicy, IEndpointSelectorPol
         var parser = new ODataUriParser(_modelManager.GetModel(), relativeUri);
         parser.Resolver.EnableCaseInsensitive = true;
         parser.Resolver.EnableNoDollarQueryOptions = true;
-
         return parser;
     }
 

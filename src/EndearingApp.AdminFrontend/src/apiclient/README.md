@@ -99,6 +99,11 @@ Class | Method | HTTP request | Description
 *EndearingAppweb.FieldsApi* | [**apiFieldsIdPut**](docs/FieldsApi.md#apiFieldsIdPut) | **PUT** /api/Fields/{id} | 
 *EndearingAppweb.FieldsApi* | [**apiFieldsPatch**](docs/FieldsApi.md#apiFieldsPatch) | **PATCH** /api/Fields | 
 *EndearingAppweb.FieldsApi* | [**apiFieldsPost**](docs/FieldsApi.md#apiFieldsPost) | **POST** /api/Fields | 
+*EndearingAppweb.FormApi* | [**apiFormGet**](docs/FormApi.md#apiFormGet) | **GET** /api/Form | 
+*EndearingAppweb.FormApi* | [**apiFormIdDelete**](docs/FormApi.md#apiFormIdDelete) | **DELETE** /api/Form/{id} | 
+*EndearingAppweb.FormApi* | [**apiFormIdGet**](docs/FormApi.md#apiFormIdGet) | **GET** /api/Form/{id} | 
+*EndearingAppweb.FormApi* | [**apiFormIdPut**](docs/FormApi.md#apiFormIdPut) | **PUT** /api/Form/{id} | 
+*EndearingAppweb.FormApi* | [**apiFormPost**](docs/FormApi.md#apiFormPost) | **POST** /api/Form | 
 *EndearingAppweb.MetadataApi* | [**apiodata**](docs/MetadataApi.md#apiodata) | **GET** /api/odata | 
 *EndearingAppweb.MetadataApi* | [**apiodatametadata**](docs/MetadataApi.md#apiodatametadata) | **GET** /api/odata/$metadata | 
 *EndearingAppweb.OptionSetDefinitionsApi* | [**apiOptionSetDefinitionsGet**](docs/OptionSetDefinitionsApi.md#apiOptionSetDefinitionsGet) | **GET** /api/OptionSetDefinitions | 
@@ -121,6 +126,7 @@ Class | Method | HTTP request | Description
  - [EndearingAppweb.EdmSchemaElementKind](docs/EdmSchemaElementKind.md)
  - [EndearingAppweb.EdmTypeKind](docs/EdmTypeKind.md)
  - [EndearingAppweb.FieldDto](docs/FieldDto.md)
+ - [EndearingAppweb.FormDTO](docs/FormDTO.md)
  - [EndearingAppweb.IEdmDirectValueAnnotationsManager](docs/IEdmDirectValueAnnotationsManager.md)
  - [EndearingAppweb.IEdmEntityContainer](docs/IEdmEntityContainer.md)
  - [EndearingAppweb.IEdmEntityContainerElement](docs/IEdmEntityContainerElement.md)
@@ -139,8 +145,10 @@ Class | Method | HTTP request | Description
  - [EndearingAppweb.ODataTypeAnnotation](docs/ODataTypeAnnotation.md)
  - [EndearingAppweb.OptionDTO](docs/OptionDTO.md)
  - [EndearingAppweb.OptionSetDefinitionDTO](docs/OptionSetDefinitionDTO.md)
+ - [EndearingAppweb.ProblemDetails](docs/ProblemDetails.md)
  - [EndearingAppweb.RelationshipDTO](docs/RelationshipDTO.md)
  - [EndearingAppweb.SettingDTO](docs/SettingDTO.md)
+ - [EndearingAppweb.ValidationProblemDetails](docs/ValidationProblemDetails.md)
 
 ## Documentation for Authorization
 

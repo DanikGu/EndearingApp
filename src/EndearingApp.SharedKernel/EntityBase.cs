@@ -5,7 +5,7 @@ namespace EndearingApp.SharedKernel;
 // This can be modified to EntityBase<TId> to support multiple key types (e.g. Guid)
 public abstract class EntityBase
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.CreateVersion7();
 
     private List<DomainEventBase> _domainEvents = new();
 
@@ -16,4 +16,5 @@ public abstract class EntityBase
         _domainEvents.Add(domainEvent);
 
     internal void ClearDomainEvents() => _domainEvents.Clear();
+
 }

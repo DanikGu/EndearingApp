@@ -88,6 +88,7 @@ public class CustomeDbStructureChangedHandler : INotificationHandler<CustomDbStr
                         IsUnique = f.IsUnique,
                         IsRequired = f.IsRequired,
                         IsSystemField = f.IsSystemField,
+                        IsFullTextSearch = f.IsFullTextSearch,
                         OptionSet = IsOptionSet(f)
                             ? optDefToOptModel[f.OptionSetDefinition!.Id]
                             : null,

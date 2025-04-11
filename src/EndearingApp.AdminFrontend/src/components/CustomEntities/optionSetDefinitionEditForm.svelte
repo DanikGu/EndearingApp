@@ -103,7 +103,7 @@
       return;
     }
     optionSet.options = [
-      ...optionSet.options,
+      ...(optionSet.options ?? []),
       { value: keyInput, name: valueInput },
     ];
     keyInput = "";

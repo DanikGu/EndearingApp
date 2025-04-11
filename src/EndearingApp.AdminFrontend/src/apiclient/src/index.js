@@ -19,6 +19,7 @@ import EdmExpressionKind from './model/EdmExpressionKind';
 import EdmSchemaElementKind from './model/EdmSchemaElementKind';
 import EdmTypeKind from './model/EdmTypeKind';
 import FieldDto from './model/FieldDto';
+import FormDTO from './model/FormDTO';
 import IEdmDirectValueAnnotationsManager from './model/IEdmDirectValueAnnotationsManager';
 import IEdmEntityContainer from './model/IEdmEntityContainer';
 import IEdmEntityContainerElement from './model/IEdmEntityContainerElement';
@@ -37,11 +38,14 @@ import ODataSingletonInfo from './model/ODataSingletonInfo';
 import ODataTypeAnnotation from './model/ODataTypeAnnotation';
 import OptionDTO from './model/OptionDTO';
 import OptionSetDefinitionDTO from './model/OptionSetDefinitionDTO';
+import ProblemDetails from './model/ProblemDetails';
 import RelationshipDTO from './model/RelationshipDTO';
 import SettingDTO from './model/SettingDTO';
+import ValidationProblemDetails from './model/ValidationProblemDetails';
 import ActionApi from './api/ActionApi';
 import CustomEntitiesApi from './api/CustomEntitiesApi';
 import FieldsApi from './api/FieldsApi';
+import FormApi from './api/FormApi';
 import MetadataApi from './api/MetadataApi';
 import OptionSetDefinitionsApi from './api/OptionSetDefinitionsApi';
 import RelationshipsApi from './api/RelationshipsApi';
@@ -120,6 +124,12 @@ export {
      * @property {module:model/FieldDto}
      */
     FieldDto,
+
+    /**
+     * The FormDTO model constructor.
+     * @property {module:model/FormDTO}
+     */
+    FormDTO,
 
     /**
      * The IEdmDirectValueAnnotationsManager model constructor.
@@ -230,6 +240,12 @@ export {
     OptionSetDefinitionDTO,
 
     /**
+     * The ProblemDetails model constructor.
+     * @property {module:model/ProblemDetails}
+     */
+    ProblemDetails,
+
+    /**
      * The RelationshipDTO model constructor.
      * @property {module:model/RelationshipDTO}
      */
@@ -240,6 +256,12 @@ export {
      * @property {module:model/SettingDTO}
      */
     SettingDTO,
+
+    /**
+     * The ValidationProblemDetails model constructor.
+     * @property {module:model/ValidationProblemDetails}
+     */
+    ValidationProblemDetails,
 
     /**
     * The ActionApi service constructor.
@@ -258,6 +280,12 @@ export {
     * @property {module:api/FieldsApi}
     */
     FieldsApi,
+
+    /**
+    * The FormApi service constructor.
+    * @property {module:api/FormApi}
+    */
+    FormApi,
 
     /**
     * The MetadataApi service constructor.

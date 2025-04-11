@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -45,5 +45,11 @@
   
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.JsonPatch">
+      <HintPath>..\..\..\..\NugetRepo\microsoft.aspnetcore.jsonpatch\9.0.2\lib\net9.0\Microsoft.AspNetCore.JsonPatch.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

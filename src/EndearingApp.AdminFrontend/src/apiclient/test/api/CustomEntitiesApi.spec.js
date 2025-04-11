@@ -100,7 +100,7 @@
       });
       describe('apiCustomEntitiesIdPut', function() {
         it('should call apiCustomEntitiesIdPut successfully', function(done) {
-          // TODO: uncomment, update parameter values for apiCustomEntitiesIdPut call
+          // TODO: uncomment, update parameter values for apiCustomEntitiesIdPut call and complete the assertions
           /*
           var opts = {};
 
@@ -109,6 +109,8 @@
               done(error);
               return;
             }
+            // TODO: update response assertions
+            expect(data).to.be.a(EndearingAppweb.CustomeEntityDTO);
 
             done();
           });

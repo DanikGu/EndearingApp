@@ -100,7 +100,7 @@
       });
       describe('apiOptionSetDefinitionsIdPut', function() {
         it('should call apiOptionSetDefinitionsIdPut successfully', function(done) {
-          // TODO: uncomment, update parameter values for apiOptionSetDefinitionsIdPut call
+          // TODO: uncomment, update parameter values for apiOptionSetDefinitionsIdPut call and complete the assertions
           /*
           var opts = {};
 
@@ -109,6 +109,8 @@
               done(error);
               return;
             }
+            // TODO: update response assertions
+            expect(data).to.be.a(EndearingAppweb.OptionSetDefinitionDTO);
 
             done();
           });

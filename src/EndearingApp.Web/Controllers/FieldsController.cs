@@ -1,10 +1,15 @@
-﻿using EndearingApp.Core.CustomEntityAggregate;
-using EndearingApp.Infrastructure.Data;
+﻿using Ardalis.Result;
+using Ardalis.Result.AspNetCore;
+using EndearingApp.Core.CustomEntityAggregate;
+using EndearingApp.Core.CustomEntityAggregate.Commands.FieldCommands.Create;
+using EndearingApp.Core.CustomEntityAggregate.Commands.FieldCommands.Delete;
+using EndearingApp.Core.CustomEntityAggregate.Commands.FieldCommands.Update;
+using EndearingApp.Core.CustomEntityAggregate.Specifications;
+using EndearingApp.SharedKernel.Interfaces;
 using EndearingApp.Web.Models;
 using Mapster;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Deltas;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace EndearingApp.Web.Controllers;
@@ -13,30 +18,37 @@ namespace EndearingApp.Web.Controllers;
 [ApiController]
 public class FieldsController : ControllerBase
 {
-    private readonly AppDbContext _context;
-    private readonly ILogger<FieldsController> _logger;
+    private readonly IMediator _mediator;
+    private readonly IRepository<CustomEntity> _repository;
 
-    public FieldsController(AppDbContext context, ILogger<FieldsController> logger)
+    public FieldsController(IMediator mediator, IRepository<CustomEntity> repository)
     {
-        _context = context;
-        _logger = logger;
+        _mediator = mediator;
+        _repository = repository;
     }
 
-    // GET: api/Fields
+    [TranslateResultToActionResult]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<FieldDto>>> GetFields()
+    public async Task<ActionResult<IEnumerable<FieldDto>>> GetFields(CancellationToken cancellationToken)
     {
-        var entities = await _context.Fields.ToListAsync();
-        return entities.Select(x => x.Adapt<FieldDto>()).ToList();
+        var entities = await _repository.ListAsync(new GetAllSpec(), cancellationToken);
+        return entities
+            .SelectMany(x => x.Fields)
+            .Select(x => x.Adapt<FieldDto>())
+            .ToList();
     }
 
-    // GET: api/Fields/5
+    [TranslateResultToActionResult]
     [HttpGet("{id}")]
-    public async Task<ActionResult<FieldDto>> GetField(Guid id)
+    public async Task<ActionResult<FieldDto>> GetField(Guid id, CancellationToken cancellationToken)
     {
-        var @field = await _context.Fields.FindAsync(id);
-
-        if (@field == null)
+        var customEntity = await _repository.FirstOrDefaultAsync(new GetByFieldId(id), cancellationToken);
+        if (customEntity is null)
+        {
+            return NotFound();
+        }
+        var @field = customEntity.Fields.FirstOrDefault(x => x.Id == id);
+        if (@field is null)
         {
             return NotFound();
         }
@@ -44,133 +56,52 @@ public class FieldsController : ControllerBase
         return @field.Adapt<FieldDto>();
     }
 
-    // PUT: api/Fields/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [TranslateResultToActionResult]
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutField(Guid id, FieldDto fieldDto)
+    public async Task<Result<FieldDto>> PutField(Guid id, FieldDto fieldDto, CancellationToken cancellationToken)
     {
-        if (id != fieldDto.Id)
-        {
-            return BadRequest();
-        }
-        var @field = fieldDto.Adapt<Field>();
-        if (@field.IsSystemField)
-        {
-            return Forbid();
-        }
-        _context.Entry(@field).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!FieldExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return NoContent();
+        var result = await _mediator.Send(new FieldUpdateCommand(fieldDto.Adapt<Field>()), cancellationToken);
+        return result.Map(x => x.Adapt<FieldDto>());
     }
 
-    // POST: api/Fields
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [TranslateResultToActionResult]
     [HttpPost]
-    public async Task<ActionResult<FieldDto>> PostField(FieldDto @field)
+    public async Task<Result<FieldDto>> PostField(FieldDto @field, CancellationToken cancellationToken)
     {
-        var etn = @field.Adapt<Field>();
-        _context.Fields.Add(etn);
-        if (etn.IsSystemField)
-        {
-            return Forbid();
-        }
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateException ex)
-        {
-            var mess = ex.Message;
-            if (FieldExists(@field.Id))
-            {
-                return Conflict();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return CreatedAtAction("GetField", new { id = @field.Id }, @field);
+        var result = await _mediator.Send(new FieldCreateCommand(@field.Adapt<Field>()), cancellationToken);
+        return result.Map(x => x.Adapt<FieldDto>());
     }
 
-    // PATCH: api/Fields
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    // Parse delta inside controller because swagger don't understand delta object,
-    // there is possible solutions in the internet, but do i care?
+    [TranslateResultToActionResult]
     [HttpPatch]
-    public async Task<ActionResult<FieldDto>> PatchField(Guid id, string fieldDelta)
+    public async Task<Result<FieldDto>> PatchField(Guid id, string fieldDelta, CancellationToken cancellationToken)
     {
-        var fieldDeltaObj = JsonConvert.DeserializeObject<PatchDelta<Field>>(fieldDelta);
-        var @field = _context.Fields.FirstOrDefault(x => x.Id == id);
-        if (@field is null || fieldDeltaObj is null)
+        var customEntity = await _repository.FirstOrDefaultAsync(new GetByFieldId(id), cancellationToken);
+        if (customEntity is null)
         {
-            return NotFound();
+            return Result.NotFound();
         }
-        if (@field.IsSystemField)
+        var @field = customEntity.Fields.FirstOrDefault(x => x.Id == id);
+        if (@field is null)
         {
-            return Forbid();
+            return Result.NotFound();
+        }
+        var fieldDeltaObj = JsonConvert.DeserializeObject<PatchDelta<Field>>(fieldDelta);
+        if (fieldDeltaObj is null) 
+        {
+            return Result.Error("Invalid json");
         }
         fieldDeltaObj.Patch(@field);
-        _context.Fields.Update(@field);
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateException ex)
-        {
-            var mess = ex.Message;
-            if (FieldExists(@field.Id))
-            {
-                return Conflict();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return NoContent();
+        var result = await _mediator.Send(new FieldUpdateCommand(@field), cancellationToken);
+        return result.Map(x => x.Adapt<FieldDto>());
     }
 
-    // DELETE: api/Fields/5
+    [TranslateResultToActionResult]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteField(Guid id)
+    public async Task<Result> DeleteField(Guid id, CancellationToken cancellationToken)
     {
-        var @field = await _context.Fields.FindAsync(id);
-
-        if (@field == null)
-        {
-            return NotFound();
-        }
-        if (@field.IsSystemField)
-        {
-            return Forbid();
-        }
-        _context.Fields.Remove(@field);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+        var result = await _mediator.Send(new FieldDeleteCommand(id), cancellationToken);
+        return result;
     }
 
-    private bool FieldExists(Guid id)
-    {
-        return _context.Fields.Any(e => e.Id == id);
-    }
 }

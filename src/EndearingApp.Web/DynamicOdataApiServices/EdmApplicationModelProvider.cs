@@ -1,4 +1,5 @@
 ﻿using EndearingApp.Core.CustomDataAccsess.Interfaces;
+using EndearingApp.Web.DynamicOdataApiServices.TemplateSegments;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.OData.Batch;
@@ -91,6 +92,13 @@ public partial class EdmApplicationModelProvider : IApplicationModelProvider
                     new EntitySetWithKeyTemplateSegment()
                 );
                 actionModel.AddSelector("delete", prefix, model, path);
+            }
+            else if (actionModel.ActionName == "FullTextSearch") 
+            {
+                ODataPathTemplate path = new ODataPathTemplate(
+                    new EntitySetFullTextSearchTemplate()
+                );
+                actionModel.AddSelector("get", prefix, model, path);
             }
         }
     }

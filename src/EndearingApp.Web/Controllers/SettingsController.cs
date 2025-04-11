@@ -17,13 +17,11 @@ public class SettingsController : Controller
     {
         _repository = repository;
     } 
-    // GET: api/Fields/name
-    [HttpGet("{name}")]
 
-    public async Task <ActionResult<SettingDTO>>Index(string name)
+    [HttpGet("{name}")]
+    public async Task <ActionResult<SettingDTO>>Index(string name, CancellationToken cancellationToken)
     {
-        var settings = await _repository.ListAsync(new GetByNameSpec(name));
-        var result = settings.FirstOrDefault();
+        var result = await _repository.FirstOrDefaultAsync(new GetByNameSpec(name), cancellationToken);
         var response = result.Adapt<SettingDTO>();
         return Ok(response);
     }

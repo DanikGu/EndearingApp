@@ -1,4 +1,5 @@
 ﻿using Ardalis.ListStartupServices;
+using Ardalis.Result.AspNetCore;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using EndearingApp.Core;
@@ -50,12 +51,18 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         new DefaultInfrastructureModule(builder.Environment.EnvironmentName == "Development")
     );
 });
-builder.Services.AddControllers().AddOData(opt => opt.EnableQueryFeatures(null).
-            AddRouteComponents(
-                OdataConstants.OdataRoute,
-                EdmCoreModel.Instance,
-                new DefaultODataBatchHandler()
-            ));
+builder.Services.AddControllers(mvcOptions => mvcOptions.AddDefaultResultConvention())
+    .AddOData(opt => opt.EnableQueryFeatures(null)
+    .AddRouteComponents(
+            OdataConstants.OdataRoute,
+            EdmCoreModel.Instance,
+            configureServices: services =>
+            {
+                services.AddSingleton((IServiceProvider sp) => new DefaultODataBatchHandler());
+
+            }
+        ));
+
 builder.Services.TryAddEnumerable(
     ServiceDescriptor.Transient<IApplicationModelProvider, EdmApplicationModelProvider>()
 );
@@ -82,7 +89,6 @@ else
 }
 app.UseODataBatching();
 app.UseRouting();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

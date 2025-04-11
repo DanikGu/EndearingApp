@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using EndearingApp.Core.CustomEntityAggregate.DbStructureModels;
+using EndearingApp.Core.OptionSetDefinitionAggregate;
 
 namespace EndearingApp.Core.CustomEntityAggregate;
 
@@ -8,7 +9,7 @@ public class Field
 {
     public Field() { }
 
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.CreateVersion7();
 
     public string? Name { get; set; }
 
@@ -28,6 +29,7 @@ public class Field
     public bool IsUnique { get; set; }
     public bool IsRequired { get; set; }
     public bool IsSystemField { get; set; } = false;
+    public bool IsFullTextSearch { get; set; } = false;
 
     [ForeignKey("CustomEntity")]
     public Guid CustomEntityId { get; set; }

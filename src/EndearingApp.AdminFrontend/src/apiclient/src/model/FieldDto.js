@@ -66,6 +66,8 @@ export default class FieldDto {
         obj.isUnique = ApiClient.convertToType(data['isUnique'], 'Boolean');
       if (data.hasOwnProperty('isRequired'))
         obj.isRequired = ApiClient.convertToType(data['isRequired'], 'Boolean');
+      if (data.hasOwnProperty('isFullTextSearch'))
+        obj.isFullTextSearch = ApiClient.convertToType(data['isFullTextSearch'], 'Boolean');
       if (data.hasOwnProperty('optionSetDefinitionId'))
         obj.optionSetDefinitionId = ApiClient.convertToType(data['optionSetDefinitionId'], 'String');
     }
@@ -142,6 +144,11 @@ FieldDto.prototype.isUnique = undefined;
  * @member {Boolean} isRequired
  */
 FieldDto.prototype.isRequired = undefined;
+
+/**
+ * @member {Boolean} isFullTextSearch
+ */
+FieldDto.prototype.isFullTextSearch = undefined;
 
 /**
  * @member {String} optionSetDefinitionId

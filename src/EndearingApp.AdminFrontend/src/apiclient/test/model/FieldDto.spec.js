@@ -45,6 +45,12 @@
         // expect(instance.id).to.be(expectedValueLiteral);
       });
 
+      it('should have the property customEntityId (base name: "customEntityId")', function() {
+        // TODO: update the code to test the property customEntityId
+        expect(instance).to.have.property('customEntityId');
+        // expect(instance.customEntityId).to.be(expectedValueLiteral);
+      });
+
       it('should have the property name (base name: "name")', function() {
         // TODO: update the code to test the property name
         expect(instance).to.have.property('name');
@@ -93,6 +99,12 @@
         // expect(instance.isNullable).to.be(expectedValueLiteral);
       });
 
+      it('should have the property isSystemField (base name: "isSystemField")', function() {
+        // TODO: update the code to test the property isSystemField
+        expect(instance).to.have.property('isSystemField');
+        // expect(instance.isSystemField).to.be(expectedValueLiteral);
+      });
+
       it('should have the property isIndexed (base name: "isIndexed")', function() {
         // TODO: update the code to test the property isIndexed
         expect(instance).to.have.property('isIndexed');
@@ -109,6 +121,12 @@
         // TODO: update the code to test the property isRequired
         expect(instance).to.have.property('isRequired');
         // expect(instance.isRequired).to.be(expectedValueLiteral);
+      });
+
+      it('should have the property isFullTextSearch (base name: "isFullTextSearch")', function() {
+        // TODO: update the code to test the property isFullTextSearch
+        expect(instance).to.have.property('isFullTextSearch');
+        // expect(instance.isFullTextSearch).to.be(expectedValueLiteral);
       });
 
       it('should have the property optionSetDefinitionId (base name: "optionSetDefinitionId")', function() {
