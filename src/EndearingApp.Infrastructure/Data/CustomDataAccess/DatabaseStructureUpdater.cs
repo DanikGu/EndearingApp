@@ -7,10 +7,9 @@ using EfSchemaCompare;
 using EndearingApp.Core.CustomDataAccsess.Interfaces;
 using EndearingApp.Core.CustomEntityAggregate.DbStructureModels;
 using EndearingApp.Core.CustomEntityAggregate.Interfaces;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace EndearingApp.Infrastructure.Data.CustomDataAccess;
 
@@ -122,12 +121,14 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         await CallDotnetCli("ef database update", folderPath);
         await CallDotnetCli("dotnet publish", folderPath);
     }
+
     private string GetPackageVersion(string packageName)
     {
         string version = "";
         var infrastructureAssembly = Assembly.GetAssembly(typeof(DatabaseStructureUpdater));
-        var packageAssembly = infrastructureAssembly?.
-            GetReferencedAssemblies().FirstOrDefault(x => x.Name == packageName);
+        var packageAssembly = infrastructureAssembly
+            ?.GetReferencedAssemblies()
+            .FirstOrDefault(x => x.Name == packageName);
         if (packageAssembly is not null)
         {
             version = packageAssembly.Version?.ToString(3) ?? "";
@@ -135,6 +136,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
 
         return version;
     }
+
     private void DisableWarningsAsErrors(string folderPath)
     {
         //<TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -287,7 +289,6 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             """
         );
 
-
         foreach (var table in dbStructure!.Tables!)
         {
             var relationshipsToThisTable = dbStructure
@@ -298,7 +299,8 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         }
         result.Append('\n');
         result.Append(GetDbContext(dbContextName, dbStructure, connectionString));
-        return ArrangeUsingRoslyn(result.ToString()); ;
+        // return ArrangeUsingRoslyn(result.ToString()); ;
+        return result.ToString();
     }
 
     private StringBuilder GetDbContext(
@@ -356,8 +358,6 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         return result;
     }
 
-
-
     private StringBuilder GetDbModelClass(Table table, Relationship[] toThisTable)
     {
         var result = new StringBuilder();
@@ -372,8 +372,6 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         result.Append("public class ").Append(table.Name).Append(":BaseEntity\n{\n");
         foreach (var field in table.Fields.Where(x => !x.IsSystemField))
         {
-
-
             result.AppendFormat(
                 "public {0} {1} {{ get; set; }}\n",
                 MapSystemTypeToCSharpType(field),
@@ -468,14 +466,20 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             fieldsConfig.Append(";\n");
         }
         fieldsConfig.Append(";\n");
-        fieldsConfig.AppendFormat("""
+        fieldsConfig.AppendFormat(
+            """
             builder.HasGeneratedTsVectorColumn(
                 p => p.SearchVector,
                 "english",  // Text search config
                 p => new {{ {0} }})  // Included properties
             .HasIndex(p => p.SearchVector)
             .HasMethod("GIN");
-            """, string.Join(", ", table.Fields.Where(x => x.IsFullTextSearch).Select(x => "p." + x.Name)));
+            """,
+            string.Join(
+                ", ",
+                table.Fields.Where(x => x.IsFullTextSearch).Select(x => "p." + x.Name)
+            )
+        );
         fieldsConfig.Append(";\n");
         result.AppendFormat(
             """
@@ -534,11 +538,11 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             _ => "DeleteBehavior.SetNull",
         };
     }
-    public string ArrangeUsingRoslyn(string csCode)
-    {
-        var tree = CSharpSyntaxTree.ParseText(csCode);
-        var root = tree.GetRoot().NormalizeWhitespace();
-        var ret = root.ToFullString();
-        return ret;
-    }
+    // public string ArrangeUsingRoslyn(string csCode)
+    // {
+    //     var tree = CSharpSyntaxTree.ParseText(csCode);
+    //     var root = tree.GetRoot().NormalizeWhitespace();
+    //     var ret = root.ToFullString();
+    //     return ret;
+    // }
 }

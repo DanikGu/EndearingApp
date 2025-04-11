@@ -254,8 +254,11 @@
     const { Formio } = await import("@formio/js");
     // @ts-ignore
     window.Formio = Formio;
-    // await import("/formBuilder/components/ActionButtons.js?url");
-    // await import("/formBuilder/components/LookupComponent.js?url");
+    await import("../../FormComponents/FormIoComponents/ActionButtons");
+    await import("../../FormComponents/FormIoComponents/LookupComponent");
+    await import("@formio/js/dist/formio.full.min.css");
+    await import("../AppComponents/styles/layout.css");
+
     customEntity = await getCustomEntity(form.customEntityId);
 
     if (form?.jsonSchema) {
