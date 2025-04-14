@@ -82,7 +82,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                 {
                     version = "-v " + version;
                 }
-                await CallDotnetCli($"add package {package} " + version, folderPath);
+                await CallDotnetCli($"add package {package} {version}", folderPath);
             }
             await CallDotnetCli("new tool-manifest", folderPath);
             DisableWarningsAsErrors(folderPath);
@@ -92,21 +92,21 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
 
             await CallDotnetCli("ef migrations add InitialCreate", folderPath);
             await CallDotnetCli("dotnet publish", folderPath);
-            if (GetIsDatabaseUpToDate())
-            {
-                ClearInitialMigration(folderPath + "/Migrations/");
-            }
-            try
-            {
-                await CallDotnetCli("ef database update", folderPath);
-            }
-            catch
-            {
-                throw new InvalidOperationException(
-                    "Initial migration of custom schema failed"
-                        + "Database structure have to be up to date or empty;"
-                );
-            }
+            //if (GetIsDatabaseUpToDate())
+            //{
+            //    ClearInitialMigration(folderPath + "/Migrations/");
+            //}
+            //try
+            //{
+            //    await CallDotnetCli("ef database update", folderPath);
+            //}
+            //catch
+            //{
+            //    throw new InvalidOperationException(
+            //        "Initial migration of custom schema failed"
+            //            + "Database structure have to be up to date or empty;"
+            //    );
+            //}
         }
         if (File.Exists(folderPath + "/AppContext.cs"))
         {

@@ -17,6 +17,8 @@ public class ActionController : Controller
     [HttpPost("UpdateDbStructure")]
     public async Task<IActionResult> UpdateDbStructure(CancellationToken cancellationToken)
     {
+        using var activity = Program.EndearingAppActivitySource.StartActivity("UpdateDbStructureActivity");
+        activity!.AddEvent(new System.Diagnostics.ActivityEvent("chlen"));
         await _mediator.Publish(new CustomDbStructureChangedEvent(), cancellationToken);
         return Ok();
     }
