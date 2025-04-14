@@ -21,8 +21,7 @@ jobs:
           ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.USER }}@${{ secrets.HOST }} <<EOF
             cd ~/endearingapp/EndearingApp/
             git pull origin test
-            docker container prune -f
-            docker volume prune -f
+            docker compose down
             docker compose pull
             docker compose up --build --force-recreate --detach
           EOF
