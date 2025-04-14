@@ -8,6 +8,8 @@ RUN dotnet publish -o out
 
 # Change the working directory to your published output
 WORKDIR /app/out
+RUN chown -R app:app /app
+USER app
 ENTRYPOINT ["dotnet", "EndearingApp.Web.dll"]
 
 
