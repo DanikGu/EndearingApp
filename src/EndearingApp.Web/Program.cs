@@ -1,4 +1,5 @@
-﻿using Ardalis.ListStartupServices;
+﻿using System.Diagnostics;
+using Ardalis.ListStartupServices;
 using Ardalis.Result.AspNetCore;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -15,14 +16,22 @@ using Microsoft.AspNetCore.OData.Batch;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OData.Edm;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Trace;
 using Serilog;
+using Serilog.Sinks.OpenTelemetry;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
-builder.Host.UseSerilog((_, config) => config.ReadFrom.Configuration(builder.Configuration));
-
+builder.Host
+    .UseSerilog((_, config) => config.ReadFrom.Configuration(builder.Configuration));
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.OpenTelemetry(
+        endpoint: "http://127.0.0.1:14268")
+    .CreateLogger();
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
     options.CheckConsentNeeded = context => true;
@@ -51,6 +60,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         new DefaultInfrastructureModule(builder.Environment.EnvironmentName == "Development")
     );
 });
+
 builder.Services.AddControllers(mvcOptions => mvcOptions.AddDefaultResultConvention())
     .AddOData(opt => opt.EnableQueryFeatures(null)
     .AddRouteComponents(
@@ -73,7 +83,31 @@ builder.Services.TryAddEnumerable(
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
-
+var otel = builder.Services.AddOpenTelemetry();
+var tracingOtlpEndpoint = builder.Configuration["OTLP_ENDPOINT_URL"];
+otel.WithTracing(tracing =>
+{
+    tracing.AddAspNetCoreInstrumentation();
+    tracing.AddHttpClientInstrumentation();
+    tracing.AddSource(Program.EndearingAppActivitySource.Name);
+    if (tracingOtlpEndpoint != null)
+    {
+        tracing.AddOtlpExporter(otlpOptions =>
+        {
+            otlpOptions.Endpoint = new Uri(tracingOtlpEndpoint!);
+        });
+    }
+    else
+    {
+        tracing.AddConsoleExporter();
+    }
+});
+//builder.Services.AddOpenTelemetry()
+//    
+//    .UseOtlpExporter(OtlpExportProtocol.HttpProtobuf, new Uri("http://localhost:4317"))
+//    .WithTracing(tracing => 
+//        tracing.AddSource("Endearing App")
+//    );
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -123,4 +157,6 @@ using (var scope = app.Services.CreateScope())
 app.Run();
 
 // Make the implicit Program.cs class public, so integration tests can reference the correct assembly for host building
-public partial class Program { }
+public partial class Program {
+    public static ActivitySource EndearingAppActivitySource = new ActivitySource("EndearingApp");
+}
