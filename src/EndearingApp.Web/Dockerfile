@@ -1,9 +1,14 @@
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS final
+FROM mcr.microsoft.com/dotnet/sdk:9.0
 WORKDIR /app
-COPY --from=publish /app/publish .
 
-# Ensure the 'app' user (created by default in MS images) owns the directory
+COPY . ./
+RUN dotnet restore
+RUN dotnet publish -o out
+
+WORKDIR /app/out
+
 RUN chown -R app:app /app
 
 USER app
+
 ENTRYPOINT ["dotnet", "EndearingApp.Web.dll"]
