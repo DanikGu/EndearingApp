@@ -6,7 +6,7 @@ namespace EndearingApp.Web.Config;
 
 public static class MapsterConfiguration
 {
-    public static void AddMapster(this IServiceCollection services)
+    public static void AddMappingGandalf(this IServiceCollection services)
     {
         var typeAdapterConfig = TypeAdapterConfig.GlobalSettings;
         Assembly applicationAssembly = typeof(BaseDto<,>).Assembly;

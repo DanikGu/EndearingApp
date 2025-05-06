@@ -1,6 +1,4 @@
 // @ts-nocheck
-import { Formio } from "@formio/js";
-
 /** @typedef EntityRef
  *  @prop {string} Id 
  *  @prop {string} Name 
@@ -63,6 +61,7 @@ class LookupComponent extends Formio.Components.components.component {
     this.inputRef = crypto.randomUUID();
     this.searchResultRef = crypto.randomUUID();
     this.linkContainerRef = crypto.randomUUID();
+    this.removeValueButtonRef = crypto.randomUUID();
   }
 
   render() {
@@ -88,30 +87,66 @@ class LookupComponent extends Formio.Components.components.component {
     searchResult.id = this.searchResultRef;
     searchResult.setAttribute("ref", this.searchResultRef);
 
-    const linkContainer = document.createElement('div');
-    linkContainer.id = this.linkContainerRef;
-    linkContainer.setAttribute("ref", this.linkContainerRef);
-    linkContainer.classList.add("mt-2");
+    const linkContainer = this.setupLinkContainer();
 
     return label.outerHTML + inputEl.outerHTML + searchResult.outerHTML + linkContainer.outerHTML;;
+  }
+  /** @return {HTMLDivElement} */
+  setupLinkContainer() {
+    const linkContainer = document.createElement('div');
+
+    if (this.linkContainerRef) {
+      linkContainer.id = this.linkContainerRef;
+      linkContainer.setAttribute("ref", this.linkContainerRef);
+    }
+
+    linkContainer.classList.add(
+      "form-control",
+      "d-flex",
+      "justify-content-between",
+      "align-items-center",
+      "mt-0"
+    );
+
+    const link = document.createElement("a");
+    link.href = "#";
+    link.textContent = "";
+
+    const removeButton = document.createElement("button");
+    removeButton.setAttribute("ref", this.removeValueButtonRef);
+    removeButton.type = "button";
+    removeButton.classList.add(
+      "btn",
+      "btn-sm"
+    );
+    removeButton.setAttribute("aria-label", "Remove");
+
+    const removeIcon = document.createElement("i");
+    removeIcon.classList.add("bi", "bi-trash");
+    removeButton.appendChild(removeIcon);
+
+    linkContainer.appendChild(link);
+    linkContainer.appendChild(removeButton);
+
+    return linkContainer;
   }
 
   attach(element) {
     this.loadRefs(element, {
       [this.inputRef]: 'single',
       [this.searchResultRef]: 'single',
-      [this.linkContainerRef]: 'single'
-    });
-    this.addEventListener(this.refs[this.inputRef], 'change', (event) => {
-      /** @type { HTMLDivElement } */
-      const input = this.refs[this.inputRef];
-      input.style.display = "none";
+      [this.linkContainerRef]: 'single',
+      [this.removeValueButtonRef]: 'single'
     });
     this.addEventListener(this.refs[this.inputRef], 'focus', (event) => {
       this.showResults(event.srcElement.value);
     });
     this.addEventListener(this.refs[this.inputRef], 'input', (event) => {
       this.showResults(event.srcElement.value);
+    });
+    this.addEventListener(this.refs[this.removeValueButtonRef], 'click', (event) => {
+      event.stopPropagation();
+      this.setValue(null);
     });
     return super.attach(element);
   }
@@ -147,31 +182,29 @@ class LookupComponent extends Formio.Components.components.component {
      * @param {EntityRef} item 
      */
   selectResult(item) {
-    this.refs[this.inputRef].value = item.Name;
     this.refs[this.searchResultRef].innerHTML = '';
-    this.showLink(item);
-    this.data[this.component.key] = item.Id;
-    this.updateValue(item.Id);
+    this.setValue(item.Id);
+    this.triggerChange();
   }
-  /** @param {EntityRef} item */
-  showLink(item) {
-    const linkContainer = this.refs[this.linkContainerRef];
-    const link = document.createElement('a');
-    link.href = `/${this.odataPath}/${this.entityName}/${item.Id}`;
-    link.textContent = item.Name;
-    link.classList.add("btn", "btn-link");
-    linkContainer.innerHTML = '';
-    linkContainer.appendChild(link);
+  setValue(value, flags = {}) {
+    this.loadExistingValue(value).then(x => super.setValue(value, flags));
   }
   /** Fetches an entity by its ID.
     * @param {string} id
     * @returns {Promise<EntityRef>} */
   async getEntityById(id) {
-    const resourceUrl = `/${this.odataPath}/${this.entityName}`;
-    const url = resourceUrl + `/${id}?select=id,name`;
-    const response = await fetch(url);
-    const result = await response.json();
-    return result;
+    try {
+      const resourceUrl = `/${this.odataPath}/${this.entityName}`;
+      const url = resourceUrl + `/${id}?select=id,name`;
+      const response = await fetch(url);
+      const result = await response.json();
+      const value = result?.value;
+      return value.length > 0 ? value[0] : null;
+    }
+    catch (ex) {
+      console.error(x);
+      return null;
+    }
   }
 
   /** @param {string} query 
@@ -188,17 +221,31 @@ class LookupComponent extends Formio.Components.components.component {
     return etns;
   }
 
-  async loadExistingValue() {
-    const value = this.getValue();
+  async loadExistingValue(value) {
+    console.log("loadExistingValue called", value);
+    let internalRefValue = null;
     if (value) {
-      const item = await this.getEntityById(value);
-      if (item) {
-        this.refs[this.inputRef].value = item.Name;
-        this.showLink(item);
-      }
+      internalRefValue = await this.getEntityById(value);
+    }
+    this.changeInternalValue(internalRefValue)
+  }
+  /** @param {EntityRef || null} item */
+  changeInternalValue(item) {
+    /** @type {HTMLDivElement} */
+    const linkContainer = this.refs[this.linkContainerRef];
+    const textInput = this.refs[this.inputRef];
+    if (item) {
+      linkContainer.classList.remove("d-none");
+      textInput.classList.add("d-none");
+      const link = linkContainer.querySelector("a");
+      link.href = `/${this.odataPath}/${this.entityName}/${item.Id}`;
+      link.textContent = item.Name;
+    }
+    else {
+      linkContainer.classList.add("d-none");
+      textInput.classList.remove("d-none");
     }
   }
-
 }
 
 Formio.Components.addComponent('lookup', LookupComponent);

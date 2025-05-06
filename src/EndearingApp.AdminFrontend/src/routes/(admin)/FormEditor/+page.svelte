@@ -22,7 +22,7 @@
   import { onMount } from "svelte";
   // @ts-ignore
   import { Input, Select, Label, Checkbox, Button } from "flowbite-svelte";
-  import { getTypeId } from "@utils/fieldtypesutils";
+  import fieldtypesutils, { getTypeId } from "@utils/fieldtypesutils";
   /** @typedef {import('../../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
 
   /** @type {OptionSetDefinitionDTO[]} */
@@ -313,19 +313,20 @@
     let entityName = customEntities.find(
       (x) => x.id === relationship.referencedCustomEntityId,
     )?.name;
-    let fieldName = customEntities
+    /** @type { FieldDto } */
+    let field = customEntities
       .find((x) => x.id === relationship.sourceCustomEntityId)
       ?.fields.find(
         (/** @type {FieldDto} */ x) => x.id === relationship.sourceFieldId,
-      ).name;
+      );
     return {
-      title: fieldName,
-      key: relationship.sourceFieldId,
+      title: field.displayName,
+      key: field.name,
       icon: "link",
       schema: {
-        label: fieldName,
+        label: field.displayName,
         type: "lookup",
-        key: relationship.sourceFieldId,
+        key: field.name,
         odataPath: "api/odata",
         entityName: entityName,
       },
