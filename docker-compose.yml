@@ -49,7 +49,7 @@ services:
       LOKI_ENDPOINT: "http://loki:3100"
       TEMPO_ENDPOINT_GRAFANA: "http://tempo:3200"
     ports:
-      - "3001:3000"
+      - "3002:3000"
     depends_on:
       - prometheus
       - loki
