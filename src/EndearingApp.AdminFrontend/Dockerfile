@@ -1,4 +1,3 @@
-# Use the official Node.js image
 FROM node:22.7.0 AS builder
 
 WORKDIR /app

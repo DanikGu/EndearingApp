@@ -1,0 +1,37 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: ${PROMETHEUS_ENDPOINT}
+    uid: PBFA97CFB590B2093
+  - name: Loki
+    type: loki
+    url: ${LOKI_ENDPOINT}
+    access: proxy
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    url: ${TEMPO_ENDPOINT_GRAFANA}
+    access: proxy
+    jsonData:
+      tracesToLogs:
+        datasourceUid: 'Loki'
+        tags: ['job', 'instance', 'pod', 'namespace', 'container_name', 'host.name', 'service.name', 'service.namespace']
+        mapTagNamesEnabled: false
+        spanStartTimeShift: '0s'
+        spanEndTimeShift: '0s'
+        filterByTraceID: true
+        filterBySpanID: false
+      tracesToMetrics:
+        datasourceUid: 'Prometheus'
+        tags: [{ key: 'service.name', value: 'service' }, { key: 'job' }]
+        queries:
+          - name: 'Service P99 Latency'
+            query: 'histogram_quantile(0.99, sum(rate(traces_spanmetrics_latency_bucket{$$__tags}[5m])) by (le, $$__tags))'
+          - name: 'Service Error Rate'
+            query: 'sum(rate(traces_spanmetrics_calls_total{status_code="STATUS_CODE_ERROR", $$__tags}[5m])) by ($$__tags) / sum(rate(traces_spanmetrics_calls_total{$$__tags}[5m])) by ($$__tags)'
+          - name: 'Service Request Rate'
+            query: 'sum(rate(traces_spanmetrics_calls_total{$$__tags}[5m])) by ($$__tags)'
+    isDefault: false 

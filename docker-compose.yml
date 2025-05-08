@@ -1,6 +1,77 @@
 version: '3.8'
 
 services:
+  prometheus:
+    image: prom/prometheus:v3.2.1
+    container_name: endearingapp_prometheus
+    volumes:
+     - ./src/TelemetryStuff/prometheus:/etc/prometheus:ro
+    command:
+      - "--web.enable-otlp-receiver"
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: endearingapp_loki
+    volumes:
+      - ./src/TelemetryStuff/loki:/etc/loki:ro
+      - loki_data:/loki
+    command:
+      - "-config.file=/etc/loki/loki-config.yaml"
+    ports:
+      - "3100:3100"
+
+  tempo:
+    image: grafana/tempo:latest
+    container_name: endearingapp_tempo
+    volumes:
+      - ./src/TelemetryStuff/tempo:/etc/tempo:ro
+      - tempo-data:/var/tempo
+    command:
+      - "-config.file=/etc/tempo/tempo.yaml"
+    ports:
+      - "4319:4319"
+      - "4320:4320"
+      - "3200:3200"
+      - "14268:14268"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: endearingapp_grafana
+    volumes:
+      - ./src/TelemetryStuff/grafana/config:/etc/grafana:ro
+      - ./src/TelemetryStuff/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    environment:
+      PROMETHEUS_ENDPOINT: "http://prometheus:9090"
+      LOKI_ENDPOINT: "http://loki:3100"
+      TEMPO_ENDPOINT_GRAFANA: "http://tempo:3200"
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+      - loki
+      - tempo
+
+  otelcollector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: endearingapp_otelcollector
+    volumes:
+      - ./src/TelemetryStuff/otelcollector/config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    command:
+      - "--config=/etc/otelcol-contrib/config.yaml"
+    environment:
+      PROMETHEUS_ENDPOINT: "http://prometheus:9090"
+      LOKI_ENDPOINT: "http://loki:3100"
+      TEMPO_ENDPOINT: "http://tempo:4319" 
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    depends_on:
+      - tempo
+
   postgres:
     image: postgres:15
     container_name: endearingapp_postgres
@@ -14,12 +85,24 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   backend:
-    image: mcr.microsoft.com/dotnet/aspnet:8.0
+    image: mcr.microsoft.com/dotnet/aspnet:9.0
     container_name: endearingapp_backend
     build:
       context: ./
       dockerfile: ./src/EndearingApp.Web/Dockerfile
     environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otelcollector:4317"
+      OTEL_SERVICE_NAME: "back"
+      OTEL_BLRP_SCHEDULE_DELAY: 1000
+      OTEL_BSP_SCHEDULE_DELAY: 1000
+      OTEL_DOTNET_EXPERIMENTAL_ASPNETCORE_DISABLE_URL_QUERY_REDACTION: true
+      OTEL_DOTNET_EXPERIMENTAL_HTTPCLIENT_DISABLE_URL_QUERY_REDACTION: true
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: true
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: true
+      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: in_memory
+      OTEL_METRICS_EXEMPLAR_FILTER: "trace_based"
+      OTEL_METRIC_EXPORT_INTERVAL: 1000
+      OTEL_TRACES_SAMPLER: "always_on"
       ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=endearingappdb;Username=postgres;Password=postgres"
       DOTNET_ROOT: "/usr/share/dotnet"
@@ -27,6 +110,7 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
+      - otelcollector
 
   frontend:
     image: node:22.7.0
@@ -35,12 +119,16 @@ services:
       context: ./src/EndearingApp.AdminFrontend
       dockerfile: Dockerfile
     environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otelcollector:4321"
+      OTEL_SERVICE_NAME: "front"
       VITE_API_URL: "http://backend:8080"
     ports:
       - "3000:3000"
     depends_on:
       - backend
-
+      - otelcollector
 volumes:
   postgres_data:
-
+  loki_data:
+  grafana_data:
+  tempo-data:

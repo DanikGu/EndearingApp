@@ -284,6 +284,7 @@
       // bind form to entityData
       // @ts-ignore
       formioForm?.on("change", function (eventData) {
+        console.log("Change called", eventData);
         // @ts-ignore
         formioForm?.alert?.remove();
         Object.keys(eventData.data).forEach((key) => {
