@@ -37,15 +37,11 @@ var grafana = builder.AddContainer("grafana", "grafana/grafana")
 var collector = builder.AddOpenTelemetryCollector("otelcollector", "../TelemetryStuff/otelcollector/config.yaml")
         .WithEnvironment("PROMETHEUS_ENDPOINT", $"{prometheus.GetEndpoint("http")}")
         .WithEnvironment("LOKI_ENDPOINT", loki.GetEndpoint("http"))
-        .WithEnvironment("TEMPO_ENDPOINT", $"{tempo.GetEndpoint("otlp-http")}")
-        .WaitFor(tempo)
-        .WaitFor(loki)
-        .WaitFor(prometheus);
+        .WithEnvironment("TEMPO_ENDPOINT", $"{tempo.GetEndpoint("otlp-http")}");
 
 var back = builder
         .AddProject<Projects.EndearingApp_Web>("back", launchProfileName: "EndearingApp.Web")
-        .WithReference(postgresdb)
-        .WaitFor(collector);
+        .WithReference(postgresdb);
 
 var front = builder.AddNpmApp("front", "../EndearingApp.AdminFrontend")
         .WithEndpoint(targetPort: 5173, scheme: "http", name: "http")

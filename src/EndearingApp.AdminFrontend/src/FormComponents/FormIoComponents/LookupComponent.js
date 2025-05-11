@@ -187,7 +187,7 @@ class LookupComponent extends Formio.Components.components.component {
     this.triggerChange();
   }
   setValue(value, flags = {}) {
-    this.loadExistingValue(value).then(x => super.setValue(value, flags));
+    this.loadExistingValue(value).then(() => super.setValue(value, flags));
   }
   /** Fetches an entity by its ID.
     * @param {string} id
@@ -195,14 +195,13 @@ class LookupComponent extends Formio.Components.components.component {
   async getEntityById(id) {
     try {
       const resourceUrl = `/${this.odataPath}/${this.entityName}`;
-      const url = resourceUrl + `/${id}?select=id,name`;
+      const url = resourceUrl + `(${id})?select=id,name`;
       const response = await fetch(url);
       const result = await response.json();
-      const value = result?.value;
-      return value.length > 0 ? value[0] : null;
+      return result;
     }
     catch (ex) {
-      console.error(x);
+      console.error(ex);
       return null;
     }
   }
