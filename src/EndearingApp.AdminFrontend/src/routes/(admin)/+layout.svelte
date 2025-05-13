@@ -30,7 +30,7 @@
   <NavHamburger></NavHamburger>
   <NavUl>
     <NavLi href="/DataCustomizations">Data Customizations</NavLi>
-    <NavLi href="/FormEditor">App Editor</NavLi>
+    <NavLi href="/FormEditor">Form Editor</NavLi>
     <NavLi href="/OdataExplorer">Odata Explorer</NavLi>
   </NavUl>
   <DarkMode btnClass={darkmodebtn}></DarkMode>
