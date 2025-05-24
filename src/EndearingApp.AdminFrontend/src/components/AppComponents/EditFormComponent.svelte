@@ -79,7 +79,6 @@
       const url = `/api/odata/${customEntity.name}`;
       entityData = await postData(url, entityData);
       alert(`Entity created`);
-      window.location.replace(window.location + "/" + entityData.Id);
       return;
     }
 
@@ -132,7 +131,7 @@
   };
   const loadEntityData = async () => {
     console.log(entityData);
-    if (!entityData.Id) {
+    if (!entityData?.Id) {
       return;
     }
     const url = `/api/odata/${customEntity.name}(${entityData.Id})`;

@@ -8,29 +8,40 @@
     OptionSetDefinitionsApi,
   } from "@apiclients";
   import { alertError, alertSuccsess, assignLoader } from "@utils/uiutils";
-  import { A, Label, Select, Button, Input } from "flowbite-svelte";
   import { onMount } from "svelte";
   import { browser } from "$app/environment";
   import { JSONEditor } from "svelte-jsoneditor";
   import EditFormComponent from "../../../components/AppComponents/EditFormComponent.svelte";
+  import {
+    Container,
+    Row,
+    Col,
+    Button,
+    Input,
+    Label,
+    FormGroup,
+  } from "@sveltestrap/sveltestrap";
+
   /** @typedef {import('svelte-jsoneditor').Mode} Mode */
+
   /** @type {string | null} */
   let selectedEntityId = null;
   $: typesItems = customEntities.map((x) => ({ value: x.id, name: x.name }));
+
   /** @type {FormDTO[]} */
   let forms = [];
   $: formsForEntity = !!selectedEntityId
     ? forms
-        .filter((x) => {
-          console.log(selectedEntityId);
-          return x.customEntityId === selectedEntityId;
-        })
+        .filter((x) => x.customEntityId === selectedEntityId)
         .map((x) => ({ value: x.id, name: x.name }))
     : [];
+
   /** @type {string | null} */
-  let selectedFormId;
+  let selectedFormId = null;
+
   /** @type {CustomeEntityDTO[]} */
   let customEntities = [];
+
   let loadCustomEntities = () => {
     let api = new CustomEntitiesApi();
     api.apiCustomEntitiesGet(
@@ -46,31 +57,33 @@
       },
     );
   };
+
   const loadForms = async () => {
     const api = new FormApi();
     forms = await new Promise((res) => {
       const callback = (
         /** @type {string} */ error,
-        /** @type {FormDTO[]} */ forms,
+        /** @type {FormDTO[]} */ retrievedForms,
       ) => {
-        if (forms) {
-          res(forms);
+        if (retrievedForms) {
+          res(retrievedForms);
           return;
         }
         if (error) {
-          alertError("Error while retriving forms");
+          alertError("Error while retrieving forms: " + error);
         }
         res([]);
       };
       api.apiFormGet(callback);
     });
-    console.log(forms);
   };
+
   /** @param {string} error */
   let handleError = (error) => {
     console.error(error);
-    alertError("Error occured: " + error);
+    alertError("Error occurred: " + error);
   };
+
   /** @type {OptionSetDefinitionDTO[]} */
   let optionSetDefinitions = [];
   let loadOptionSets = () => {
@@ -88,56 +101,76 @@
       },
     );
   };
+
   let loadData = async () => {
     loadCustomEntities();
     loadOptionSets();
     await loadForms();
   };
+
   onMount(async () => {
     await loadData();
   });
-  $: resourceUrl = selectedEntityId
-    ? window.location.origin +
-      "/api/odata/" +
-      customEntities.find((x) => x.id === selectedEntityId)?.name
-    : "";
+
+  $: resourceUrl =
+    selectedEntityId && browser
+      ? window.location.origin +
+        "/api/odata/" +
+        customEntities.find((x) => x.id === selectedEntityId)?.name
+      : "";
+
   $: firstPageUrl = resourceUrl
     ? resourceUrl + "?orderby=createdon%20desc"
     : "";
-  $: firstPageUrl, getFirstPage();
+
+  $: if (browser && firstPageUrl) getFirstPage();
+
   let getUrlValue = "";
+
   let content = {
     json: {},
   };
 
   const reloadFromInput = async () => {
-    firstPageUrl = getUrlValue;
-    let prom = getFirstPage();
-    assignLoader("Load data from: " + firstPageUrl, prom);
+    if (getUrlValue) {
+      firstPageUrl = getUrlValue;
+      let prom = getFirstPage();
+      assignLoader("Load data from: " + firstPageUrl, prom);
+    }
   };
+
   const getFirstPage = async () => {
-    if (!browser || !selectedEntityId) {
+    if (!browser || !selectedEntityId || !firstPageUrl) {
+      content.json = {};
+      getUrlValue = firstPageUrl;
       return;
     }
-    const response = await fetch(firstPageUrl, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    try {
+      const response = await fetch(firstPageUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-    if (!response.ok) {
-      alertError(`HTTP error! Status: ${response.status}`);
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      if (!response.ok) {
+        alertError(`HTTP error! Status: ${response.status}`);
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      let items = await response.json();
+      items = items.value;
+      content.json = items;
+      getUrlValue = firstPageUrl;
+    } catch (error) {
+      handleError("Failed to fetch first page data: " + error);
+      content.json = {};
+      getUrlValue = firstPageUrl;
     }
-
-    let items = await response.json();
-    items = items.value;
-    content.json = items;
-    getUrlValue = firstPageUrl;
   };
 
   const putData = async (url = "", data = {}) => {
+    if (!browser) return;
     const response = await fetch(url, {
       method: "PUT",
       headers: {
@@ -154,7 +187,9 @@
     alertSuccsess(`Entity updated`);
     return await response.json();
   };
+
   const postData = async (url = "", data = {}) => {
+    if (!browser) return;
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -171,97 +206,220 @@
     alertSuccsess(`Entity created`);
     return await response.json();
   };
+
   /** @type {string | null } */
   let editedEntityId = null;
+
   const loadEntity = async () => {
+    if (!browser) return;
     const id = prompt("Put entity id");
     if (!id) {
       return;
     }
     editedEntityId = id;
   };
+
   const newEntity = () => {
     editedEntityId = null;
   };
+
   /** @returns {Mode} */
   // @ts-ignore
   const getMode = () => "table";
-  /** @param {Object} data */
-  let onFormSubmit = (data) => {
-    console.log(data);
+
+  /** @param { string } formId
+   ** @returns { Promise<FormDTO | null> } */
+  const loadFormById = (formId) => {
+    return new Promise((res) => {
+      const formApi = new FormApi();
+      // @ts-ignore
+      const callback = (error, form) => {
+        if (form) {
+          res(form);
+          return;
+        }
+        res(null);
+      };
+      formApi.apiFormIdGet(formId, callback);
+    });
+  };
+  /**
+   * @param { string } customEntityId
+   * @returns { Promise<CustomeEntityDTO> }
+   */
+  const getCustomEntity = async (customEntityId) => {
+    return new Promise((res) => {
+      const api = new CustomEntitiesApi();
+      // @ts-ignore
+      let callBack = (error, customEntity) => {
+        res(customEntity ?? {});
+      };
+      api.apiCustomEntitiesIdGet(customEntityId, callBack);
+    });
+  };
+  /**
+   * @param { FormDTO } form
+   * @param { string } entityId
+   * @returns { Promise<Object | null> } */
+  const loadEntityData = async (form, entityId) => {
+    const customEntity = await getCustomEntity(form.customEntityId);
+    const url = `/api/odata/${customEntity.name}(${entityId})`;
+    const response = await fetch(url);
+
+    if (response.status === 404) {
+      return null;
+    }
+
+    if (response.status === 200) {
+      return await response.json();
+    }
+    throw new Error(
+      `Request to load entity data: ${url} failed with status: ${response.status}`,
+    );
+  };
+  /** @returns {Promise<{form: FormDTO, data: Object | null}>} */
+  const loadEntityWithForm = async () => {
+    if (!selectedFormId) {
+      throw "ne tuda";
+    }
+    const form = await loadFormById(selectedFormId);
+    if (!form) {
+      throw "ne tuda";
+    }
+    const entityData =
+      !!form && !!editedEntityId
+        ? await loadEntityData(form, editedEntityId)
+        : {};
+    return {
+      form,
+      data: entityData,
+    };
   };
 </script>
 
-<div class="flex flex-col p-3 w-full gap-1">
-  <Label>
-    Page for testing and exploring odata resources generated from data structure
-    defined in Data Customizations tab
-  </Label>
-  <Label>Odata Metadata</Label>
-  <A href="/api/odata/$metadata" target="response">/api/odata/$metadata</A>
-  <div class="flex flex-row gap-4">
-    <div>
-      <Label>Choose Entity</Label>
-      <Select class="w-36" bind:value={selectedEntityId} items={typesItems} />
-    </div>
-    <div>
-      <Label>Choose Form</Label>
-      <Select
-        disabled={!selectedEntityId}
-        class="w-48"
-        bind:value={selectedFormId}
-        items={formsForEntity}
-      />
-    </div>
-  </div>
-  <div class="flex flex-row gap-3">
-    <div class="flex flex-row gap-3 w-1/2">
+<Container fluid class="vh-100 d-flex flex-column p-3">
+  <Row class="mb-3">
+    <Col>
+      <p class="text-muted">
+        Page for testing and exploring OData resources generated from data
+        structure defined in Data Customizations tab.
+      </p>
+      <h6>OData Metadata</h6>
+      <p>
+        <a href="/api/odata/$metadata" target="_blank" rel="noopener noreferrer"
+          >/api/odata/$metadata</a
+        >
+      </p>
+    </Col>
+  </Row>
+
+  <Row class="mb-3 gx-4">
+    <Col md="auto">
+      <FormGroup>
+        <Label for="entitySelect">Choose Entity</Label>
+        <Input
+          type="select"
+          id="entitySelect"
+          bind:value={selectedEntityId}
+          on:change={() => {
+            selectedFormId = null;
+            editedEntityId = null;
+          }}
+        >
+          <option value={null} selected={selectedEntityId === null}
+            >Select an Entity...</option
+          >
+          {#each typesItems as item (item.value)}
+            <option value={item.value}>{item.name}</option>
+          {/each}
+        </Input>
+      </FormGroup>
+    </Col>
+    <Col md="auto">
+      <FormGroup>
+        <Label for="formSelect">Choose Form</Label>
+        <Input
+          type="select"
+          id="formSelect"
+          bind:value={selectedFormId}
+          disabled={!selectedEntityId || formsForEntity.length === 0}
+          on:change={() => (editedEntityId = null)}
+        >
+          <option value={null} selected={selectedFormId === null}
+            >Select a Form...</option
+          >
+          {#each formsForEntity as item (item.value)}
+            <option value={item.value}>{item.name}</option>
+          {/each}
+          {#if formsForEntity.length === 0 && selectedEntityId}
+            <option value={null} disabled>No forms available</option>
+          {/if}
+        </Input>
+      </FormGroup>
+    </Col>
+  </Row>
+
+  <Row class="mb-3 gx-3 align-items-center">
+    <Col md="6" class="d-flex flex-wrap gap-2 mb-2 mb-md-0">
       <Button
         disabled={!selectedEntityId || !selectedFormId}
-        onclick={newEntity}
+        on:click={newEntity}
+        size="sm"
       >
         New Entity
       </Button>
       <Button
         disabled={!selectedEntityId || !selectedFormId}
-        onclick={loadEntity}
+        on:click={loadEntity}
+        size="sm"
       >
         Load Entity
       </Button>
-      <div class="dark:text-white">{resourceUrl}</div>
-    </div>
-    <div class="flex flex-row gap-3 w-1/2">
-      <Button disabled={!selectedEntityId} onclick={reloadFromInput}>
+      <div class="ms-md-auto align-self-center text-break">
+        <small class="text-muted">{resourceUrl}</small>
+      </div>
+    </Col>
+    <Col md="6" class="d-flex gap-2">
+      <Button disabled={!selectedEntityId} on:click={reloadFromInput} size="sm">
         Reload
       </Button>
       <Input
-        class="dark:text-white"
+        class="flex-grow-1"
         readonly={!selectedEntityId}
         bind:value={getUrlValue}
-      ></Input>
-    </div>
-  </div>
-  <div class="flex flex-row gap-3">
-    <div id="json-editor-form" class="h-svh p-3 w-1/2">
-      {#key selectedFormId}
-        {#key editedEntityId}
-          {#if selectedFormId}
-            <iframe
-              class="h-full w-full"
-              title="editform"
-              src={"/Edit/" +
-                selectedFormId +
-                (editedEntityId ? "/" + editedEntityId : "")}
-            >
-            </iframe>
-          {/if}
+        placeholder="OData URL"
+        bsSize="sm"
+      />
+    </Col>
+  </Row>
+
+  <Row class="g-3 flex-grow-1" style="min-height: 0;">
+    <Col md="6" class="d-flex flex-column p-1 border-1">
+      {#if selectedFormId}
+        {#key selectedFormId + (editedEntityId || "new")}
+          {#await loadEntityWithForm() then props}
+            <EditFormComponent
+              form={props.form}
+              entityData={!!editedEntityId ? props.data : {}}
+            ></EditFormComponent>
+          {/await}
         {/key}
-      {/key}
-    </div>
-    <div class="w-1/2">
-      {#key content}
-        <JSONEditor bind:content mode={getMode()}></JSONEditor>
-      {/key}
-    </div>
-  </div>
-</div>
+      {:else}
+        <div
+          class="w-100 h-100 d-flex justify-content-center align-items-center text-muted"
+        >
+          Select an entity and form to see the editor.
+        </div>
+      {/if}
+    </Col>
+    <Col md="6" class="d-flex flex-column p-1">
+      <div
+        class="flex-grow-1 d-flex flex-column border rounded overflow-hidden"
+      >
+        {#key content}
+          <JSONEditor bind:content mode={getMode()} />
+        {/key}
+      </div>
+    </Col>
+  </Row>
+</Container>

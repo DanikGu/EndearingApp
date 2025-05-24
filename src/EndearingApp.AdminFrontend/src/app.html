@@ -5,11 +5,85 @@
   <meta charset="utf-8" />
   <link rel="icon" href="%sveltekit.assets%/favicon.png" />
   <meta name="viewport" content="width=device-width" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
   %sveltekit.head%
+  <script>
+    (function () {
+      const THEME_KEY = 'themePreference';
+      const htmlElement = document.documentElement;
+      const callbacks = [];
 
+      function applyTheme(theme) {
+        const currentBsTheme = htmlElement.getAttribute('data-bs-theme');
+        if (theme === 'dark') {
+          if (currentBsTheme !== 'dark') {
+            htmlElement.setAttribute('data-bs-theme', 'dark');
+          }
+          htmlElement.classList.add('dark');
+        } else {
+          if (currentBsTheme !== 'light') {
+            htmlElement.setAttribute('data-bs-theme', 'light');
+          }
+          htmlElement.classList.remove('dark');
+        }
+        try {
+          localStorage.setItem(THEME_KEY, theme);
+        } catch (e) {
+          console.error('Failed to save theme to localStorage:', e);
+        }
+        try {
+          callbacks.forEach(x => x());
+        } catch (ex) {
+          console.error(ex);
+        }
+      }
+
+      let initialTheme = htmlElement.getAttribute('data-bs-theme');
+      const storedTheme = localStorage.getItem(THEME_KEY);
+
+      if (initialTheme) {
+        applyTheme(initialTheme);
+      } else if (storedTheme) {
+        applyTheme(storedTheme);
+      } else {
+        applyTheme('light');
+      }
+      const observer = new MutationObserver((mutationsList) => {
+        for (const mutation of mutationsList) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'data-bs-theme') {
+            const newTheme = htmlElement.getAttribute('data-bs-theme');
+            if (newTheme) {
+              applyTheme(newTheme);
+            } else {
+              applyTheme('light');
+            }
+          }
+        }
+      });
+
+      observer.observe(htmlElement, {attributes: true});
+
+      window.togglePageTheme = function () {
+        const currentBsTheme = htmlElement.getAttribute('data-bs-theme');
+        const newThemeToSet = currentBsTheme === 'dark' ? 'light' : 'dark';
+        htmlElement.setAttribute('data-bs-theme', newThemeToSet);
+      };
+
+      window.addChangeThemeCallback = function (callbk) {
+        callbacks.push(callbk);
+      }
+
+      window.getCurrentTheme = function () {
+        const currentBsTheme = htmlElement.getAttribute('data-bs-theme');
+        return currentBsTheme;
+      }
+
+    })();
+  </script>
 </head>
 
-<body data-sveltekit-preload-data="hover" class="relative bg-white dark:bg-gray-800">
+<body data-sveltekit-preload-data="hover">
   <div style="display: contents">%sveltekit.body%</div>
 </body>
 

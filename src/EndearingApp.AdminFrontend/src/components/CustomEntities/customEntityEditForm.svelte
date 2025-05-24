@@ -1,27 +1,23 @@
 <script>
   import {
     Table,
-    TableBody,
-    TableBodyCell,
-    TableBodyRow,
-    TableHead,
-    TableHeadCell,
     Label,
     Input,
-    Textarea,
     Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
     Button,
-  } from "flowbite-svelte";
+    FormGroup,
+    Row,
+    Col,
+    Icon,
+    Theme,
+  } from "@sveltestrap/sveltestrap";
   import { getTypeName } from "../../utils/fieldtypesutils";
-  import {
-    EditOutline,
-    TrashBinOutline,
-    PlusOutline,
-  } from "flowbite-svelte-icons";
   import FieldEditForm from "./fieldEditForm.svelte";
   import { FieldDto, RelationshipDTO } from "@apiclients/src";
   import { assignLoader, assignBlockingLoader } from "../../utils/uiutils";
-  import { onMount } from "svelte";
   import RelationshipEditForm from "./relationshipEditForm.svelte";
   import {
     applyChangesToDbApi,
@@ -35,7 +31,7 @@
 
   /** @typedef {import('../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
   /** @typedef {import('../../apiclient/src/model/FieldDto').default} FieldEntity */
-  /** @typedef {import('../../apiclient/src/model/RelationshipDTO').default} RelationshipDTO  */
+  /** @typedef {import('../../apiclient/src/model/RelationshipDTO').default} RelationshipDTO */
 
   /** @type {CustomEntity[]} */
   export let customEntities;
@@ -68,38 +64,48 @@
   let isNewRelationship = false;
 
   /** @type {HTMLDivElement | null} */
-  let form;
+  let formContainer;
 
   /** @param {FieldEntity} field **/
   let editField = (field) => {
     isNewField = false;
-    editFieldModal = true;
     editedField = field;
+    editFieldModal = true;
   };
 
   /** @param {RelationshipDTO} relationship **/
   let editRelationship = (relationship) => {
     isNewRelationship = false;
-    editRelationshipModal = true;
     editedRelationship = relationship;
+    editRelationshipModal = true;
   };
 
   let addNewRelationship = () => {
     isNewRelationship = true;
-    editRelationshipModal = true;
     editedRelationship = new RelationshipDTO();
-    customEntity.relationships = [
-      editedRelationship,
-      ...customEntity.relationships,
-    ];
-    editedRelationship.sourceCustomEntityId = customEntity.id;
+    // if (customEntity && customEntity.relationships) {
+    //   customEntity.relationships = [
+    //     editedRelationship,
+    //     ...customEntity.relationships,
+    //   ];
+    // } else if (customEntity) {
+    //   customEntity.relationships = [editedRelationship];
+    // }
+    // if (editedRelationship && customEntity) {
+    //   editedRelationship.sourceCustomEntityId = customEntity.id;
+    // }
+    editRelationshipModal = true;
   };
 
   let addNewField = () => {
     isNewField = true;
-    editFieldModal = true;
     editedField = new FieldDto();
-    customEntity.fields = [editedField, ...customEntity.fields];
+    // if (customEntity && customEntity.fields) {
+    //   customEntity.fields = [editedField, ...customEntity.fields];
+    // } else if (customEntity) {
+    //   customEntity.fields = [editedField];
+    // }
+    editFieldModal = true;
   };
 
   /** @param {string} id */
@@ -125,6 +131,7 @@
     const prom = saveFieldApi(editedField, customEntity);
     assignLoader("Saving field", prom);
     await prom;
+    editFieldModal = false;
     reloadParentData();
   };
   const saveRelationship = async () => {
@@ -134,19 +141,20 @@
     const prom = saveRelationshipApi(editedRelationship, customEntity);
     assignLoader("Saving relationship", prom);
     await prom;
+    editRelationshipModal = false;
     reloadParentData();
   };
 
   const deleteCustomEntity = async () => {
     const prom = deleteCustomEntityApi(customEntity);
-    assignBlockingLoader("Deleteing Entity", prom, form);
+    assignBlockingLoader("Deleting Entity", prom, formContainer);
     await prom;
     reloadParentData();
   };
 
   const saveCustomEntity = async () => {
     const prom = saveCustomEntityApi(isNew, customEntity);
-    assignBlockingLoader("Saving entity", prom, form);
+    assignBlockingLoader("Saving entity", prom, formContainer);
     const [updatedEntity, error] = await prom;
     if (updatedEntity) {
       customEntity.id = updatedEntity.id;
@@ -156,165 +164,271 @@
   };
   const applyChangesToDb = () => {
     const prom = applyChangesToDbApi();
-    assignBlockingLoader("Updating Db", prom);
+    assignBlockingLoader("Updating Db", prom, formContainer);
   };
 </script>
 
-<div class="relative flex flex-col" bind:this={form}>
-  <div class="flex flex-row justify-between">
-    <div class="grid grid-cols-2 gap-4">
-      <div class="mb-6 max-w-48 p-2">
-        <Label for="large-input" class="block mb-2">Display Name</Label>
-        <Input
-          placeholder="Name of Entity"
-          bind:value={customEntity.displayName}
-        />
-      </div>
-      <div class="mb-6 max-w-48 p-2">
-        <Label for="large-input" class="block mb-2">Name</Label>
-        <Input
-          disabled={!isNew}
-          placeholder="Logical name"
-          bind:value={customEntity.name}
-        />
-      </div>
-      <div class="mb-6 max-w-48 p-2">
-        <Label for="large-input" class="block mb-2">Description</Label>
-        <Textarea
-          placeholder="Description"
-          bind:value={customEntity.description}
-        />
-      </div>
-    </div>
-    <div class="flex flex-row gap-3 p-2 mb-auto">
-      <Button
-        on:click={applyChangesToDb}
-        class="h-10 mx-0"
-        outline
-        color="purple"
-        >Apply to DB
+<div class="position-relative d-flex flex-column p-3" bind:this={formContainer}>
+  <Row class="justify-content-between mb-4">
+    <Col md="7">
+      <Row class="g-3">
+        <Col md="6">
+          <FormGroup>
+            <Label for="customEntityDisplayName" class="mb-2">
+              Display Name
+            </Label>
+            <Input
+              id="customEntityDisplayName"
+              placeholder="Name of Entity"
+              bind:value={customEntity.displayName}
+            />
+          </FormGroup>
+        </Col>
+        <Col md="6">
+          <FormGroup>
+            <Label for="customEntityName" class="mb-2">Name</Label>
+            <Input
+              id="customEntityName"
+              disabled={!isNew}
+              placeholder="Logical name"
+              bind:value={customEntity.name}
+            />
+          </FormGroup>
+        </Col>
+        <Col md="12">
+          <FormGroup>
+            <Label for="customEntityDescription" class="mb-2">Description</Label
+            >
+            <Input
+              type="textarea"
+              id="customEntityDescription"
+              placeholder="Description"
+              bind:value={customEntity.description}
+            />
+          </FormGroup>
+        </Col>
+      </Row>
+    </Col>
+    <Col md="auto" class="d-flex flex-row align-items-start gap-2 mt-3 mt-md-0">
+      <Button on:click={applyChangesToDb} outline color="info">
+        Apply to DB
       </Button>
-      <Button
-        on:click={saveCustomEntity}
-        class="h-10 mx-0"
-        outline
-        color="green"
-        >Save
+      <Button on:click={saveCustomEntity} outline color="success">
+        Save Entity
       </Button>
-      <Button
-        on:click={deleteCustomEntity}
-        class="h-10 mx-0"
-        outline
-        color="red"
-        >Delete
-      </Button>
-    </div>
-  </div>
-  <div class="flex flex-row w-full gap-10">
-    <div class="flex flex-col max-h-full overflow-auto w-1/2 gap-1 p-2">
-      <div class="flex max-w-full justify-between">
-        <Label class="text-xl">Columns</Label>
+      {#if !isNew}
+        <Button on:click={deleteCustomEntity} outline color="danger">
+          Delete Entity
+        </Button>
+      {/if}
+    </Col>
+  </Row>
+
+  <Row class="g-4">
+    <Col md="6" class="d-flex flex-column" style="max-height: 500px;">
+      <div
+        class="d-flex justify-content-between align-items-center mb-2 p-2 pb-0"
+      >
+        <h2 class="mb-0 pb-0">Columns</h2>
         <Button
-          color="alternative"
-          on:click={() => addNewField()}
-          size="xs"
-          disabled={isNew}
+          size="sm"
+          color="success"
+          outline
+          on:click={addNewField}
+          disabled={isNew || !customEntity?.id}
+          title="Add new column"
         >
-          <PlusOutline class="text-xl"></PlusOutline>
+          <Icon name="plus-lg" />
         </Button>
       </div>
-      {#key customEntity.id}
-        <Table hoverable={true} shadow items={customEntity.fields}>
-          <TableHead>
-            <TableHeadCell class="sticky top-0">Name</TableHeadCell>
-            <TableHeadCell class="sticky top-0">Type</TableHeadCell>
-            <TableHeadCell class="sticky top-0">Actions</TableHeadCell>
-          </TableHead>
-          <TableBody tableBodyClass="divide-y">
-            <TableBodyRow slot="row" let:item>
-              <TableBodyCell>{item.name}</TableBodyCell>
-              <TableBodyCell>{getTypeName(item.type)}</TableBodyCell>
-              <TableBodyCell>
-                <div class="flex flex-row pad-2">
-                  <button on:click={() => editField(item)}>
-                    <EditOutline />
-                  </button>
-                  <button on:click={() => deleteField(item.id)}>
-                    <TrashBinOutline />
-                  </button>
-                </div>
-              </TableBodyCell>
-            </TableBodyRow>
-          </TableBody>
-        </Table>
-      {/key}
-    </div>
-    <div class="flex flex-col max-h-full overflow-auto w-1/2 gap-1 p-2">
-      <div class="flex max-w-full justify-between">
-        <Label class="text-xl">Relationships</Label>
-        <Button
-          color="alternative"
-          size="xs"
-          disabled={isNew}
-          onclick={addNewRelationship}
+      {#if customEntity?.fields && customEntity?.fields.length > 0}
+        <div
+          class="overflow-auto flex-grow-1 border-2 border-gray-100 dark:border-gray-600 rounded"
         >
-          <PlusOutline class="text-xl"></PlusOutline>
+          <table class="table table-hover">
+            <thead class="sticky-top">
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody
+              class="table-grup-divider border-gray-100 dark:border-gray-600"
+            >
+              {#each customEntity.fields as field (field.id || field.name)}
+                <tr class="p-1">
+                  <td>{field.name}</td>
+                  <td>{getTypeName(field.type)}</td>
+                  <td>
+                    <div class="d-flex gap-1">
+                      <Button
+                        size="sm"
+                        color="success"
+                        outline
+                        on:click={() => editField(field)}
+                        title="Edit field"
+                      >
+                        <Icon name="pencil-square" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        color="danger"
+                        outline
+                        on:click={() => deleteField(field.id)}
+                        title="Delete field"
+                        disabled={field.isSystemField}
+                      >
+                        <Icon name="trash3" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
+      {:else}
+        <p class="text-muted p-2">No columns defined yet.</p>
+      {/if}
+    </Col>
+
+    <Col md="6" class="d-flex flex-column" style="max-height: 500px;">
+      <div
+        class="d-flex justify-content-between align-items-center mb-2 p-2 pb-0"
+      >
+        <h5 class="mb-0">Relationships</h5>
+        <Button
+          size="sm"
+          color="success"
+          outline
+          on:click={addNewRelationship}
+          disabled={isNew || !customEntity || !customEntity.id}
+          title="Add new relationship"
+        >
+          <Icon name="plus-lg" />
         </Button>
       </div>
-      {#key customEntity.id}
-        <Table hoverable={true} shadow items={customEntity.relationships}>
-          <TableHead>
-            <TableHeadCell class="sticky top-0">Constraint Name</TableHeadCell>
-            <TableHeadCell class="sticky top-0">Actions</TableHeadCell>
-          </TableHead>
-          <TableBody tableBodyClass="divide-y">
-            <TableBodyRow slot="row" let:item>
-              <TableBodyCell>{item.constraintName}</TableBodyCell>
-              <TableBodyCell>
-                <div class="flex flex-row pad-2">
-                  <button on:click={() => editRelationship(item)}>
-                    <EditOutline />
-                  </button>
-                  <button on:click={() => deleteRelationship(item.id)}>
-                    <TrashBinOutline />
-                  </button>
-                </div>
-              </TableBodyCell>
-            </TableBodyRow>
-          </TableBody>
-        </Table>
-      {/key}
-    </div>
-  </div>
+      {#if customEntity?.relationships && customEntity?.relationships.length > 0}
+        <div
+          class="overflow-auto flex-grow-1 border-2 border-gray-100 dark:border-gray-600 rounded"
+        >
+          <table class="table table-hover">
+            <thead class="sticky-top">
+              <tr>
+                <th>Constraint Name</th>
+                <th>Target Entity</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {#each customEntity.relationships as relationship (relationship.id || relationship.constraintName)}
+                <tr>
+                  <td>{relationship.constraintName}</td>
+                  <td>
+                    {customEntities.find(
+                      (ce) => ce.id === relationship.targetCustomEntityId,
+                    )?.displayName || relationship.targetCustomEntityId}
+                  </td>
+                  <td>
+                    <div class="d-flex gap-1">
+                      <Button
+                        size="sm"
+                        outline
+                        color="success"
+                        on:click={() => editRelationship(relationship)}
+                        title="Edit relationship"
+                      >
+                        <Icon name="pencil-square" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        color="danger"
+                        outline
+                        on:click={() => deleteRelationship(relationship.id)}
+                        title="Delete relationship"
+                      >
+                        <Icon name="trash3" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
+      {:else}
+        <p class="text-muted p-2">No relationships defined yet.</p>
+      {/if}
+    </Col>
+  </Row>
 </div>
-<Modal title="Edit Field" bind:open={editFieldModal} autoclose>
-  {#if !!editedField}
-    <FieldEditForm bind:editedField bind:isNew={isNewField}></FieldEditForm>
-  {:else}
-    <div>Something went wrong</div>
-  {/if}
-  <svelte:fragment slot="footer">
-    <Button color="dark">Cancel</Button>
-    <Button on:click={saveField} disabled={!!editedField?.isSystemField}>
-      Save
+
+<Modal
+  body
+  isOpen={editFieldModal}
+  toggle={() => (editFieldModal = !editFieldModal)}
+  size="lg"
+  backdrop={false}
+  fade={false}
+  modalClassName="bg-opacity-15 bg-gray-900 dark:bg-gray-100 dark:bg-opacity-15"
+>
+  <ModalHeader toggle={() => (editFieldModal = !editFieldModal)}>
+    {isNewField ? "Add New Field" : "Edit Field"}
+  </ModalHeader>
+  <ModalBody>
+    {#if editedField}
+      <FieldEditForm bind:editedField bind:isNew={isNewField}></FieldEditForm>
+    {:else}
+      <div>Loading field data or an error occurred.</div>
+    {/if}
+  </ModalBody>
+  <ModalFooter>
+    <Button color="secondary" on:click={() => (editFieldModal = false)}>
+      Cancel
     </Button>
-  </svelte:fragment>
+    <Button
+      color="primary"
+      on:click={saveField}
+      disabled={!!editedField?.isSystemField || !editedField}>Save</Button
+    >
+  </ModalFooter>
 </Modal>
-<Modal title="Edit Constraint" bind:open={editRelationshipModal} autoclose>
-  {#if !!editedRelationship}
-    <RelationshipEditForm
-      currentEntity={customEntity}
-      relationship={editedRelationship}
-      {customEntities}
-      isNew={isNewRelationship}
-    ></RelationshipEditForm>
-  {:else}
-    <div>Something went wrong</div>
-  {/if}
-  <svelte:fragment slot="footer">
-    <Button color="dark">Cancel</Button>
-    <Button on:click={saveRelationship} disabled={!isNewRelationship}>
+
+<Modal
+  body
+  isOpen={editRelationshipModal}
+  toggle={() => (editRelationshipModal = !editRelationshipModal)}
+  size="lg"
+  backdrop={false}
+  fade={false}
+  modalClassName="bg-opacity-15 bg-gray-900 dark:bg-gray-100 dark:bg-opacity-15"
+>
+  <ModalHeader toggle={() => (editRelationshipModal = !editRelationshipModal)}>
+    {isNewRelationship ? "Add New Relationship" : "Edit Relationship"}
+  </ModalHeader>
+  <ModalBody>
+    {#if editedRelationship && customEntity}
+      <RelationshipEditForm
+        currentEntity={customEntity}
+        bind:relationship={editedRelationship}
+        {customEntities}
+        bind:isNew={isNewRelationship}
+      ></RelationshipEditForm>
+    {:else}
+      <div>Loading relationship data or an error occurred.</div>
+    {/if}
+  </ModalBody>
+  <ModalFooter>
+    <Button color="secondary" on:click={() => (editRelationshipModal = false)}>
+      Cancel
+    </Button>
+    <Button
+      color="primary"
+      on:click={saveRelationship}
+      disabled={!editedRelationship}
+    >
       Save
     </Button>
-  </svelte:fragment>
+  </ModalFooter>
 </Modal>

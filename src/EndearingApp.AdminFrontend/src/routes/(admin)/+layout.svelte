@@ -3,37 +3,67 @@
   import { ensureTypeConfig } from "../../utils/fieldtypesutils";
   import "../../app.css";
   import {
-    DarkMode,
+    Nav,
     Navbar,
-    NavBrand,
-    NavLi,
-    NavUl,
-    NavHamburger,
-  } from "flowbite-svelte";
-  let darkmodebtn =
-    "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-lg p-2.5  z-50";
+    NavItem,
+    NavbarBrand,
+    NavLink,
+    ThemeToggler,
+    Button,
+    Row,
+    Icon,
+    Col,
+  } from "@sveltestrap/sveltestrap";
+  let currentColorMode = "dark";
+  const toggleColorMode = () => {
+    // @ts-ignore
+    window.togglePageTheme();
+    // @ts-ignore
+    currentColorMode = window.getCurrentTheme();
+  };
   onMount(() => {
     ensureTypeConfig();
+    // @ts-ignore
+    currentColorMode = window.getCurrentTheme();
   });
 </script>
 
 <Navbar>
-  <NavBrand href="/">
-    <div class="bg-white p-2 rounded-lg me-3">
-      <img src="/EndearingApp.svg" class="h-5 sm:h-9" alt="App Logo" />
-    </div>
-    <span
-      class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"
-      >EndearingApp</span
-    >
-  </NavBrand>
-  <NavHamburger></NavHamburger>
-  <NavUl>
-    <NavLi href="/DataCustomizations">Data Customizations</NavLi>
-    <NavLi href="/FormEditor">Form Editor</NavLi>
-    <NavLi href="/OdataExplorer">Odata Explorer</NavLi>
-  </NavUl>
-  <DarkMode btnClass={darkmodebtn}></DarkMode>
+  <NavbarBrand href="/">
+    <Row>
+      <div class="w-auto">
+        <div class="bg-white p-2 rounded-lg me-3">
+          <img src="/EndearingApp.svg" class="h-5 sm:h-9" alt="App Logo" />
+        </div>
+      </div>
+      <Col xs="6" class="justify-items-center content-center">
+        <div>EndearingApp</div>
+      </Col>
+    </Row>
+  </NavbarBrand>
+  <Nav>
+    <NavItem>
+      <NavLink href="/DataCustomizations">Data Customizations</NavLink>
+    </NavItem>
+    <NavItem>
+      <NavLink href="/FormEditor">Form Editor</NavLink>
+    </NavItem>
+    <NavItem>
+      <NavLink href="/OdataExplorer">Odata Explorer</NavLink>
+    </NavItem>
+  </Nav>
+  <ThemeToggler>
+    {#if currentColorMode == "dark"}
+      <Button outline color="light" on:click={() => toggleColorMode()}>
+        <Icon name="moon" />
+      </Button>
+    {/if}
+    {#if currentColorMode == "light"}
+      <Button outline color="dark" on:click={() => toggleColorMode()}>
+        <Icon name="sun" />
+      </Button>
+    {/if}
+  </ThemeToggler>
 </Navbar>
 <slot></slot>
 <div

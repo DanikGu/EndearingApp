@@ -1,6 +1,6 @@
 <script>
+  import { Spinner } from "@sveltestrap/sveltestrap";
   import { onMount } from "svelte";
-  import { Spinner } from "flowbite-svelte";
 
   /** @type {string} */
   export let msg;
@@ -44,11 +44,12 @@
 </script>
 
 <div
-  class="flex gap-10 h-full w-full absolute top-0 bg-black bg-opacity-15 rounded dark:bg-gray-100 dark:bg-opacity-15"
+  class="flex gap-10 h-full w-full absolute top-0 bg-opacity-15 rounded bg-gray-900 dark:bg-gray-100 dark:bg-opacity-15"
+  style="z-index: 10000;"
   bind:this={thisCompElem}
 >
   <div
-    class="flex flex-col justify-center items-center h-full w-full z-50 dark:text-white"
+    class="flex flex-col justify-center items-center h-full w-full z-auto dark:text-white"
   >
     <Spinner class="w-5 h-5" />
     {msg}

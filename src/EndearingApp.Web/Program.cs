@@ -3,7 +3,6 @@ using Autofac.Extensions.DependencyInjection;
 using EndearingApp.Core.CustomEntityAggregate.Events;
 using EndearingApp.Infrastructure.Data;
 using EndearingApp.Web.Config;
-using EndearingApp.Web.Middlwares;
 using MediatR;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +39,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseMiddleware<UnsuccessfulResponseLoggingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

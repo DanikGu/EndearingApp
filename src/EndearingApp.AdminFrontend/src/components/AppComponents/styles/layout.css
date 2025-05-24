@@ -1,11 +1,3 @@
-:root {
-  --bs-body-bg: var(--bs-body-bg-custom);
-  --bs-body-bg-rgb: var(--bs-body-bg-rgb-custom);
-}
-[data-bs-theme=dark] {
-  --bs-body-bg: var(--bs-body-bg-custom);
-  --bs-body-bg-rgb: var(--bs-body-bg-rgb-custom);
-}
 body {
   overflow: hidden;
 }
@@ -16,13 +8,6 @@ body {
   background-color: var(--bs-body-bg)
 }
 
-.bg-light {
-  background-color: var(--bs-body-bg) !important
-}
-.bg-white {
-    --bs-bg-opacity: 1;
-    background-color: var(--bs-body-bg) !important;
-}
 .formio.builder.row.formbuilder
 {
   margin: 0;

@@ -2,93 +2,187 @@
   import { OptionSetDefinitionDTO, OptionSetDefinitionsApi } from "@apiclients";
   import { getTypesArray, getTypeId } from "@utils/fieldtypesutils";
   /** @typedef {import('../../apiclient/src/model/FieldDto').default} FieldEntity */
-  import { Input, Select, Label, Checkbox, Button } from "flowbite-svelte";
+  import {
+    InputGroup,
+    Input,
+    Label,
+    FormGroup,
+    Row,
+    Col,
+  } from "@sveltestrap/sveltestrap";
 
   /** @type {FieldEntity} */
   export let editedField;
   export let isNew = false;
 
-  $: isReadOnlyForm = editedField.isSystemField;
+  $: isReadOnlyForm = !!editedField.isSystemField;
   $: fieldType = `${editedField.type}`;
-  $: onFieldTypeChange(fieldType);
-  $: isSizeApplicable = editedField.type // @ts-ignore
-    ? getTypesArray().find((x) => x.id == editedField.type).isSizeApplicable
+  $: onFieldTypeChange(fieldType); // This will run when fieldType changes (which happens when editedField.type changes)
+
+  // @ts-ignore
+  $: isSizeApplicable = editedField.type
+    ? getTypesArray().find((x) => x.id == editedField.type)?.isSizeApplicable
     : false;
 
-  /** @param {string} fieldType */
-  let onFieldTypeChange = (fieldType) => {
-    editedField.type = parseInt(fieldType);
+  /** @param {string} newFieldTypeString */
+  let onFieldTypeChange = (newFieldTypeString) => {
+    const newFieldTypeInt = parseInt(newFieldTypeString);
+    if (editedField && editedField.type !== newFieldTypeInt) {
+      editedField.type = newFieldTypeInt;
+    }
   };
-  let typesItems = getTypesArray().map((x) => ({ value: x.id, name: x.name }));
+
+  let typesItems = getTypesArray().map((x) => ({
+    value: x.id.toString(),
+    name: x.name,
+  }));
+
   /** @returns {Promise<OptionSetDefinitionDTO[]>} */
-  const getOptionSetPromise = () => {
-    const prom = new Promise((res, rej) => {
+  const getOptionSetPromise = async () => {
+    return new Promise((resolve, reject) => {
       // @ts-ignore
-      const callback = (error, data) => {
-        if (data) {
-          res(data);
-        } else if (error) {
-          rej(error);
+      const callback = (error, data, response) => {
+        if (error) {
+          console.error("Error fetching option sets:", error);
+          reject(error);
+        } else {
+          resolve(data || []);
         }
       };
+      // @ts-ignore
       new OptionSetDefinitionsApi().apiOptionSetDefinitionsGet(callback);
     });
-    return prom;
   };
 </script>
 
-<div class="flex flex-row gap-4 w-full">
-  <div class="flex flex-col gap-1 w-full">
-    <Label>Name</Label>
-    <Input bind:value={editedField.name} disabled={!isNew || isReadOnlyForm}
-    ></Input>
-    <Label>Display Name</Label>
-    <Input bind:value={editedField.displayName} disabled={isReadOnlyForm}
-    ></Input>
-    <Label>Description</Label>
-    <Input bind:value={editedField.description} disabled={isReadOnlyForm}
-    ></Input>
-    {#if isSizeApplicable}
-      <Label>Size</Label>
+<Row class="g-3 w-100">
+  <Col md="6" class="d-flex flex-column gap-2">
+    <FormGroup>
+      <Label for="fieldName">Name</Label>
       <Input
-        bind:value={editedField.size}
-        type="number"
+        id="fieldName"
+        bind:value={editedField.name}
+        disabled={!isNew || isReadOnlyForm}
+      />
+    </FormGroup>
+    <FormGroup>
+      <Label for="fieldDisplayName">Display Name</Label>
+      <Input
+        id="fieldDisplayName"
+        bind:value={editedField.displayName}
         disabled={isReadOnlyForm}
-      ></Input>
-    {/if}
-  </div>
-  <div class="flex flex-col gap-1 w-full">
-    <Label>Type</Label>
-    <Select bind:value={fieldType} items={typesItems} disabled={isReadOnlyForm}
-    ></Select>
-    <!-- TODO: fix this, add an type key so do not filter by display Name -->
-    {#if editedField.type == getTypeId("Option Set") || editedField.type == getTypeId("Option Set MultiSelect")}
-      {#await getOptionSetPromise() then data}
-        <Label>Option Set Definition</Label>
-        <Select
-          bind:value={editedField.optionSetDefinitionId}
-          items={data.map((x) => ({ value: x.id, name: x.name }))}
+      />
+    </FormGroup>
+    <FormGroup>
+      <Label for="fieldDescription">Description</Label>
+      <Input
+        id="fieldDescription"
+        type="textarea"
+        bind:value={editedField.description}
+        disabled={isReadOnlyForm}
+      />
+    </FormGroup>
+    {#if isSizeApplicable}
+      <FormGroup>
+        <Label for="fieldSize">Size</Label>
+        <Input
+          id="fieldSize"
+          type="number"
+          bind:value={editedField.size}
           disabled={isReadOnlyForm}
-        ></Select>
-      {/await}
+        />
+      </FormGroup>
     {/if}
-    <Checkbox bind:checked={editedField.isIndexed} disabled={isReadOnlyForm}>
-      Is Indexed
-    </Checkbox>
-    <Checkbox bind:checked={editedField.isUnique} disabled={isReadOnlyForm}>
-      Is Unique
-    </Checkbox>
-    <Checkbox bind:checked={editedField.isNullable} disabled={isReadOnlyForm}>
-      Is Nullable
-    </Checkbox>
-    <Checkbox bind:checked={editedField.isRequired} disabled={isReadOnlyForm}>
-      Is Required
-    </Checkbox>
-    <Checkbox
-      bind:checked={editedField.isFullTextSearch}
-      disabled={isReadOnlyForm}
-    >
-      Is Full Text Search
-    </Checkbox>
-  </div>
-</div>
+  </Col>
+  <Col md="6" class="d-flex flex-column gap-2">
+    <FormGroup check>
+      <FormGroup>
+        <Label for="fieldType">Type</Label>
+        <Input
+          type="select"
+          id="fieldType"
+          bind:value={fieldType}
+          disabled={isReadOnlyForm}
+        >
+          {#each typesItems as item (item.value)}
+            <option value={item.value}>{item.name}</option>
+          {/each}
+        </Input>
+      </FormGroup>
+
+      {#if editedField.type == getTypeId("Option Set") || editedField.type == getTypeId("Option Set MultiSelect")}
+        {#await getOptionSetPromise()}
+          <p>Loading option sets...</p>
+        {:then optionSetData}
+          <FormGroup>
+            <Label for="optionSetDefinition">Option Set Definition</Label>
+            <Input
+              type="select"
+              id="optionSetDefinition"
+              bind:value={editedField.optionSetDefinitionId}
+              disabled={isReadOnlyForm}
+            >
+              {#if optionSetData && optionSetData.length > 0}
+                {#each optionSetData as os (os.id)}
+                  <option value={os.id}>{os.name}</option>
+                {/each}
+              {:else}
+                <option value="" disabled>No option sets available</option>
+              {/if}
+            </Input>
+          </FormGroup>
+        {:catch error}
+          <p class="text-danger">
+            Error loading option sets: {error.message || error}
+          </p>
+        {/await}
+      {/if}
+
+      <InputGroup>
+        <Input
+          type="checkbox"
+          id="isIndexedField"
+          bind:checked={editedField.isIndexed}
+          disabled={isReadOnlyForm}
+        />
+        <Label for="isIndexedField" check>Is Indexed</Label>
+      </InputGroup>
+      <InputGroup>
+        <Input
+          type="checkbox"
+          id="isUniqueField"
+          bind:checked={editedField.isUnique}
+          disabled={isReadOnlyForm}
+        />
+        <Label for="isUniqueField" check>Is Unique</Label>
+      </InputGroup>
+      <InputGroup>
+        <Input
+          type="checkbox"
+          id="isNullableField"
+          bind:checked={editedField.isNullable}
+          disabled={isReadOnlyForm}
+        />
+        <Label for="isNullableField" check>Is Nullable</Label>
+      </InputGroup>
+      <InputGroup>
+        <Input
+          type="checkbox"
+          id="isRequiredField"
+          bind:checked={editedField.isRequired}
+          disabled={isReadOnlyForm}
+        />
+        <Label for="isRequiredField" check>Is Required</Label>
+      </InputGroup>
+      <InputGroup>
+        <Input
+          type="checkbox"
+          id="isFullTextField"
+          bind:checked={editedField.isFullTextSearch}
+          disabled={isReadOnlyForm}
+        />
+        <Label for="isFullTextField" check>Is Full Text Search</Label>
+      </InputGroup>
+    </FormGroup>
+  </Col>
+</Row>
