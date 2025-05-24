@@ -65,7 +65,8 @@ public class CustomDataEditor : ICustomDataEditor
             throw new ArgumentException($"Entity with name {tableName} and key {key} wasn't found");
         }
         var deltaObj = JsonConvert.DeserializeObject<Dictionary<string, object>>(
-            jsonChangedValues, new JsonSerializerSettings()
+            jsonChangedValues, 
+            new JsonSerializerSettings()
             {
                 DateTimeZoneHandling = DateTimeZoneHandling.Utc
             }
@@ -189,10 +190,6 @@ public class CustomDataEditor : ICustomDataEditor
             else
             {
                 value = Convert.ChangeType(value, targetType);
-            }
-            if (targetType == typeof(DateTime) && value is not null) 
-            {
-                value = DateTime.SpecifyKind((DateTime)value, DateTimeKind.Utc);
             }
 
             return value;

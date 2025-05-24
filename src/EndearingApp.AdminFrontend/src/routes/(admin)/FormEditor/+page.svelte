@@ -10,19 +10,25 @@
     RelationshipDTO,
   } from "@apiclients/src";
   import { alertError, alertSuccsess, assignLoader } from "@utils/uiutils";
-  import {
-    Sidebar,
-    SidebarWrapper,
-    SidebarGroup,
-    SidebarDropdownWrapper,
-    SidebarDropdownItem,
-    SidebarItem,
-  } from "flowbite-svelte";
-  import { PlusOutline } from "flowbite-svelte-icons";
   import { onMount } from "svelte";
-  // @ts-ignore
-  import { Input, Select, Label, Checkbox, Button } from "flowbite-svelte";
   import fieldtypesutils, { getTypeId } from "@utils/fieldtypesutils";
+  import {
+    Container,
+    Row,
+    Col,
+    Accordion,
+    AccordionItem,
+    ListGroup,
+    ListGroupItem,
+    Icon,
+    Input,
+    Label,
+    Button,
+    Form,
+    FormGroup,
+  } from "@sveltestrap/sveltestrap";
+  import Builder from "../../../FormComponents/Builder.svelte";
+
   /** @typedef {import('../../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
 
   /** @type {OptionSetDefinitionDTO[]} */
@@ -34,42 +40,31 @@
   let forms = [];
 
   /** @type {FormDTO | null} */
-  let editedForm;
+  let editedForm = null;
   /** @type {boolean} */
   let isNewForm = false;
 
   let editForEntity = "";
+  /** @type {any} */
+  let currentSchema = null;
 
-  /** @type {HTMLIFrameElement} */
-  let builderFrame;
-  $: editedForm, builderFrame, updateBuilder();
+  /** @type {any} */
+  let currentObj = {};
+
+  $: editedForm?.id, updateBuilder();
 
   const updateBuilder = () => {
     console.log("Update builder called");
     const customEntity = customEntities.find(
       (x) => x.id == editedForm?.customEntityId,
     );
-    if (!customEntity || !builderFrame) {
+    if (!customEntity) {
       console.log("Update short curcuit");
       return;
     }
-    let obj = convertToFormioComponents(customEntity, optionSetDefinitions);
-    builderFrame?.contentWindow?.postMessage(
-      {
-        components: obj,
-        currentSchema: JSON.parse(editedForm?.jsonSchema ?? "{}"),
-      },
-      "*",
-    );
-    builderFrame?.addEventListener("load", () => {
-      builderFrame?.contentWindow?.postMessage(
-        {
-          components: obj,
-          currentSchema: JSON.parse(editedForm?.jsonSchema ?? "{}"),
-        },
-        "*",
-      );
-    });
+    currentObj = convertToFormioComponents(customEntity, optionSetDefinitions);
+    currentSchema = JSON.parse(editedForm?.jsonSchema ?? "{}");
+    console.log("schema changed");
   };
 
   /** @param {CustomEntity} customEntity*/
@@ -91,7 +86,9 @@
   };
 
   const saveForm = async () => {
+    if (!editedForm) return;
     const api = new FormApi();
+    editedForm.jsonSchema = JSON.stringify(currentSchema);
     const form = await assignLoader(
       "Saving Form",
       new Promise((res) => {
@@ -101,6 +98,8 @@
         ) => {
           if (error) {
             alertError("Error while saving form: " + error);
+          } else {
+            alertSuccsess("Form Saved");
           }
           res(result);
         };
@@ -129,14 +128,14 @@
       await reloadData();
     }
     isNewForm = false;
-    alertSuccsess("Form Saved");
   };
   const deleteForm = async () => {
+    if (!editedForm || !editedForm.id) return;
     const api = new FormApi();
     await new Promise((res) => {
       const callback = (/** @type {string} */ error) => {
         if (error) {
-          alertError("Error while retriving forms");
+          alertError("Error while deleting form: " + error);
         }
         res({});
       };
@@ -151,14 +150,14 @@
     forms = await new Promise((res) => {
       const callback = (
         /** @type {string} */ error,
-        /** @type {FormDTO[]} */ forms,
+        /** @type {FormDTO[]} */ retrievedForms,
       ) => {
-        if (forms) {
-          res(forms);
+        if (retrievedForms) {
+          res(retrievedForms);
           return;
         }
         if (error) {
-          alertError("Error while retriving forms");
+          alertError("Error while retrieving forms: " + error);
         }
         res([]);
       };
@@ -171,7 +170,7 @@
       api.apiCustomEntitiesGet(
         (/** @type {string} */ error, /** @type {CustomEntity[]} */ elems) => {
           if (error) {
-            alertError("Error while retriving customEntities");
+            alertError("Error while retrieving customEntities: " + error);
             res([]);
             return;
           } else if (elems) {
@@ -192,7 +191,7 @@
           /** @type {OptionSetDefinitionDTO[]} */ elems,
         ) => {
           if (error) {
-            alertError("Error while retriving customEntities");
+            alertError("Error while retrieving option sets: " + error);
             res([]);
             return;
           } else if (elems) {
@@ -211,10 +210,9 @@
     await Promise.all([formProm, etnsProm, optsProm]);
   };
   /**
-   * Converts entity fields and relationships to Form.io builder components structure
-   * @param {CustomEntity} customEntity - The custom entity configuration
-   * @param {OptionSetDefinitionDTO[]} optionSets - Available option sets
-   * @returns {Object} Form.io builder components configuration
+   * @param {CustomEntity} customEntity
+   * @param {OptionSetDefinitionDTO[]} optionSets
+   * @returns {Object}
    */
   function convertToFormioComponents(customEntity, optionSets) {
     /** @type {any} */
@@ -224,7 +222,6 @@
       components: {},
     };
 
-    // Process entity fields
     if (customEntity.fields?.length) {
       customEntity.fields.forEach((/** @type {FieldDto} */ field) => {
         componentsConfig.components[field.name] = createFieldComponent(
@@ -234,7 +231,6 @@
       });
     }
 
-    // Process relationships
     if (customEntity.relationships?.length) {
       customEntity.relationships.forEach(
         (/** @type {RelationshipDTO} */ relationship) => {
@@ -248,11 +244,9 @@
   }
 
   /**
-   * Creates individual field component configuration
-   * @private
-   * @param {FieldDto} field - Field definition
-   * @param {OptionSetDefinitionDTO[]} optionSets - Available option sets
-   * @returns {Object} Form.io component configuration
+   * @param {FieldDto} field
+   * @param {OptionSetDefinitionDTO[]} optionSets
+   * @returns {Object}
    */
   function createFieldComponent(field, optionSets) {
     const componentType = mapFieldType(field.type);
@@ -288,7 +282,7 @@
           const optionSet = optionSets.find(
             (os) => os.id === field.optionSetDefinitionId,
           );
-          if (optionSet) {
+          if (optionSet && optionSet.options) {
             component.schema.data = {
               values: optionSet.options.map((/** @type {OptionDTO} */ opt) => ({
                 label: opt.name,
@@ -304,21 +298,35 @@
   }
 
   /**
-   * Creates relationship component configuration
-   * @private
-   * @param {RelationshipDTO} relationship - Relationship definition
-   * @returns {Object} Form.io component configuration
+   * @param {RelationshipDTO} relationship
+   * @returns {Object}
    */
   function createRelationshipComponent(relationship) {
     let entityName = customEntities.find(
       (x) => x.id === relationship.referencedCustomEntityId,
     )?.name;
-    /** @type { FieldDto } */
+    /** @type { FieldDto | undefined } */
     let field = customEntities
       .find((x) => x.id === relationship.sourceCustomEntityId)
       ?.fields.find(
         (/** @type {FieldDto} */ x) => x.id === relationship.sourceFieldId,
       );
+
+    if (!field) {
+      console.error("Source field not found for relationship:", relationship);
+      return {
+        title: "Undefined Field",
+        key: "undefined_" + relationship.sourceFieldId,
+        icon: "link-broken",
+        schema: {
+          label: "Undefined Field",
+          type: "textfield",
+          key: "undefined_" + relationship.sourceFieldId,
+          disabled: true,
+        },
+      };
+    }
+
     return {
       title: field.displayName,
       key: field.name,
@@ -374,105 +382,109 @@
   }
   onMount(async () => {
     await reloadData();
-    window.addEventListener("message", (event) => {
-      if (event.data.type === "formSchemaChanged") {
-        if (editedForm) {
-          editedForm.jsonSchema = JSON.stringify(event.data.content);
-          console.log(editedForm.jsonSchema);
-        }
-      }
-    });
   });
 </script>
 
-<div class="flex flex-row">
-  <div class="flex flex-col h-full">
-    <Sidebar>
-      <SidebarWrapper>
-        <SidebarGroup>
-          <SidebarGroup>
-            <SidebarDropdownWrapper label="Entities">
-              {#key customEntities}
-                {#each customEntities as elem}
-                  <SidebarDropdownWrapper label={elem.displayName}>
-                    {#key forms}
-                      {#each forms.filter((x) => x.customEntityId === elem.id) as form}
-                        <SidebarDropdownItem
-                          label={form.name}
-                          on:click={() => openForm(elem, form)}
-                        />
-                      {/each}
-                    {/key}
-                    <SidebarItem
-                      label="Add Form"
-                      on:click={() => addForm(elem)}
-                    >
-                      <svelte:fragment slot="icon">
-                        <PlusOutline></PlusOutline>
-                      </svelte:fragment>
-                    </SidebarItem>
-                  </SidebarDropdownWrapper>
-                {/each}
-              {/key}
-            </SidebarDropdownWrapper>
-          </SidebarGroup>
-        </SidebarGroup>
-      </SidebarWrapper>
-    </Sidebar>
-  </div>
-  {#if editedForm}
-    <div class="h-svh w-full p-3 flex flex-col gap-5">
-      <div class="flex flex-row justify-between">
-        <div class="flex flex-row">
-          <div class="p-3">
-            <Label for="name" class="mb-2">For Entity</Label>
-            <Input
-              type="text"
-              id="name"
-              placeholder="Entity Name"
-              value={editForEntity}
-              readonly
-              required
-            />
-          </div>
-          <div class="p-3">
-            <Label for="name" class="mb-2">Name</Label>
-            <Input
-              type="text"
-              id="name"
-              placeholder="New Form"
-              required
-              bind:value={editedForm.name}
-            />
-          </div>
-        </div>
-        <div class="flex flex-row gap-3 p-2 mb-auto">
-          <Button on:click={saveForm} class="h-10 mx-0" outline color="green">
-            Save
-          </Button>
-          <Button
-            on:click={deleteForm}
-            class="h-10 mx-0"
-            outline
-            color="red"
-            disabled={isNewForm}
-          >
-            Delete
-          </Button>
-        </div>
+<Container fluid class="vh-100 d-flex flex-column p-0">
+  <Row class="flex-grow-1 g-0">
+    <Col md="3" class="p-0 d-flex flex-column border-end">
+      <div class="flex-grow-1 overflow-auto">
+        <Accordion stayOpen class="rounded-0">
+          {#key customEntities}
+            {#each customEntities as elem (elem.id)}
+              <AccordionItem class="entity-accordion-item p-0">
+                <svelte:fragment slot="header"
+                  >{elem.displayName}</svelte:fragment
+                >
+                <ListGroup flush>
+                  {#key forms}
+                    {#each forms.filter((f) => f.customEntityId === elem.id) as form (form.id)}
+                      <ListGroupItem
+                        action
+                        class="py-2 border-0"
+                        active={editedForm?.id === form.id && !isNewForm}
+                        on:click={() => openForm(elem, form)}
+                      >
+                        {form.name}
+                      </ListGroupItem>
+                    {/each}
+                  {/key}
+                  <ListGroupItem
+                    action
+                    class="py-2 border-0"
+                    active={isNewForm && editedForm?.customEntityId === elem.id}
+                    on:click={() => addForm(elem)}
+                  >
+                    <Icon name="plus-lg" /> Add Form
+                  </ListGroupItem>
+                </ListGroup>
+              </AccordionItem>
+            {/each}
+          {/key}
+        </Accordion>
       </div>
-      <!-- <Builder></Builder> -->
-      <iframe
-        id="builderFrame"
-        class="h-full w-full"
-        title="Builder"
-        src="/Builder"
-        bind:this={builderFrame}
-      >
-      </iframe>
-    </div>
-  {/if}
-  {#if !editedForm}
-    <div class="w-full h-full text-center dark:text-white">Choose Form</div>
-  {/if}
-</div>
+    </Col>
+    <Col md="9" class="d-flex flex-column">
+      {#if editedForm}
+        <div class="p-3 d-flex flex-column flex-grow-1">
+          <Form>
+            <Row class="mb-3 align-items-center">
+              <Col md="auto">
+                <FormGroup>
+                  <Label for="forEntity">For Entity</Label>
+                  <Input
+                    type="text"
+                    id="forEntity"
+                    placeholder="Entity Name"
+                    value={editForEntity}
+                    readonly
+                  />
+                </FormGroup>
+              </Col>
+              <Col md="auto">
+                <FormGroup>
+                  <Label for="formName">Name</Label>
+                  <Input
+                    type="text"
+                    id="formName"
+                    placeholder="New Form"
+                    required
+                    bind:value={editedForm.name}
+                  />
+                </FormGroup>
+              </Col>
+              <Col
+                class="d-flex justify-content-start justify-content-md-end align-items-center gap-2 mt-3 mt-md-0"
+              >
+                <Button on:click={saveForm} outline color="success">
+                  Save
+                </Button>
+                <Button
+                  on:click={deleteForm}
+                  outline
+                  color="danger"
+                  disabled={isNewForm}
+                >
+                  Delete
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+          <div class="flex-grow-1 mt-3">
+            {#key editedForm?.id}
+              <Builder bind:currentSchema bind:currentComponents={currentObj}
+              ></Builder>
+            {/key}
+          </div>
+        </div>
+      {/if}
+      {#if !editedForm}
+        <div
+          class="d-flex flex-grow-1 justify-content-center align-items-center text-muted p-3"
+        >
+          Choose a form to edit from the sidebar, or create a new one.
+        </div>
+      {/if}
+    </Col>
+  </Row>
+</Container>

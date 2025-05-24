@@ -1,5 +1,5 @@
 <script>
-  import { Input, Label, Select } from "flowbite-svelte";
+  import { Input, Label, FormGroup, Row, Col } from "@sveltestrap/sveltestrap";
   /** @typedef {import('../../apiclient/src/model/RelationshipDTO').default} Relationship */
   /** @typedef {import('../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
   /** @typedef {import('../../apiclient/src/model/FieldDto').default} FieldDto */
@@ -15,63 +15,128 @@
 
   /** @type {CustomEntity} */
   export let currentEntity;
-  $: selectedSourceField = currentEntity.fields.find(
-    /** @param {FieldDto} x */
-    (x) => x.id == relationship.sourceFieldId,
-  );
 
-  $: selectedTargetEntity = customEntities.find(
-    (x) => x.id == relationship.referencedCustomEntityId,
-  );
+  $: selectedSourceField =
+    currentEntity && currentEntity.fields
+      ? currentEntity.fields.find(
+          /** @param {FieldDto} x */
+          (x) => x.id === relationship.sourceFieldId,
+        )
+      : undefined;
 
-  $: fromFieldSelectItems = currentEntity.fields.map(
-    /** @param {FieldDto} x */
-    (x) => ({
-      name: x.displayName,
-      value: x.id,
-    }),
-  );
+  $: selectedTargetEntity = customEntities
+    ? customEntities.find((x) => x.id === relationship.referencedCustomEntityId)
+    : undefined;
 
-  $: customEntitySelectItems = customEntities.map((x) => ({
-    name: x.displayName,
-    value: x.id,
-  }));
+  $: fromFieldSelectItems =
+    currentEntity && currentEntity.fields
+      ? currentEntity.fields.map(
+          /** @param {FieldDto} x */
+          (x) => ({
+            name: x.displayName,
+            value: x.id,
+          }),
+        )
+      : [];
 
-  $: toFieldSelectItems = selectedTargetEntity?.fields
-    .filter(
-      /** @param {FieldDto} x */
-      (x) => x.type == selectedSourceField.type,
-    )
-    .map(
-      /** @param {FieldDto} x */
-      (x) => ({
+  $: customEntitySelectItems = customEntities
+    ? customEntities.map((x) => ({
         name: x.displayName,
         value: x.id,
-      }),
-    );
+      }))
+    : [];
+
+  $: toFieldSelectItems =
+    selectedTargetEntity?.fields && selectedSourceField
+      ? selectedTargetEntity.fields
+          .filter(
+            /** @param {FieldDto} x */
+            (x) => x.type === selectedSourceField.type,
+          )
+          .map(
+            /** @param {FieldDto} x */
+            (x) => ({
+              name: x.displayName,
+              value: x.id,
+            }),
+          )
+      : [];
 </script>
 
-<div class="flex flex-row gap-4 w-full">
-  <div class="flex flex-col gap-1 w-full">
-    <Label>Constraint Name</Label>
-    <Input bind:value={relationship.constraintName} disabled={!isNew}></Input>
-    <Label>From Field</Label>
-    <Select
-      bind:items={fromFieldSelectItems}
-      bind:value={relationship.sourceFieldId}
-      disabled={!isNew}
-    ></Select>
-    <Label>To Table</Label>
-    <Select
-      bind:items={customEntitySelectItems}
-      bind:value={relationship.referencedCustomEntityId}
-      disabled={!isNew}
-    ></Select>
-    <Label>To Field</Label>
-    <Select
-      bind:items={toFieldSelectItems}
-      bind:value={relationship.referencedFieldId}
-      disabled={!isNew}
-    ></Select>
-  </div>
-</div>
+<Row class="g-3 w-100">
+  <Col md="12" class="d-flex flex-column gap-2">
+    <FormGroup>
+      <Label for="relationshipConstraintName">Constraint Name</Label>
+      <Input
+        id="relationshipConstraintName"
+        bind:value={relationship.constraintName}
+        disabled={!isNew}
+      />
+    </FormGroup>
+
+    <FormGroup>
+      <Label for="relationshipSourceField">From Field</Label>
+      <Input
+        type="select"
+        id="relationshipSourceField"
+        bind:value={relationship.sourceFieldId}
+        disabled={!isNew}
+      >
+        <option value={undefined} selected={relationship.sourceFieldId == null}
+          >Select source field...</option
+        >
+        {#if fromFieldSelectItems}
+          {#each fromFieldSelectItems as item (item.value)}
+            <option value={item.value}>{item.name}</option>
+          {/each}
+        {/if}
+      </Input>
+    </FormGroup>
+
+    <FormGroup>
+      <Label for="relationshipReferencedEntity">To Table</Label>
+      <Input
+        type="select"
+        id="relationshipReferencedEntity"
+        bind:value={relationship.referencedCustomEntityId}
+        disabled={!isNew}
+      >
+        <option
+          value={undefined}
+          selected={relationship.referencedCustomEntityId == null}
+          >Select target table...</option
+        >
+        {#if customEntitySelectItems}
+          {#each customEntitySelectItems as item (item.value)}
+            <option value={item.value}>{item.name}</option>
+          {/each}
+        {/if}
+      </Input>
+    </FormGroup>
+
+    <FormGroup>
+      <Label for="relationshipReferencedField">To Field</Label>
+      <Input
+        type="select"
+        id="relationshipReferencedField"
+        bind:value={relationship.referencedFieldId}
+        disabled={!isNew || !selectedTargetEntity || !selectedSourceField}
+      >
+        <option
+          value={undefined}
+          selected={relationship.referencedFieldId == null}
+          >Select target field...</option
+        >
+        {#if toFieldSelectItems && toFieldSelectItems.length > 0}
+          {#each toFieldSelectItems as item (item.value)}
+            <option value={item.value}>{item.name}</option>
+          {/each}
+        {:else if selectedTargetEntity && selectedSourceField}
+          <option value={undefined} disabled
+            >No matching type fields in target</option
+          >
+        {/if}
+      </Input>
+    </FormGroup>
+  </Col>
+</Row>

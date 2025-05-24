@@ -5,3 +5,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where([data-bs-theme=dark], [data-bs-theme=dark] *));
+.accordion-collapse {
+    height: 100% !important;
+}
+.p-0 .accordion-body {
+  padding: 0;
+}

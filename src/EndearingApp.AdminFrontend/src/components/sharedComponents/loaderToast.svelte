@@ -1,31 +1,33 @@
 <script>
-  import { Toast, Spinner } from "flowbite-svelte";
+  import {
+    Toast,
+    ToastHeader,
+    ToastBody,
+    Spinner,
+  } from "@sveltestrap/sveltestrap";
   import { slide } from "svelte/transition";
   import { onMount } from "svelte";
-  import {
-    BadgeCheckSolid,
-    ExclamationCircleSolid,
-  } from "flowbite-svelte-icons";
 
   /**
    * @enum {number}
    **/
   const ToastType = {
     LOADING: 0,
-    SUCCSESS: 1,
+    SUCCESS: 1,
     ERROR: 2,
   };
 
   /** @type {ToastType} */
-  export let type = 0;
+  export let type = ToastType.LOADING;
   export let dismissable = false;
-  export let msg;
+  export let msg = "";
 
   /**
-   * @type {Promise<any>}
+   * @type {Promise<any> | undefined}
    */
-  export let awaitedPromise;
-  let toastStatus = false;
+  export let awaitedPromise = undefined;
+  export let toastStatus = false;
+
   onMount(() => {
     if (!awaitedPromise) {
       return;
@@ -42,19 +44,28 @@
       },
     );
   });
+
+  function handleClose() {
+    toastStatus = false;
+  }
 </script>
 
-<div class="flex gap-10">
-  <Toast {dismissable} transition={slide} bind:toastStatus>
-    {#if ToastType.LOADING == type}
-      <Spinner class="w-5 h-5" />
-    {/if}
-    {#if ToastType.SUCCSESS == type}
-      <BadgeCheckSolid class="w-5 h-5 text-green-600" />
-    {/if}
-    {#if ToastType.ERROR == type}
-      <ExclamationCircleSolid class="w-5 h-5 text-red-700" />
-    {/if}
-    {msg}
-  </Toast>
-</div>
+{#if toastStatus}
+  <div transition:slide>
+    <Toast class="mb-3 shadow-sm">
+      <ToastHeader toggle={dismissable ? handleClose : undefined}>
+        {#if ToastType.LOADING === type}
+          <Spinner size="sm" color="primary" class="me-2" />
+          <span>Loading...</span>
+        {:else if ToastType.SUCCESS === type}
+          <span>Success</span>
+        {:else if ToastType.ERROR === type}
+          <span>Error</span>
+        {/if}
+      </ToastHeader>
+      <ToastBody>
+        {msg}
+      </ToastBody>
+    </Toast>
+  </div>
+{/if}
