@@ -44,12 +44,12 @@
 </script>
 
 <div
-  class="flex gap-10 h-full w-full absolute top-0 bg-opacity-15 rounded bg-gray-900 dark:bg-gray-100 dark:bg-opacity-15"
+  class="flex gap-10 h-full w-full absolute top-0 right-0 left-0 bottom-0 bg-opacity-15 rounded bg-gray-900 dark:bg-gray-100 dark:bg-opacity-15"
   style="z-index: 10000;"
   bind:this={thisCompElem}
 >
   <div
-    class="flex flex-col justify-center items-center h-full w-full z-auto dark:text-white"
+    class="flex flex-col justify-center items-center h-full w-full z-auto text-primary"
   >
     <Spinner class="w-5 h-5" />
     {msg}

@@ -21,6 +21,8 @@
     Label,
     FormGroup,
   } from "@sveltestrap/sveltestrap";
+  import QueryBuilder from "../../../components/QueryBuilder/queryBuilder.svelte";
+  import { Field } from "../../../components/QueryBuilder/typeDefinitions";
 
   /** @typedef {import('svelte-jsoneditor').Mode} Mode */
 
@@ -41,7 +43,14 @@
 
   /** @type {CustomeEntityDTO[]} */
   let customEntities = [];
+  let odataMetaUrl = "/api/odata/$metadata";
+  let namespace = "CustomEntitiesDbContext";
+  $: selectedTable = typesItems.find((x) => x.value === selectedEntityId)?.name;
+  /** @type {Field[]} */
+  let selectedTableFields = [];
 
+  /** @type {any} */
+  let odataSchema;
   let loadCustomEntities = () => {
     let api = new CustomEntitiesApi();
     api.apiCustomEntitiesGet(
@@ -107,9 +116,19 @@
     loadOptionSets();
     await loadForms();
   };
+  const prepareQuery = async () => {
+    let response = await fetch(odataMetaUrl);
+    let schemaText = await response.text();
+    odataSchema = new DOMParser().parseFromString(schemaText, "text/xml");
+    odataSchema = odataSchema.querySelector(`Schema[Namespace="${namespace}"]`);
+    if (!odataSchema) {
+      throw "Ну ты приколист";
+    }
+  };
 
   onMount(async () => {
     await loadData();
+    await prepareQuery();
   });
 
   $: resourceUrl =
@@ -295,9 +314,26 @@
       data: entityData,
     };
   };
+  $: selectedTable,
+    (() => {
+      if (!odataSchema || !selectedTable) {
+        return;
+      }
+      let entity = odataSchema.querySelector(
+        `EntityType[Name="${selectedTable}"]`,
+      );
+      console.log(entity);
+      selectedTableFields = [...entity.querySelectorAll("Property")].map(
+        (/** @type { any } */ x) => ({
+          name: x.getAttribute("Name"),
+          displayName: x.getAttribute("Name"),
+        }),
+      );
+      console.log(selectedTableFields);
+    })();
 </script>
 
-<Container fluid class="vh-100 d-flex flex-column p-3">
+<Container fluid class="d-flex flex-column p-3">
   <Row class="mb-3">
     <Col>
       <p class="text-muted">
@@ -306,9 +342,13 @@
       </p>
       <h6>OData Metadata</h6>
       <p>
-        <a href="/api/odata/$metadata" target="_blank" rel="noopener noreferrer"
-          >/api/odata/$metadata</a
+        <a
+          href="/api/odata/$metadata"
+          target="_blank"
+          rel="noopener noreferrer"
         >
+          /api/odata/$metadata
+        </a>
       </p>
     </Col>
   </Row>
@@ -326,9 +366,9 @@
             editedEntityId = null;
           }}
         >
-          <option value={null} selected={selectedEntityId === null}
-            >Select an Entity...</option
-          >
+          <option value={null} selected={selectedEntityId === null}>
+            Select an Entity...
+          </option>
           {#each typesItems as item (item.value)}
             <option value={item.value}>{item.name}</option>
           {/each}
@@ -345,9 +385,9 @@
           disabled={!selectedEntityId || formsForEntity.length === 0}
           on:change={() => (editedEntityId = null)}
         >
-          <option value={null} selected={selectedFormId === null}
-            >Select a Form...</option
-          >
+          <option value={null} selected={selectedFormId === null}>
+            Select a Form...
+          </option>
           {#each formsForEntity as item (item.value)}
             <option value={item.value}>{item.name}</option>
           {/each}
@@ -376,7 +416,9 @@
         Load Entity
       </Button>
       <div class="ms-md-auto align-self-center text-break">
-        <small class="text-muted">{resourceUrl}</small>
+        <small class="text-muted">
+          {resourceUrl + (!!editedEntityId ? `(${editedEntityId})` : "")}
+        </small>
       </div>
     </Col>
     <Col md="6" class="d-flex gap-2">
@@ -394,23 +436,24 @@
   </Row>
 
   <Row class="g-3 flex-grow-1" style="min-height: 0;">
-    <Col md="6" class="d-flex flex-column p-1 border-1">
-      {#if selectedFormId}
+    {#if selectedFormId}
+      <Col md="6" class="d-flex flex-column p-1 border-1">
         {#key selectedFormId + (editedEntityId || "new")}
           {#await loadEntityWithForm() then props}
             <EditFormComponent
               form={props.form}
               entityData={!!editedEntityId ? props.data : {}}
+              onAfterSave={(/** @type{any}*/ editedEntity) => {
+                editedEntityId = editedEntity.Id;
+              }}
+              onAfterDelete={() => (editedEntityId = null)}
             ></EditFormComponent>
           {/await}
         {/key}
-      {:else}
-        <div
-          class="w-100 h-100 d-flex justify-content-center align-items-center text-muted"
-        >
-          Select an entity and form to see the editor.
-        </div>
-      {/if}
+      </Col>
+    {/if}
+    <Col md="6">
+      <QueryBuilder {selectedTableFields}></QueryBuilder>
     </Col>
     <Col md="6" class="d-flex flex-column p-1">
       <div
