@@ -22,7 +22,7 @@
     FormGroup,
   } from "@sveltestrap/sveltestrap";
   import QueryBuilder from "../../../components/QueryBuilder/queryBuilder.svelte";
-  import { Field } from "../../../components/QueryBuilder/typeDefinitions";
+  import { ConditionGroup } from "../../../components/QueryBuilder/typeDefinitions";
 
   /** @typedef {import('svelte-jsoneditor').Mode} Mode */
 
@@ -45,9 +45,7 @@
   let customEntities = [];
   let odataMetaUrl = "/api/odata/$metadata";
   let namespace = "CustomEntitiesDbContext";
-  $: selectedTable = typesItems.find((x) => x.value === selectedEntityId)?.name;
-  /** @type {Field[]} */
-  let selectedTableFields = [];
+  let rootQuery = new ConditionGroup("and", []);
 
   /** @type {any} */
   let odataSchema;
@@ -314,23 +312,9 @@
       data: entityData,
     };
   };
-  $: selectedTable,
-    (() => {
-      if (!odataSchema || !selectedTable) {
-        return;
-      }
-      let entity = odataSchema.querySelector(
-        `EntityType[Name="${selectedTable}"]`,
-      );
-      console.log(entity);
-      selectedTableFields = [...entity.querySelectorAll("Property")].map(
-        (/** @type { any } */ x) => ({
-          name: x.getAttribute("Name"),
-          displayName: x.getAttribute("Name"),
-        }),
-      );
-      console.log(selectedTableFields);
-    })();
+  const queryBuilderSearchClick = () => {
+    console.log(rootQuery);
+  };
 </script>
 
 <Container fluid class="d-flex flex-column p-3">
@@ -453,7 +437,13 @@
       </Col>
     {/if}
     <Col md="6">
-      <QueryBuilder {selectedTableFields}></QueryBuilder>
+      <Button on:click={queryBuilderSearchClick}>Search</Button>
+      <QueryBuilder
+        rootGroup={rootQuery}
+        {customEntities}
+        {optionSetDefinitions}
+        bind:customEntityId={selectedEntityId}
+      ></QueryBuilder>
     </Col>
     <Col md="6" class="d-flex flex-column p-1">
       <div

@@ -46,7 +46,12 @@
       {/if}
     </Col>
     <Col md="1" class="flex flex-row pt-3 pb-3 pl-0 pr-0 items-center">
-      <Col md="10" class="text-end pr-1">{group.operator}</Col>
+      <Col md="10" class="text-end pr-1">
+        <select class="focus-visible:outline-0" bind:value={group.operator}>
+          <option value="and">And</option>
+          <option value="or">Or</option>
+        </select>
+      </Col>
       <Col md="2" class="h-full">
         <div class="border-l-2 border-t-2 border-b-2 h-full"></div>
       </Col>
