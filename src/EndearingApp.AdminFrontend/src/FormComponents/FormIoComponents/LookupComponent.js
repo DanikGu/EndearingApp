@@ -1,4 +1,5 @@
 // @ts-nocheck
+
 /** @typedef EntityRef
  *  @prop {string} Id 
  *  @prop {string} Name 
@@ -161,7 +162,7 @@ class LookupComponent extends Formio.Components.components.component {
     console.log(etnRefs);
     if (etnRefs && etnRefs.length > 0) {
       const dropdown = document.createElement('div');
-      dropdown.classList.add('list-group');
+      dropdown.classList.add('list-group', "absolute", "w-full", "z-3");
       etnRefs.forEach(item => {
         const option = document.createElement('button');
         option.type = "button";
@@ -210,8 +211,8 @@ class LookupComponent extends Formio.Components.components.component {
    *  @returns {Promise<EntityRef[]>}*/
   async searchEtnByQuery(query) {
     const resourceUrl = `/${this.schema.odataPath}/${this.schema.entityName}`;
-    const fullTextSearch = resourceUrl + `/fullTextSearch/${query}/?select=id,name&top=10`;
-    const firstpage = resourceUrl + "/?select=id,name&top=10";
+    const fullTextSearch = resourceUrl + `/fullTextSearch/${query}/?select=id,name&top=5`;
+    const firstpage = resourceUrl + "/?select=id,name&top=5";
     const response = query && query.length > 0 ?
       await fetch(fullTextSearch) :
       await fetch(firstpage);

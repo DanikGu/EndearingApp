@@ -1,6 +1,3 @@
-body {
-  overflow: hidden;
-}
 .formio-dialog.formio-dialog-theme-default .formio-dialog-content,
 .choices[data-type*=select-one] .choices__input, 
 .choices__list--dropdown, .choices__list[aria-expanded]
