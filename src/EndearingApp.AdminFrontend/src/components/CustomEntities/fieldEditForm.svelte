@@ -1,4 +1,6 @@
 <script>
+  import { run } from "svelte/legacy";
+
   import { OptionSetDefinitionDTO, OptionSetDefinitionsApi } from "@apiclients";
   import { getTypesArray, getTypeId } from "@utils/fieldtypesutils";
   /** @typedef {import('../../apiclient/src/model/FieldDto').default} FieldEntity */
@@ -11,18 +13,14 @@
     Col,
   } from "@sveltestrap/sveltestrap";
 
-  /** @type {FieldEntity} */
-  export let editedField;
-  export let isNew = false;
+  /**
+   * @typedef {Object} Props
+   * @property {FieldEntity} editedField
+   * @property {boolean} [isNew]
+   */
 
-  $: isReadOnlyForm = !!editedField.isSystemField;
-  $: fieldType = `${editedField.type}`;
-  $: onFieldTypeChange(fieldType); // This will run when fieldType changes (which happens when editedField.type changes)
-
-  // @ts-ignore
-  $: isSizeApplicable = editedField.type
-    ? getTypesArray().find((x) => x.id == editedField.type)?.isSizeApplicable
-    : false;
+  /** @type {Props} */
+  let { editedField = $bindable(), isNew = $bindable(false) } = $props();
 
   /** @param {string} newFieldTypeString */
   let onFieldTypeChange = (newFieldTypeString) => {
@@ -53,6 +51,17 @@
       new OptionSetDefinitionsApi().apiOptionSetDefinitionsGet(callback);
     });
   };
+  let isReadOnlyForm = $derived(!!editedField.isSystemField);
+  let fieldType = $derived(`${editedField.type}`);
+  run(() => {
+    onFieldTypeChange(fieldType);
+  }); // This will run when fieldType changes (which happens when editedField.type changes)
+  // @ts-ignore
+  let isSizeApplicable = $derived(
+    editedField.type
+      ? getTypesArray().find((x) => x.id == editedField.type)?.isSizeApplicable
+      : false,
+  );
 </script>
 
 <Row class="g-3 w-100">

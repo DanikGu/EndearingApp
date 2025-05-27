@@ -1,10 +1,15 @@
 <script>
   import { onMount } from "svelte";
 
-  /** @type {any} */
-  export let currentSchema = null;
-  /** @type {any} */
-  export let currentComponents = null;
+  /**
+   * @typedef {Object} Props
+   * @property {any} [currentSchema]
+   * @property {any} [currentComponents]
+   */
+
+  /** @type {Props} */
+  let { currentSchema = $bindable(null), currentComponents = $bindable(null) } =
+    $props();
   /** @type {any} */
   let Formio;
 

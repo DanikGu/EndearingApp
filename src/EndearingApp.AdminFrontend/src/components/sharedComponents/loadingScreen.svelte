@@ -1,20 +1,21 @@
 <script>
+  import { run } from "svelte/legacy";
+
   import { Spinner } from "@sveltestrap/sveltestrap";
   import { onMount } from "svelte";
 
-  /** @type {string} */
-  export let msg;
+  /**
+   * @typedef {Object} Props
+   * @property {string} msg
+   * @property {Promise<any>} awaitedPromise
+   * @property {boolean} [loadingStatus]
+   */
 
-  /** @type {Promise<any>} */
-  export let awaitedPromise;
-
-  /** @type {boolean} */
-  export let loadingStatus = true;
+  /** @type {Props} */
+  let { msg, awaitedPromise, loadingStatus = $bindable(true) } = $props();
 
   /** @type {HTMLElement | null} */
-  let thisCompElem = null;
-
-  $: onStatusChange(loadingStatus);
+  let thisCompElem = $state(null);
 
   /** @param {boolean} loadingStatus */
   let onStatusChange = (loadingStatus) => {
@@ -40,6 +41,9 @@
         throw x;
       },
     );
+  });
+  run(() => {
+    onStatusChange(loadingStatus);
   });
 </script>
 

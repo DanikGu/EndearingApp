@@ -14,18 +14,24 @@
   /** @typedef {import('../../apiclient/src/model/OptionSetDefinitionDTO').default} OptionSetDefinitionDTO */
   /** @typedef {import('../../apiclient/src/model/OptionDTO').default} OptionDTO_local */
 
-  /** @type {OptionSetDefinitionDTO[]} */
-  export let optionSets;
-  /** @type {OptionSetDefinitionDTO} */
-  export let optionSet;
-  /** @type {boolean} */
-  export let isNew;
+  /**
+   * @typedef {Object} Props
+   * @property {OptionSetDefinitionDTO[]} optionSets
+   * @property {OptionSetDefinitionDTO} optionSet
+   * @property {boolean} isNew
+   * @property {Function} reloadParentData
+   */
 
-  /** @type {Function} */
-  export let reloadParentData;
+  /** @type {Props} */
+  let {
+    optionSets = $bindable(),
+    optionSet = $bindable(),
+    isNew = $bindable(),
+    reloadParentData,
+  } = $props();
 
-  /** @type {HTMLDivElement | null} */
-  let formContainer;
+  /** @type {HTMLDivElement | null | undefined} */
+  let formContainer = $state();
 
   const applyChangesToDb = () => {
     const prom = applyChangesToDbApi();
@@ -134,8 +140,8 @@
     }
   };
 
-  let keyInput = "";
-  let valueInput = "";
+  let keyInput = $state("");
+  let valueInput = $state("");
 
   function addItem() {
     const numericKey = parseInt(keyInput);

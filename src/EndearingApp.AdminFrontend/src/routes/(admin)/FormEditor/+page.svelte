@@ -1,4 +1,6 @@
 <script>
+  import { run } from "svelte/legacy";
+
   import {
     CustomEntitiesApi,
     FieldDto,
@@ -35,23 +37,21 @@
   let optionSetDefinitions = [];
 
   /** @type {CustomEntity[]} */
-  let customEntities = [];
+  let customEntities = $state([]);
   /** @type {FormDTO[]} */
-  let forms = [];
+  let forms = $state([]);
 
   /** @type {FormDTO | null} */
-  let editedForm = null;
+  let editedForm = $state(null);
   /** @type {boolean} */
-  let isNewForm = false;
+  let isNewForm = $state(false);
 
-  let editForEntity = "";
+  let editForEntity = $state("");
   /** @type {any} */
-  let currentSchema = null;
+  let currentSchema = $state(null);
 
   /** @type {any} */
-  let currentObj = {};
-
-  $: editedForm?.id, updateBuilder();
+  let currentObj = $state({});
 
   const updateBuilder = () => {
     console.log("Update builder called");
@@ -383,6 +383,9 @@
   onMount(async () => {
     await reloadData();
   });
+  run(() => {
+    editedForm?.id, updateBuilder();
+  });
 </script>
 
 <Container fluid class="vh-100 d-flex flex-column p-0">
@@ -392,10 +395,10 @@
         <Accordion stayOpen class="rounded-0">
           {#key customEntities}
             {#each customEntities as elem (elem.id)}
-              <AccordionItem class="entity-accordion-item p-0">
-                <svelte:fragment slot="header"
-                  >{elem.displayName}</svelte:fragment
-                >
+              <AccordionItem
+                class="entity-accordion-item p-0"
+                header={elem.displayName}
+              >
                 <ListGroup flush>
                   {#key forms}
                     {#each forms.filter((f) => f.customEntityId === elem.id) as form (form.id)}

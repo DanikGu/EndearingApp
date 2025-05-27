@@ -11,14 +11,15 @@
 
   /** @typedef {import('@sveltestrap/sveltestrap').InputType} InputType */
 
-  /** @type {Condition} */
-  export let condition;
+  /**
+   * @typedef {Object} Props
+   * @property {Condition} condition
+   * @property {any} deleteCondition
+   * @property {Field[]} fields
+   */
 
-  /** @type {any} */
-  export let deleteCondition;
-
-  /** @type {Field[]} */
-  export let fields;
+  /** @type {Props} */
+  let { condition = $bindable(), deleteCondition, fields } = $props();
 
   /** @type {CustomeEntityDTO[]} */
   let customEntities = [];
@@ -26,8 +27,8 @@
   let optionSetDefinitions = [];
   /** @type {FieldDto} */
   let fieldDefinition;
-  /** @type {InputType | null} */
-  let controlType;
+  /** @type {InputType | null | undefined} */
+  let controlType = $state();
   /** @type {string | null} */
   let currEntityId;
 

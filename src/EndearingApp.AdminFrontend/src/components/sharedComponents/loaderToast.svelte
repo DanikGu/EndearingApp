@@ -17,16 +17,23 @@
     ERROR: 2,
   };
 
-  /** @type {ToastType} */
-  export let type = ToastType.LOADING;
-  export let dismissable = false;
-  export let msg = "";
-
   /**
-   * @type {Promise<any> | undefined}
+   * @typedef {Object} Props
+   * @property {ToastType} [type]
+   * @property {boolean} [dismissable]
+   * @property {string} [msg]
+   * @property {Promise<any> | undefined} [awaitedPromise]
+   * @property {boolean} [toastStatus]
    */
-  export let awaitedPromise = undefined;
-  export let toastStatus = false;
+
+  /** @type {Props} */
+  let {
+    type = ToastType.LOADING,
+    dismissable = false,
+    msg = "",
+    awaitedPromise = undefined,
+    toastStatus = $bindable(false),
+  } = $props();
 
   onMount(() => {
     if (!awaitedPromise) {

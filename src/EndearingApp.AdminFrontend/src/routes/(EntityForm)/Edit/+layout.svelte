@@ -1,5 +1,12 @@
 <script>
   import { onMount } from "svelte";
+  /**
+   * @typedef {Object} Props
+   * @property {import('svelte').Snippet} [children]
+   */
+
+  /** @type {Props} */
+  let { children } = $props();
   onMount(() => {
     setupColors();
   });
@@ -32,7 +39,7 @@
 </script>
 
 <div id="form-container">
-  <slot></slot>
+  {@render children?.()}
 </div>
 <div class="bg-white"></div>
 

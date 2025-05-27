@@ -24,22 +24,22 @@
   /** @typedef {import('../../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
 
   /** @type {CustomEntity[]} */
-  let customEntities = [];
+  let customEntities = $state([]);
 
   /** @type { CustomEntity | null } */
-  let selectedEntity = null;
+  let selectedEntity = $state(null);
 
   /** @type { boolean } */
-  let isNewEntity = false;
+  let isNewEntity = $state(false);
 
   /** @type {OptionSetDefinitionDTO[]} */
-  let optionSetDefinitions = [];
+  let optionSetDefinitions = $state([]);
 
   /** @type { OptionSetDefinitionDTO | null } */
-  let selectedOptionSet = null;
+  let selectedOptionSet = $state(null);
 
   /** @type { boolean } */
-  let isNewOptionSet = false;
+  let isNewOptionSet = $state(false);
 
   /* Accordion manages its own open/close state, so dropdown-specific state variables are not needed. */
 
@@ -163,8 +163,7 @@
     <Col md="3" class="p-0 d-flex flex-column">
       <div class="flex-grow-1 overflow-auto">
         <Accordion stayOpen class="rounded-0">
-          <AccordionItem class="p-0">
-            <svelte:fragment slot="header">Entities</svelte:fragment>
+          <AccordionItem class="p-0" header="Entities">
             <ListGroup flush>
               {#key customEntities}
                 {#each customEntities as elem}
@@ -194,8 +193,7 @@
             </ListGroup>
           </AccordionItem>
 
-          <AccordionItem>
-            <svelte:fragment slot="header">Option Sets</svelte:fragment>
+          <AccordionItem header="Option Sets">
             <ListGroup flush>
               {#key optionSetDefinitions}
                 {#each optionSetDefinitions as elem}

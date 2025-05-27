@@ -1,4 +1,6 @@
 <script>
+  import { run } from "svelte/legacy";
+
   import {
     CustomeEntityDTO,
     CustomEntitiesApi,
@@ -27,22 +29,16 @@
   /** @typedef {import('svelte-jsoneditor').Mode} Mode */
 
   /** @type {string | null} */
-  let selectedEntityId = null;
-  $: typesItems = customEntities.map((x) => ({ value: x.id, name: x.name }));
+  let selectedEntityId = $state(null);
 
   /** @type {FormDTO[]} */
-  let forms = [];
-  $: formsForEntity = !!selectedEntityId
-    ? forms
-        .filter((x) => x.customEntityId === selectedEntityId)
-        .map((x) => ({ value: x.id, name: x.name }))
-    : [];
+  let forms = $state([]);
 
   /** @type {string | null} */
-  let selectedFormId = null;
+  let selectedFormId = $state(null);
 
   /** @type {CustomeEntityDTO[]} */
-  let customEntities = [];
+  let customEntities = $state([]);
   let odataMetaUrl = "/api/odata/$metadata";
   let namespace = "CustomEntitiesDbContext";
   let rootQuery = new ConditionGroup("and", []);
@@ -92,7 +88,7 @@
   };
 
   /** @type {OptionSetDefinitionDTO[]} */
-  let optionSetDefinitions = [];
+  let optionSetDefinitions = $state([]);
   let loadOptionSets = () => {
     let api = new OptionSetDefinitionsApi();
     api.apiOptionSetDefinitionsGet(
@@ -129,24 +125,11 @@
     await prepareQuery();
   });
 
-  $: resourceUrl =
-    selectedEntityId && browser
-      ? window.location.origin +
-        "/api/odata/" +
-        customEntities.find((x) => x.id === selectedEntityId)?.name
-      : "";
+  let getUrlValue = $state("");
 
-  $: firstPageUrl = resourceUrl
-    ? resourceUrl + "?orderby=createdon%20desc"
-    : "";
-
-  $: if (browser && firstPageUrl) getFirstPage();
-
-  let getUrlValue = "";
-
-  let content = {
+  let content = $state({
     json: {},
-  };
+  });
 
   const reloadFromInput = async () => {
     if (getUrlValue) {
@@ -225,7 +208,7 @@
   };
 
   /** @type {string | null } */
-  let editedEntityId = null;
+  let editedEntityId = $state(null);
 
   const loadEntity = async () => {
     if (!browser) return;
@@ -315,6 +298,29 @@
   const queryBuilderSearchClick = () => {
     console.log(rootQuery);
   };
+  let typesItems = $derived(
+    customEntities.map((x) => ({ value: x.id, name: x.name })),
+  );
+  let formsForEntity = $derived(
+    !!selectedEntityId
+      ? forms
+          .filter((x) => x.customEntityId === selectedEntityId)
+          .map((x) => ({ value: x.id, name: x.name }))
+      : [],
+  );
+  let resourceUrl = $derived(
+    selectedEntityId && browser
+      ? window.location.origin +
+          "/api/odata/" +
+          customEntities.find((x) => x.id === selectedEntityId)?.name
+      : "",
+  );
+  let firstPageUrl = $derived(
+    resourceUrl ? resourceUrl + "?orderby=createdon%20desc" : "",
+  );
+  run(() => {
+    if (browser && firstPageUrl) getFirstPage();
+  });
 </script>
 
 <Container fluid class="d-flex flex-column p-3">

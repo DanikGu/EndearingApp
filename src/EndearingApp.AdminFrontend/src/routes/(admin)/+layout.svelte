@@ -14,7 +14,14 @@
     Icon,
     Col,
   } from "@sveltestrap/sveltestrap";
-  let currentColorMode = "dark";
+  /**
+   * @typedef {Object} Props
+   * @property {import('svelte').Snippet} [children]
+   */
+
+  /** @type {Props} */
+  let { children } = $props();
+  let currentColorMode = $state("dark");
   const toggleColorMode = () => {
     // @ts-ignore
     window.togglePageTheme();
@@ -65,7 +72,7 @@
     {/if}
   </ThemeToggler>
 </Navbar>
-<slot></slot>
+{@render children?.()}
 <div
   class="globalToastContainer fixed right-0 bottom-0 flex gap-1 flex-col"
 ></div>

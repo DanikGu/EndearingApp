@@ -9,20 +9,24 @@
   import { onMount } from "svelte";
   /** @typedef {import('@formio/js').Form} Form */
 
-  /** @type {any} */
-  export let entityData = {};
+  /**
+   * @typedef {Object} Props
+   * @property {any} [entityData]
+   * @property {FormDTO} form
+   * @property {Function | null} [onAfterSave]
+   * @property {Function | null} [onAfterDelete]
+   */
 
-  /** @type {FormDTO} */
-  export let form;
+  /** @type {Props} */
+  let {
+    entityData = $bindable({}),
+    form = $bindable(),
+    onAfterSave = null,
+    onAfterDelete = null,
+  } = $props();
 
-  /** @type {Function | null} */
-  export let onAfterSave = null;
-
-  /** @type {Function | null} */
-  export let onAfterDelete = null;
-
-  /** @type {HTMLElement} */
-  let formElem;
+  /** @type {HTMLElement | undefined} */
+  let formElem = $state();
 
   /** @type {Form | null}*/
   let formioForm = null;

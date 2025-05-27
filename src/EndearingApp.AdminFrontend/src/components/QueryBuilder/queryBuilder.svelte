@@ -9,35 +9,54 @@
     OptionSetDefinitionDTO,
   } from "@apiclients/src";
 
-  export let rootGroup = new ConditionGroup("and", []);
-  /** @type {string | null} */
-  export let customEntityId = "";
-  /** @type {CustomeEntityDTO[]} */
-  export let customEntities = [];
-  /** @type {OptionSetDefinitionDTO[]} */
-  export let optionSetDefinitions = [];
+  /**
+   * @typedef {Object} Props
+   * @property {any} [rootGroup]
+   * @property {string | null} [customEntityId]
+   * @property {CustomeEntityDTO[]} [customEntities]
+   * @property {OptionSetDefinitionDTO[]} [optionSetDefinitions]
+   */
+
+  /** @type {Props} */
+  let {
+    rootGroup = new ConditionGroup("and", []),
+    customEntityId = $bindable(""),
+    customEntities = [],
+    optionSetDefinitions = [],
+  } = $props();
 
   /** @type {Field[]} */
-  let selectedTableFields = [];
+  let selectedTableFields = $state([]);
 
   onMount(async () => {});
 
-  $: customEntityId,
-    (() => {
-      if (customEntityId) {
-        selectedTableFields = customEntities
-          .find((x) => x.id == customEntityId)
-          ?.fields.map((/** @type {FieldDto} */ item) => {
-            return {
-              name: item.name,
-              displayName: item.displayName,
-            };
-          });
+  $effect(() => {
+    let newFields = [];
+    if (customEntityId && customEntities && customEntities.length > 0) {
+      const entity = customEntities.find((x) => x.id == customEntityId);
+      if (entity && entity.fields) {
+        newFields = entity.fields.map((/** @type {FieldDto} */ item) => {
+          return {
+            name: item.name,
+            displayName: item.displayName,
+          };
+        });
       }
-      setContext("customEntityId", customEntityId);
-      setContext("optionSets", optionSetDefinitions);
-      setContext("etnStructure", customEntities);
-    })();
+    }
+    selectedTableFields = newFields;
+  });
+
+  $effect(() => {
+    setContext("customEntityId", customEntityId);
+  });
+
+  $effect(() => {
+    setContext("optionSets", optionSetDefinitions);
+  });
+
+  $effect(() => {
+    setContext("etnStructure", customEntities);
+  });
 </script>
 
 <Container>

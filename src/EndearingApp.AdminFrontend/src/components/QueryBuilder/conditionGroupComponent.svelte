@@ -1,14 +1,18 @@
 <script>
+  import ConditionGroupComponent from "./conditionGroupComponent.svelte";
   import { Button, Col, Icon, Row, Input } from "@sveltestrap/sveltestrap";
   import { Condition, ConditionGroup, Field } from "./typeDefinitions";
   import ConditionComponent from "./conditionComponent.svelte";
 
-  /** @type { ConditionGroup } */
-  export let group;
-  /** @type {Field[]} */
-  export let fields;
-  /** @type {any} */
-  export let deleteGroup = null;
+  /**
+   * @typedef {Object} Props
+   * @property { ConditionGroup } group
+   * @property {Field[]} fields
+   * @property {any} [deleteGroup]
+   */
+
+  /** @type {Props} */
+  let { group = $bindable(), fields, deleteGroup = null } = $props();
 
   /** @param {ConditionGroup} parentElem */
   const addCondition = (parentElem) => {
@@ -21,7 +25,7 @@
     parentElem.children.push(new ConditionGroup("and", []));
     v = crypto.randomUUID();
   };
-  let v = crypto.randomUUID();
+  let v = $state(crypto.randomUUID());
   /** @param {Condition | ConditionGroup} child */
   const deleteChild = (child) => {
     group.children = group.children.filter((item) => item !== child);
@@ -66,11 +70,11 @@
           ></ConditionComponent>
         {/if}
         {#if child instanceof ConditionGroup}
-          <svelte:self
+          <ConditionGroupComponent
             {fields}
             group={child}
             deleteGroup={() => deleteChild(child)}
-          ></svelte:self>
+          ></ConditionGroupComponent>
         {/if}
       {/each}
       {#if !group.children || group.children.length === 0}
