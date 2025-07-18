@@ -21,4 +21,8 @@
     <ProjectReference Include="..\EndearingApp.Web\EndearingApp.Web.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="aspire-manifest.json" />
+  </ItemGroup>
+
 </Project>

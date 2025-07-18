@@ -1,4 +1,6 @@
 <script>
+  import { run } from "svelte/legacy";
+
   import {
     CustomeEntityDTO,
     CustomEntitiesApi,
@@ -11,7 +13,7 @@
   import { onMount } from "svelte";
   import { browser } from "$app/environment";
   import { JSONEditor } from "svelte-jsoneditor";
-  import EditFormComponent from "../../../components/AppComponents/EditFormComponent.svelte";
+  import FormComponent from "../../../components/AppComponents/EditFormComponent.svelte";
   import {
     Container,
     Row,
@@ -21,27 +23,29 @@
     Label,
     FormGroup,
   } from "@sveltestrap/sveltestrap";
+  import QueryBuilder from "../../../components/QueryBuilder/queryBuilder.svelte";
+  import { ConditionGroup } from "../../../components/QueryBuilder/typeDefinitions";
+  import { convertToOdataFilter } from "../../../components/QueryBuilder/queryToOdataUrlParams";
 
   /** @typedef {import('svelte-jsoneditor').Mode} Mode */
 
   /** @type {string | null} */
-  let selectedEntityId = null;
-  $: typesItems = customEntities.map((x) => ({ value: x.id, name: x.name }));
+  let selectedEntityId = $state(null);
 
   /** @type {FormDTO[]} */
-  let forms = [];
-  $: formsForEntity = !!selectedEntityId
-    ? forms
-        .filter((x) => x.customEntityId === selectedEntityId)
-        .map((x) => ({ value: x.id, name: x.name }))
-    : [];
+  let forms = $state([]);
 
   /** @type {string | null} */
-  let selectedFormId = null;
+  let selectedFormId = $state(null);
 
   /** @type {CustomeEntityDTO[]} */
-  let customEntities = [];
+  let customEntities = $state([]);
+  let odataMetaUrl = "/api/odata/$metadata";
+  let namespace = "CustomEntitiesDbContext";
+  let rootQuery = new ConditionGroup("and", []);
 
+  /** @type {any} */
+  let odataSchema;
   let loadCustomEntities = () => {
     let api = new CustomEntitiesApi();
     api.apiCustomEntitiesGet(
@@ -85,7 +89,7 @@
   };
 
   /** @type {OptionSetDefinitionDTO[]} */
-  let optionSetDefinitions = [];
+  let optionSetDefinitions = $state([]);
   let loadOptionSets = () => {
     let api = new OptionSetDefinitionsApi();
     api.apiOptionSetDefinitionsGet(
@@ -107,29 +111,26 @@
     loadOptionSets();
     await loadForms();
   };
+  const prepareQuery = async () => {
+    let response = await fetch(odataMetaUrl);
+    let schemaText = await response.text();
+    odataSchema = new DOMParser().parseFromString(schemaText, "text/xml");
+    odataSchema = odataSchema.querySelector(`Schema[Namespace="${namespace}"]`);
+    if (!odataSchema) {
+      throw "Ну ты приколист";
+    }
+  };
 
   onMount(async () => {
     await loadData();
+    await prepareQuery();
   });
 
-  $: resourceUrl =
-    selectedEntityId && browser
-      ? window.location.origin +
-        "/api/odata/" +
-        customEntities.find((x) => x.id === selectedEntityId)?.name
-      : "";
+  let getUrlValue = $state("");
 
-  $: firstPageUrl = resourceUrl
-    ? resourceUrl + "?orderby=createdon%20desc"
-    : "";
-
-  $: if (browser && firstPageUrl) getFirstPage();
-
-  let getUrlValue = "";
-
-  let content = {
+  let content = $state({
     json: {},
-  };
+  });
 
   const reloadFromInput = async () => {
     if (getUrlValue) {
@@ -208,7 +209,7 @@
   };
 
   /** @type {string | null } */
-  let editedEntityId = null;
+  let editedEntityId = $state(null);
 
   const loadEntity = async () => {
     if (!browser) return;
@@ -295,9 +296,42 @@
       data: entityData,
     };
   };
+  const queryBuilderSearchClick = () => {
+    console.log(rootQuery);
+    const filter = convertToOdataFilter(rootQuery);
+    console.log(filter);
+    console.log(getUrlValue);
+    let link = resourceUrl + "?filter=" + filter;
+    console.log(link);
+    getUrlValue = link;
+    reloadFromInput();
+  };
+  let typesItems = $derived(
+    customEntities.map((x) => ({ value: x.id, name: x.name })),
+  );
+  let formsForEntity = $derived(
+    !!selectedEntityId
+      ? forms
+          .filter((x) => x.customEntityId === selectedEntityId)
+          .map((x) => ({ value: x.id, name: x.name }))
+      : [],
+  );
+  let resourceUrl = $derived(
+    selectedEntityId && browser
+      ? window.location.origin +
+          "/api/odata/" +
+          customEntities.find((x) => x.id === selectedEntityId)?.name
+      : "",
+  );
+  let firstPageUrl = $derived(
+    resourceUrl ? resourceUrl + "?orderby=createdon%20desc" : "",
+  );
+  run(() => {
+    if (browser && firstPageUrl) getFirstPage();
+  });
 </script>
 
-<Container fluid class="vh-100 d-flex flex-column p-3">
+<Container fluid class="d-flex flex-column p-3">
   <Row class="mb-3">
     <Col>
       <p class="text-muted">
@@ -306,9 +340,13 @@
       </p>
       <h6>OData Metadata</h6>
       <p>
-        <a href="/api/odata/$metadata" target="_blank" rel="noopener noreferrer"
-          >/api/odata/$metadata</a
+        <a
+          href="/api/odata/$metadata"
+          target="_blank"
+          rel="noopener noreferrer"
         >
+          /api/odata/$metadata
+        </a>
       </p>
     </Col>
   </Row>
@@ -326,9 +364,9 @@
             editedEntityId = null;
           }}
         >
-          <option value={null} selected={selectedEntityId === null}
-            >Select an Entity...</option
-          >
+          <option value={null} selected={selectedEntityId === null}>
+            Select an Entity...
+          </option>
           {#each typesItems as item (item.value)}
             <option value={item.value}>{item.name}</option>
           {/each}
@@ -345,9 +383,9 @@
           disabled={!selectedEntityId || formsForEntity.length === 0}
           on:change={() => (editedEntityId = null)}
         >
-          <option value={null} selected={selectedFormId === null}
-            >Select a Form...</option
-          >
+          <option value={null} selected={selectedFormId === null}>
+            Select a Form...
+          </option>
           {#each formsForEntity as item (item.value)}
             <option value={item.value}>{item.name}</option>
           {/each}
@@ -376,7 +414,9 @@
         Load Entity
       </Button>
       <div class="ms-md-auto align-self-center text-break">
-        <small class="text-muted">{resourceUrl}</small>
+        <small class="text-muted">
+          {resourceUrl + (!!editedEntityId ? `(${editedEntityId})` : "")}
+        </small>
       </div>
     </Col>
     <Col md="6" class="d-flex gap-2">
@@ -394,23 +434,30 @@
   </Row>
 
   <Row class="g-3 flex-grow-1" style="min-height: 0;">
-    <Col md="6" class="d-flex flex-column p-1 border-1">
-      {#if selectedFormId}
+    {#if selectedFormId}
+      <Col md="6" class="d-flex flex-column p-1 border-1">
         {#key selectedFormId + (editedEntityId || "new")}
           {#await loadEntityWithForm() then props}
-            <EditFormComponent
+            <FormComponent
               form={props.form}
               entityData={!!editedEntityId ? props.data : {}}
-            ></EditFormComponent>
+              onAfterSave={(/** @type{any}*/ editedEntity) => {
+                editedEntityId = editedEntity.Id;
+              }}
+              onAfterDelete={() => (editedEntityId = null)}
+            ></FormComponent>
           {/await}
         {/key}
-      {:else}
-        <div
-          class="w-100 h-100 d-flex justify-content-center align-items-center text-muted"
-        >
-          Select an entity and form to see the editor.
-        </div>
-      {/if}
+      </Col>
+    {/if}
+    <Col md="6">
+      <Button on:click={queryBuilderSearchClick}>Search</Button>
+      <QueryBuilder
+        rootGroup={rootQuery}
+        {customEntities}
+        {optionSetDefinitions}
+        bind:customEntityId={selectedEntityId}
+      ></QueryBuilder>
     </Col>
     <Col md="6" class="d-flex flex-column p-1">
       <div

@@ -4,31 +4,40 @@
   /** @typedef {import('../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
   /** @typedef {import('../../apiclient/src/model/FieldDto').default} FieldDto */
 
-  /** @type {boolean} */
-  export let isNew = false;
+  /**
+   * @typedef {Object} Props
+   * @property {boolean} [isNew]
+   * @property {Relationship} relationship
+   * @property {CustomEntity[]} customEntities
+   * @property {CustomEntity} currentEntity
+   */
 
-  /** @type {Relationship} */
-  export let relationship;
+  /** @type {Props} */
+  let {
+    isNew = $bindable(false),
+    relationship = $bindable(),
+    customEntities,
+    currentEntity,
+  } = $props();
 
-  /** @type {CustomEntity[]} */
-  export let customEntities;
-
-  /** @type {CustomEntity} */
-  export let currentEntity;
-
-  $: selectedSourceField =
+  let selectedSourceField = $derived(
     currentEntity && currentEntity.fields
       ? currentEntity.fields.find(
           /** @param {FieldDto} x */
           (x) => x.id === relationship.sourceFieldId,
         )
-      : undefined;
+      : undefined,
+  );
 
-  $: selectedTargetEntity = customEntities
-    ? customEntities.find((x) => x.id === relationship.referencedCustomEntityId)
-    : undefined;
+  let selectedTargetEntity = $derived(
+    customEntities
+      ? customEntities.find(
+          (x) => x.id === relationship.referencedCustomEntityId,
+        )
+      : undefined,
+  );
 
-  $: fromFieldSelectItems =
+  let fromFieldSelectItems = $derived(
     currentEntity && currentEntity.fields
       ? currentEntity.fields.map(
           /** @param {FieldDto} x */
@@ -37,16 +46,19 @@
             value: x.id,
           }),
         )
-      : [];
+      : [],
+  );
 
-  $: customEntitySelectItems = customEntities
-    ? customEntities.map((x) => ({
-        name: x.displayName,
-        value: x.id,
-      }))
-    : [];
+  let customEntitySelectItems = $derived(
+    customEntities
+      ? customEntities.map((x) => ({
+          name: x.displayName,
+          value: x.id,
+        }))
+      : [],
+  );
 
-  $: toFieldSelectItems =
+  let toFieldSelectItems = $derived(
     selectedTargetEntity?.fields && selectedSourceField
       ? selectedTargetEntity.fields
           .filter(
@@ -60,7 +72,8 @@
               value: x.id,
             }),
           )
-      : [];
+      : [],
+  );
 </script>
 
 <Row class="g-3 w-100">

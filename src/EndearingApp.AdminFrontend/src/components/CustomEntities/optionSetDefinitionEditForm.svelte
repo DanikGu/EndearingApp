@@ -14,18 +14,25 @@
   /** @typedef {import('../../apiclient/src/model/OptionSetDefinitionDTO').default} OptionSetDefinitionDTO */
   /** @typedef {import('../../apiclient/src/model/OptionDTO').default} OptionDTO_local */
 
-  /** @type {OptionSetDefinitionDTO[]} */
-  export let optionSets;
-  /** @type {OptionSetDefinitionDTO} */
-  export let optionSet;
-  /** @type {boolean} */
-  export let isNew;
+  /**
+   * @typedef {Object} Props
+   * @property {OptionSetDefinitionDTO[]} optionSets
+   * @property {OptionSetDefinitionDTO} optionSet
+   * @property {boolean} isNew
+   * @property {Function} reloadParentData
+   */
 
-  /** @type {Function} */
-  export let reloadParentData;
+  /** @type {Props} */
+  let {
+    optionSets = $bindable(),
+    optionSet = $bindable(),
+    isNew = $bindable(),
+    reloadParentData,
+  } = $props();
 
-  /** @type {HTMLDivElement | null} */
-  let formContainer;
+  let optionsKey = $state(crypto.randomUUID());
+  /** @type {HTMLDivElement | null | undefined} */
+  let formContainer = $state();
 
   const applyChangesToDb = () => {
     const prom = applyChangesToDbApi();
@@ -134,8 +141,8 @@
     }
   };
 
-  let keyInput = "";
-  let valueInput = "";
+  let keyInput = $state("");
+  let valueInput = $state("");
 
   function addItem() {
     const numericKey = parseInt(keyInput);
@@ -146,6 +153,7 @@
     optionSet.options = [...(optionSet.options || []), newOption];
     keyInput = "";
     valueInput = "";
+    optionsKey = crypto.randomUUID();
   }
 
   /** @param {OptionDTO_local} optionToDelete */
@@ -158,6 +166,7 @@
           option.name === optionToDelete.name
         ),
     );
+    optionsKey = crypto.randomUUID();
   }
 </script>
 
@@ -195,47 +204,50 @@
   <Row class="mt-3">
     <Col md="10" lg="8">
       <h5>Options</h5>
-      {#if optionSet && optionSet.options && optionSet.options.length > 0}
-        <div class="p-2 mb-1 fw-bold d-none d-md-flex row gx-2">
-          <div class="col">Key</div>
-          <div class="col">Value</div>
-          <div class="col-3 text-end">Action</div>
-        </div>
-        {#each optionSet.options as item, i (item.value + "-" + i)}
-          <Row class="g-2 mb-2 align-items-center">
-            <Col xs="12" md>
-              <Label for={`optionKey-${i}`} class="visually-hidden">Key</Label>
-              <Input
-                id={`optionKey-${i}`}
-                bind:value={item.value}
-                type="number"
-                placeholder="Key"
-              />
-            </Col>
-            <Col xs="12" md>
-              <Label for={`optionName-${i}`} class="visually-hidden"
-                >Value</Label
-              >
-              <Input
-                id={`optionName-${i}`}
-                bind:value={item.name}
-                placeholder="Value"
-              />
-            </Col>
-            <Col xs="12" md="3" class="text-md-end mt-2 mt-md-0">
-              <Button
-                outline
-                color="danger"
-                size="sm"
-                on:click={() => deleteItem(item)}
-                class="w-100">Delete</Button
-              >
-            </Col>
-          </Row>
-        {/each}
-      {:else}
-        <p class="text-muted fst-italic">No options defined yet.</p>
-      {/if}
+      {#key optionsKey}
+        {#if optionSet && optionSet.options && optionSet.options.length > 0}
+          <div class="p-2 mb-1 fw-bold d-none d-md-flex row gx-2">
+            <div class="col">Key</div>
+            <div class="col">Value</div>
+            <div class="col-3 text-end">Action</div>
+          </div>
+          {#each optionSet.options as item, i (item.value + "-" + i)}
+            <Row class="g-2 mb-2 align-items-center">
+              <Col xs="12" md>
+                <Label for={`optionKey-${i}`} class="visually-hidden">Key</Label
+                >
+                <Input
+                  id={`optionKey-${i}`}
+                  bind:value={item.value}
+                  type="number"
+                  placeholder="Key"
+                />
+              </Col>
+              <Col xs="12" md>
+                <Label for={`optionName-${i}`} class="visually-hidden"
+                  >Value</Label
+                >
+                <Input
+                  id={`optionName-${i}`}
+                  bind:value={item.name}
+                  placeholder="Value"
+                />
+              </Col>
+              <Col xs="12" md="3" class="text-md-end mt-2 mt-md-0">
+                <Button
+                  outline
+                  color="danger"
+                  size="sm"
+                  on:click={() => deleteItem(item)}
+                  class="w-100">Delete</Button
+                >
+              </Col>
+            </Row>
+          {/each}
+        {:else}
+          <p class="text-muted fst-italic">No options defined yet.</p>
+        {/if}
+      {/key}
 
       <Row class="g-2 mt-3 pt-3 border-top align-items-center">
         <Col xs="12" md>

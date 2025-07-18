@@ -1,8 +1,15 @@
 <script>
   import { Theme } from "@sveltestrap/sveltestrap";
   import { onMount } from "svelte";
+  /**
+   * @typedef {Object} Props
+   * @property {import('svelte').Snippet} [children]
+   */
+
+  /** @type {Props} */
+  let { children } = $props();
   /** @type {string} */
-  let theme;
+  let theme = $state("light");
   onMount(() => {
     // @ts-ignore
     window.getCurrentTheme();
@@ -17,5 +24,5 @@
 </script>
 
 <Theme {theme}>
-  <slot></slot>
+  {@render children?.()}
 </Theme>

@@ -33,38 +33,42 @@
   /** @typedef {import('../../apiclient/src/model/FieldDto').default} FieldEntity */
   /** @typedef {import('../../apiclient/src/model/RelationshipDTO').default} RelationshipDTO */
 
-  /** @type {CustomEntity[]} */
-  export let customEntities;
+  /**
+   * @typedef {Object} Props
+   * @property {CustomEntity[]} customEntities
+   * @property {CustomEntity} customEntity
+   * @property {boolean} [isNew]
+   * @property {Function} reloadParentData
+   */
 
-  /** @type {CustomEntity} */
-  export let customEntity;
+  /** @type {Props} */
+  let {
+    customEntities,
+    customEntity = $bindable(),
+    isNew = $bindable(false),
+    reloadParentData,
+  } = $props();
 
   /** @type {boolean} */
-  export let isNew = false;
-
-  /** @type {Function} */
-  export let reloadParentData;
+  let editFieldModal = $state(false);
 
   /** @type {boolean} */
-  let editFieldModal = false;
-
-  /** @type {boolean} */
-  let isNewField = false;
+  let isNewField = $state(false);
 
   /** @type {FieldEntity | null} */
-  let editedField = null;
+  let editedField = $state(null);
 
   /** @type {boolean} */
-  let editRelationshipModal = false;
+  let editRelationshipModal = $state(false);
 
   /** @type {RelationshipDTO | null} */
-  let editedRelationship = null;
+  let editedRelationship = $state(null);
 
   /** @type {boolean} */
-  let isNewRelationship = false;
+  let isNewRelationship = $state(false);
 
-  /** @type {HTMLDivElement | null} */
-  let formContainer;
+  /** @type {HTMLDivElement | null | undefined} */
+  let formContainer = $state();
 
   /** @param {FieldEntity} field **/
   let editField = (field) => {

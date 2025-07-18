@@ -8,28 +8,14 @@
     }
   },
   "profiles": {
-    "IISExpress": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "hotReloadEnabled": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "EndearingApp.Web": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "hotReloadEnabled": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:57679/"
-    },
-    "Watch": {
-      "commandName": "Executable",
-      "workingDirectory": "$(ProjectDir)",
-      "executablePath": "dotnet",
-      "commandLineArgs": "watch run debug --launch-profile IISExpress"
     }
   }
 }

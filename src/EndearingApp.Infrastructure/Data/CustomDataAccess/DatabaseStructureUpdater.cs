@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -92,21 +93,21 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
 
             await CallDotnetCli("ef migrations add InitialCreate", folderPath);
             await CallDotnetCli("dotnet publish", folderPath);
-            //if (GetIsDatabaseUpToDate())
-            //{
-            //    ClearInitialMigration(folderPath + "/Migrations/");
-            //}
-            //try
-            //{
-            //    await CallDotnetCli("ef database update", folderPath);
-            //}
-            //catch
-            //{
-            //    throw new InvalidOperationException(
-            //        "Initial migration of custom schema failed"
-            //            + "Database structure have to be up to date or empty;"
-            //    );
-            //}
+            // if (GetIsDatabaseUpToDate())
+            // {
+            //     ClearInitialMigration(folderPath + "/Migrations/");
+            // }
+            // try
+            // {
+            //     await CallDotnetCli("ef database update", folderPath);
+            // }
+            // catch
+            // {
+            //     throw new InvalidOperationException(
+            //         "Initial migration of custom schema failed"
+            //             + "Database structure have to be up to date or empty;"
+            //     );
+            // }
         }
         if (File.Exists(folderPath + "/AppContext.cs"))
         {
@@ -171,7 +172,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         //_contextAssemblyLoader.FreePreviousAssembly();
         //
         //return !hasErrors;
-        return true;    
+        return true;
     }
 
     private void ClearInitialMigration(string migrationFolder)
@@ -249,7 +250,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
     {
         return "updateState"
             + DateTime
-                .UtcNow.ToString()
+                .UtcNow.ToString(CultureInfo.InvariantCulture)
                 .Replace(" ", "_")
                 .Replace(".", "")
                 .Replace(":", "")

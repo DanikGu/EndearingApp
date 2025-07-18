@@ -1,20 +1,21 @@
 <script>
+  import { run } from "svelte/legacy";
+
   import { Spinner } from "@sveltestrap/sveltestrap";
   import { onMount } from "svelte";
 
-  /** @type {string} */
-  export let msg;
+  /**
+   * @typedef {Object} Props
+   * @property {string} msg
+   * @property {Promise<any>} awaitedPromise
+   * @property {boolean} [loadingStatus]
+   */
 
-  /** @type {Promise<any>} */
-  export let awaitedPromise;
-
-  /** @type {boolean} */
-  export let loadingStatus = true;
+  /** @type {Props} */
+  let { msg, awaitedPromise, loadingStatus = $bindable(true) } = $props();
 
   /** @type {HTMLElement | null} */
-  let thisCompElem = null;
-
-  $: onStatusChange(loadingStatus);
+  let thisCompElem = $state(null);
 
   /** @param {boolean} loadingStatus */
   let onStatusChange = (loadingStatus) => {
@@ -41,15 +42,18 @@
       },
     );
   });
+  run(() => {
+    onStatusChange(loadingStatus);
+  });
 </script>
 
 <div
-  class="flex gap-10 h-full w-full absolute top-0 bg-opacity-15 rounded bg-gray-900 dark:bg-gray-100 dark:bg-opacity-15"
+  class="flex gap-10 h-full w-full absolute top-0 right-0 left-0 bottom-0 bg-opacity-15 rounded bg-gray-900 dark:bg-gray-100 dark:bg-opacity-15"
   style="z-index: 10000;"
   bind:this={thisCompElem}
 >
   <div
-    class="flex flex-col justify-center items-center h-full w-full z-auto dark:text-white"
+    class="flex flex-col justify-center items-center h-full w-full z-auto text-primary"
   >
     <Spinner class="w-5 h-5" />
     {msg}

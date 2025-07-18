@@ -5,15 +5,29 @@
     FieldDto,
     FormDTO,
   } from "@apiclients/src";
+  import { showBlockingLoader } from "@utils/uiutils";
   import { onMount } from "svelte";
   /** @typedef {import('@formio/js').Form} Form */
 
-  /** @type {any} */
-  export let entityData = {};
-  /** @type {FormDTO} */
-  export let form;
-  /** @type {HTMLElement} */
-  let formElem;
+  /**
+   * @typedef {Object} Props
+   * @property {any} [entityData]
+   * @property {FormDTO} form
+   * @property {Function | null} [onAfterSave]
+   * @property {Function | null} [onAfterDelete]
+   */
+
+  /** @type {Props} */
+  let {
+    entityData = $bindable({}),
+    form = $bindable(),
+    onAfterSave = null,
+    onAfterDelete = null,
+  } = $props();
+
+  /** @type {HTMLElement | undefined} */
+  let formElem = $state();
+
   /** @type {Form | null}*/
   let formioForm = null;
 
@@ -38,7 +52,7 @@
     formioForm.options.noAlerts = true;
   };
   /** @param { string } msg */
-  const alert = (msg) => {
+  const alertMsg = (msg) => {
     if (!formioForm) {
       return;
     }
@@ -74,11 +88,11 @@
     if (entityData.Id) {
       const url = `/api/odata/${customEntity.name}(${entityData.Id})`;
       await patchData(url, entityData);
-      alert(`Entity updated`);
+      alertMsg(`Entity updated`);
     } else {
       const url = `/api/odata/${customEntity.name}`;
       entityData = await postData(url, entityData);
-      alert(`Entity created`);
+      alertMsg(`Entity created`);
       return;
     }
 
@@ -87,21 +101,6 @@
   const patchData = async (url = "", data = {}) => {
     const response = await fetch(url, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      alertError(`HTTP error! Status: ${response.status}`);
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-  };
-
-  const putData = async (url = "", data = {}) => {
-    const response = await fetch(url, {
-      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
@@ -196,58 +195,9 @@
         "Content-Type": "application/json",
       },
     });
-    if (response.ok) {
-      window.location.replace(
-        window.location.href.substring(
-          0,
-          window.location.href.lastIndexOf("/"),
-        ),
-      );
-    } else {
+    if (!response.ok) {
       alertError(`HTTP error! Status: ${response.status}`);
     }
-  };
-
-  /** @param { HTMLElement } targetElement
-   *  @param { string } message */
-  const showLoader = (targetElement, message) => {
-    const overlay = document.createElement("div");
-    overlay.className = "bg-body";
-    overlay.style.position = "absolute";
-    overlay.style.top = "0";
-    overlay.style.left = "0";
-    overlay.style.width = "100%";
-    overlay.style.height = "calc(100% + 50px)";
-    overlay.style.opacity = "0.6";
-    overlay.style.display = "flex";
-    overlay.style.flexDirection = "column";
-    overlay.style.alignItems = "center";
-    overlay.style.justifyContent = "center";
-    overlay.style.backdropFilter = "blur(5px)";
-    overlay.style.zIndex = "9999";
-    overlay.style.borderRadius = "inherit";
-
-    const spinner = document.createElement("i");
-    spinner.className = "bi bi-arrow-clockwise";
-    spinner.style.fontSize = "2rem";
-    spinner.style.animation = "spin 1s linear infinite";
-
-    const text = document.createElement("p");
-    text.innerText = message;
-    text.style.marginTop = "10px";
-    text.style.fontSize = "1rem";
-    text.style.color = "#333";
-
-    overlay.appendChild(spinner);
-    overlay.appendChild(text);
-
-    if (getComputedStyle(targetElement).position === "static") {
-      targetElement.style.position = "relative";
-    }
-
-    targetElement.appendChild(overlay);
-
-    return () => overlay.remove();
   };
   onMount(async () => {
     const { Formio } = await import("@formio/js");
@@ -276,8 +226,9 @@
         formioForm.nosubmit = true;
       }
       // @ts-ignore
-      formioForm?.on("EntityDelete", function (eventData) {
-        delteCurrentEntity();
+      formioForm?.on("EntityDelete", async function (eventData) {
+        await delteCurrentEntity();
+        onAfterDelete && onAfterDelete();
       });
 
       // bind form to entityData
@@ -305,7 +256,8 @@
       formioForm?.on(
         "EntitySave",
         async function (/** @type {any} */ eventData) {
-          const removeLoader = showLoader(formElem, "Saving...");
+          // const removeLoader = showLoader(formElem, "Saving...");
+          const removeLoader = showBlockingLoader("Saving...", formElem);
           try {
             // @ts-ignore
             const isValid = formioForm.checkValidity(null, true, null, false);
@@ -313,6 +265,9 @@
             formioForm.checkData();
             if (isValid) {
               await saveEntity();
+            }
+            if (onAfterSave) {
+              onAfterSave(entityData);
             }
           } catch (ex) {
             console.log(ex);
@@ -326,4 +281,4 @@
   });
 </script>
 
-<div class="p-4 dark:text-white" id="form" bind:this={formElem}></div>
+<div class="p-4 dark:text-white relative" id="form" bind:this={formElem}></div>
