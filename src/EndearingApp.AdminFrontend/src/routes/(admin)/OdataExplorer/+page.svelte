@@ -13,7 +13,7 @@
   import { onMount } from "svelte";
   import { browser } from "$app/environment";
   import { JSONEditor } from "svelte-jsoneditor";
-  import EditFormComponent from "../../../components/AppComponents/EditFormComponent.svelte";
+  import FormComponent from "../../../components/AppComponents/EditFormComponent.svelte";
   import {
     Container,
     Row,
@@ -25,6 +25,7 @@
   } from "@sveltestrap/sveltestrap";
   import QueryBuilder from "../../../components/QueryBuilder/queryBuilder.svelte";
   import { ConditionGroup } from "../../../components/QueryBuilder/typeDefinitions";
+  import { convertToOdataFilter } from "../../../components/QueryBuilder/queryToOdataUrlParams";
 
   /** @typedef {import('svelte-jsoneditor').Mode} Mode */
 
@@ -297,6 +298,13 @@
   };
   const queryBuilderSearchClick = () => {
     console.log(rootQuery);
+    const filter = convertToOdataFilter(rootQuery);
+    console.log(filter);
+    console.log(getUrlValue);
+    let link = resourceUrl + "?filter=" + filter;
+    console.log(link);
+    getUrlValue = link;
+    reloadFromInput();
   };
   let typesItems = $derived(
     customEntities.map((x) => ({ value: x.id, name: x.name })),
@@ -430,14 +438,14 @@
       <Col md="6" class="d-flex flex-column p-1 border-1">
         {#key selectedFormId + (editedEntityId || "new")}
           {#await loadEntityWithForm() then props}
-            <EditFormComponent
+            <FormComponent
               form={props.form}
               entityData={!!editedEntityId ? props.data : {}}
               onAfterSave={(/** @type{any}*/ editedEntity) => {
                 editedEntityId = editedEntity.Id;
               }}
               onAfterDelete={() => (editedEntityId = null)}
-            ></EditFormComponent>
+            ></FormComponent>
           {/await}
         {/key}
       </Col>

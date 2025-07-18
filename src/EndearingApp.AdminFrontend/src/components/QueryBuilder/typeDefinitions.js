@@ -1,3 +1,5 @@
+import { FieldDto } from "@apiclients/src";
+
 /**
  * @class Field
  * @property {string} name - The actual name or identifier of the field.
@@ -18,17 +20,20 @@ class Field {
    * @property {string} field
    * @property {string} operation
    * @property {string} value
+   * @property {FieldDto | null} filedDTO
    */
 class Condition {
   /**
    * @param {string} field
    * @param {string} operation
-   * @param {string} value
+   * @param {any} value
+   * @param {FieldDto | null} fieldDto
    */
-  constructor(field, operation, value) {
+  constructor(field, operation, value, fieldDto) {
     this.field = field;
     this.operation = operation;
     this.value = value;
+    this.fieldDto = fieldDto;
   }
 }
 

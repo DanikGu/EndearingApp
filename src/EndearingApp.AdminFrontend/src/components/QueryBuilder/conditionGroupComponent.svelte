@@ -16,7 +16,7 @@
 
   /** @param {ConditionGroup} parentElem */
   const addCondition = (parentElem) => {
-    parentElem.children.push(new Condition("", "", ""));
+    parentElem.children.push(new Condition("", "", "", null));
     v = crypto.randomUUID();
   };
 

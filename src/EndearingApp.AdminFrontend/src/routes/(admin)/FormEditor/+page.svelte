@@ -475,7 +475,9 @@
           </Form>
           <div class="flex-grow-1 mt-3">
             {#key editedForm?.id}
-              <Builder bind:currentSchema bind:currentComponents={currentObj}
+              <Builder
+                bind:currentSchema
+                bind:currentComponents={currentObj}
               ></Builder>
             {/key}
           </div>

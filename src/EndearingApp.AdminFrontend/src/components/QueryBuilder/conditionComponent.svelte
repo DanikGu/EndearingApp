@@ -5,9 +5,11 @@
   import {
     CustomeEntityDTO,
     FieldDto,
+    OptionDTO,
     OptionSetDefinitionDTO,
   } from "@apiclients/src";
   import { getTypeId } from "@utils/fieldtypesutils";
+  import Svelecte from "svelecte";
 
   /** @typedef {import('@sveltestrap/sveltestrap').InputType} InputType */
 
@@ -31,6 +33,10 @@
   let controlType = $state();
   /** @type {string | null} */
   let currEntityId;
+  /** @type {OptionDTO[]} */
+  let valueOptions = [];
+  /** @type {boolean} */
+  let isSelect = $state(false);
 
   onMount(() => {
     customEntities = getContext("etnStructure");
@@ -40,6 +46,7 @@
   });
 
   const onFieldTypeChange = () => {
+    condition.value = null;
     const currEntity = customEntities.find((x) => x.id == currEntityId);
     fieldDefinition = currEntity?.fields.find(
       (/** @type {FieldDto} */ field) => field.name === condition.field,
@@ -68,8 +75,29 @@
       };
       return mappings[fieldDefinition.type] || "textfield";
     })();
-    if (fieldDefinition.type === getTypeId("Option Set")) {
+    if (
+      fieldDefinition?.type === getTypeId("Option Set") ||
+      fieldDefinition?.type === getTypeId("Option Set MultiSelect")
+    ) {
+      isSelect = true;
+      const optSetDefinintion = optionSetDefinitions.find(
+        (x) => x.id == fieldDefinition.optionSetDefinitionId,
+      );
+      if (optSetDefinintion) {
+        valueOptions = optSetDefinintion.options;
+      } else {
+        valueOptions = [];
+      }
+    } else {
+      valueOptions = [];
+      isSelect = false;
     }
+    if (fieldDefinition) {
+      condition.fieldDto = fieldDefinition;
+    }
+  };
+  const onValueChange = () => {
+    console.log(condition.value);
   };
 </script>
 
@@ -99,11 +127,30 @@
     <option value="in">In</option>
   </Input>
 
-  <Input
-    type={controlType ?? "text"}
-    placeholder="Value"
-    bind:value={condition.value}
-  ></Input>
+  {#if isSelect}
+    <div class="form-control">
+      <Svelecte
+        options={valueOptions.map((x) => ({
+          value: `${x.value}`,
+          text: x.name,
+        }))}
+        multiple
+        bind:value={condition.value}
+        onChange={onValueChange}
+      ></Svelecte>
+    </div>
+  {:else}
+    <Input
+      type={controlType ?? "text"}
+      placeholder="Value"
+      bind:value={condition.value}
+      on:change={onValueChange}
+    >
+      {#each valueOptions as opt}
+        <option value={`${opt.value}`}>{opt.name}</option>
+      {/each}
+    </Input>
+  {/if}
   <Button color="danger" outline on:click={deleteCondition}>
     <Icon name="trash"></Icon>
   </Button>

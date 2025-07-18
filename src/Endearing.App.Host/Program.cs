@@ -1,8 +1,9 @@
 ﻿using Endearing.App.Host.OpenTelemetryCollector;
 
 var builder = DistributedApplication.CreateBuilder(args);
-
-var postgres = builder.AddPostgres("postgres").WithDataVolume(isReadOnly: false);
+var postgres = builder
+    .AddPostgres("postgres")
+    .WithDataVolume(isReadOnly: false);
 var postgresdb = postgres.AddDatabase("postgresdb");
 
 var prometheus = builder.AddContainer("prometheus", "prom/prometheus", "v3.2.1")
@@ -40,15 +41,15 @@ var collector = builder.AddOpenTelemetryCollector("otelcollector", "../Telemetry
         .WithEnvironment("TEMPO_ENDPOINT", $"{tempo.GetEndpoint("otlp-http")}");
 
 var back = builder
-        .AddProject<Projects.EndearingApp_Web>("back", launchProfileName: "EndearingApp.Web")
+        .AddProject<Projects.EndearingApp_Web>("back")
         .WithReference(postgresdb);
 
-var front = builder.AddNpmApp("front", "../EndearingApp.AdminFrontend")
+var front = builder
+        .AddNpmApp("front", "../EndearingApp.AdminFrontend", "dev")
         .WithEndpoint(targetPort: 5173, scheme: "http", name: "http")
         .WithEnvironment("VITE_API_URL", back.GetEndpoint("http"))
         .WithExternalHttpEndpoints()
         .WithReference(back)
-        .WaitFor(back)
         .PublishAsDockerFile();
 
 builder.Build().Run();
