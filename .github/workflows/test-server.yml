@@ -19,6 +19,7 @@ jobs:
           echo "$PRIVATE_KEY" | tr -d '\r' > private_key.pem # Write the private key to a file
           chmod 600 private_key.pem # Set the appropriate permissions for the key file
           ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.USER }}@${{ secrets.HOST }} <<EOF
+            sudo su
             cd ~/${{secrets.APP_PATH}}
             git pull origin test
             docker compose down -v
