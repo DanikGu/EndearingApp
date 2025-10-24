@@ -324,7 +324,7 @@
       : "",
   );
   let firstPageUrl = $derived(
-    resourceUrl ? resourceUrl + "?orderby=createdon%20desc" : "",
+    resourceUrl ? resourceUrl + "?orderby=createdon%20desc&top=100" : "",
   );
   run(() => {
     if (browser && firstPageUrl) getFirstPage();
