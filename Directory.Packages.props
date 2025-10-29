@@ -10,6 +10,7 @@
     <PackageVersion Include="Ardalis.Specification" Version="8.0.0" />
     <PackageVersion Include="Ardalis.Specification.EntityFrameworkCore" Version="8.0.0" />
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.5.2" />
+    <PackageVersion Include="Aspire.Hosting.Docker" Version="9.5.2-preview.1.25522.3" />
     <PackageVersion Include="Aspire.Hosting.NodeJs" Version="9.2.1" />
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="9.2.1" />
     <PackageVersion Include="Autofac" Version="8.2.0" />
