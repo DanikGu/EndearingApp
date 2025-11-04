@@ -30,7 +30,7 @@ export function convertToOdataFilter(query) {
         return '';
       }
 
-      const formattedValue = formatValue(value, fieldDto)
+      const formattedValue = formatValue(value, fieldDto, operation)
       return `${field} ${operation} ${formattedValue}`;
     }
 
@@ -42,8 +42,9 @@ export function convertToOdataFilter(query) {
 
 /** @param {any} value 
  *  @param {FieldDto} fieldDefinition 
+ *  @param {string} operation 
  *  @return {any} **/
-function formatValue(value, fieldDefinition) {
+function formatValue(value, fieldDefinition, operation) {
   const formatAs = {
     [getTypeId("Unlimited Text")]: "string",
     [getTypeId("Limited Text")]: "string",
@@ -61,17 +62,27 @@ function formatValue(value, fieldDefinition) {
     [getTypeId("Option Set MultiSelect")]: "select",
   }[fieldDefinition.type];
 
+  if (operation === 'in') {
+    if (formatAs === 'string' || formatAs === 'guid') {
+      // @ts-ignore
+      return `(${value.map(v => `'${v.replace(/'/g, "''")}'`).join(',')})`;
+    }
+    return `(${value.join(',')})`;
+  }
+
   if (formatAs === "string") {
     return `'${value.replace(/'/g, "''")}'`;
   } else if (formatAs === "raw") {
     return value;
   } else if (formatAs === "date") {
-
+    return new Date(value).toISOString();
+  } else if (formatAs === "time") {
+    return `duration'${value}'`;
   }
   else if (formatAs === "select") {
-
+    return value;
   } else if (formatAs === "guid") {
-
+    return `${value}`;
   }
 }
 

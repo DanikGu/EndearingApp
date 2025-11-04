@@ -17,12 +17,14 @@
   /** @param {ConditionGroup} parentElem */
   const addCondition = (parentElem) => {
     parentElem.children.push(new Condition("", "", "", null));
+    console.log(parentElem.children);
     v = crypto.randomUUID();
   };
 
   /** @param {ConditionGroup} parentElem */
   const addGroup = (parentElem) => {
     parentElem.children.push(new ConditionGroup("and", []));
+    console.log(parentElem.children);
     v = crypto.randomUUID();
   };
   let v = $state(crypto.randomUUID());

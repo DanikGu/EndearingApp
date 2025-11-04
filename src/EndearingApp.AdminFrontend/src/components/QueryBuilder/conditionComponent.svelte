@@ -42,11 +42,14 @@
     customEntities = getContext("etnStructure");
     optionSetDefinitions = getContext("optionSets");
     currEntityId = getContext("customEntityId");
-    onFieldTypeChange();
+    onFieldTypeChange(true);
   });
 
-  const onFieldTypeChange = () => {
-    condition.value = null;
+  /** @param {boolean} mount */
+  const onFieldTypeChange = (mount) => {
+    if (!mount) {
+      condition.value = null;
+    }
     const currEntity = customEntities.find((x) => x.id == currEntityId);
     fieldDefinition = currEntity?.fields.find(
       (/** @type {FieldDto} */ field) => field.name === condition.field,
@@ -105,7 +108,7 @@
   <Input
     type="select"
     placeholder="Select Field"
-    on:change={onFieldTypeChange}
+    on:change={() => onFieldTypeChange(false)}
     bind:value={condition.field}
   >
     {#each fields as field}
