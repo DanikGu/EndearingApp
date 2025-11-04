@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Security.AccessControl;
 using System.Text;
 using System.Xml;
 using CliWrap;
@@ -42,6 +43,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         {
             throw new ArgumentNullException(nameof(connectionString));
         }
+
         var projectName = "CustomEntitiesDbContext";
         var dbContextName = "AppDbContext";
         var appContextText = GetAllTablesClasses(
@@ -83,9 +85,12 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                 {
                     version = "-v " + version;
                 }
+
                 await CallDotnetCli($"add package {package} {version}", folderPath);
             }
+
             await CallDotnetCli("new tool-manifest", folderPath);
+            await CallDotnetCli("tool restore", folderPath);
             DisableWarningsAsErrors(folderPath);
             await CallDotnetCli("tool install dotnet-ef", folderPath);
             File.WriteAllText(folderPath + "/AppContext.cs", appContext);
@@ -109,6 +114,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             //     );
             // }
         }
+
         if (File.Exists(folderPath + "/AppContext.cs"))
         {
             var currDbContext = File.ReadAllText(folderPath + "/AppContext.cs");
@@ -117,6 +123,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                 return;
             }
         }
+
         File.WriteAllText(folderPath + "/AppContext.cs", appContext);
         await CallDotnetCli("ef migrations add " + GetNewMigrationName(), folderPath);
         await CallDotnetCli("ef database update", folderPath);
@@ -160,6 +167,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                 (warning as XmlNode).InnerText = "False";
             }
         }
+
         var resultXml = xmlDocument.OuterXml;
         File.WriteAllText(projectFile, resultXml);
     }
@@ -183,6 +191,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         {
             throw new ArgumentException("Migration is not found");
         }
+
         var fileText = File.ReadAllText(migratonFile);
         fileText = RemoveFunctionBody(fileText, "Up(MigrationBuilder migrationBuilder)");
         fileText = RemoveFunctionBody(fileText, "Down(MigrationBuilder migrationBuilder)");
@@ -205,16 +214,19 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             {
                 openBracketsCount--;
             }
+
             if (openBracketsCount == 0)
             {
                 indexToEndDeletion = i;
                 break;
             }
         }
+
         if (indexToEndDeletion == -1)
         {
             throw new Exception("Something wrong I can feel it");
         }
+
         fileText =
             fileText.Substring(0, startDeletionIndex + 1) + fileText.Substring(indexToEndDeletion);
         return fileText;
@@ -226,8 +238,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             .WithArguments(command)
             .WithWorkingDirectory(folderPath)
             .WithStandardOutputPipe(
-                PipeTarget.ToDelegate(
-                    (message) =>
+                PipeTarget.ToDelegate((message) =>
                     {
                         Debug.WriteLine(message);
                         _logger?.LogInformation(message);
@@ -235,8 +246,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                 )
             )
             .WithStandardErrorPipe(
-                PipeTarget.ToDelegate(
-                    (message) =>
+                PipeTarget.ToDelegate((message) =>
                     {
                         Debug.WriteLine(message);
                         _logger?.LogError(message);
@@ -249,12 +259,12 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
     private string GetNewMigrationName()
     {
         return "updateState"
-            + DateTime
-                .UtcNow.ToString(CultureInfo.InvariantCulture)
-                .Replace(" ", "_")
-                .Replace(".", "")
-                .Replace(":", "")
-                .Replace("/", "");
+               + DateTime
+                   .UtcNow.ToString(CultureInfo.InvariantCulture)
+                   .Replace(" ", "_")
+                   .Replace(".", "")
+                   .Replace(":", "")
+                   .Replace("/", "");
     }
 
     private string GetAllTablesClasses(
@@ -299,6 +309,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             var @class = GetDbModelClass(table, relationshipsToThisTable);
             result.Append(@class);
         }
+
         result.Append('\n');
         result.Append(GetDbContext(dbContextName, dbStructure, connectionString));
         // return ArrangeUsingRoslyn(result.ToString()); ;
@@ -313,33 +324,33 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
     {
         var result = new StringBuilder();
         var baseEntityTrackingFunc = """
-            public override int SaveChanges(bool acceptAllChangesOnSuccess)
-            {
-                foreach (var entry in ChangeTracker.Entries())
-                {
-                    if (!(entry.Entity is BaseEntity)) {
-                        continue;
-                    }
-                    switch (entry.State)
-                    {
-                        case EntityState.Added:
-                            ((BaseEntity)entry.Entity).CreatedOn = DateTime.UtcNow;
-                            ((BaseEntity)entry.Entity).ModifiedOn = DateTime.UtcNow;
-                            break;
+                                     public override int SaveChanges(bool acceptAllChangesOnSuccess)
+                                     {
+                                         foreach (var entry in ChangeTracker.Entries())
+                                         {
+                                             if (!(entry.Entity is BaseEntity)) {
+                                                 continue;
+                                             }
+                                             switch (entry.State)
+                                             {
+                                                 case EntityState.Added:
+                                                     ((BaseEntity)entry.Entity).CreatedOn = DateTime.UtcNow;
+                                                     ((BaseEntity)entry.Entity).ModifiedOn = DateTime.UtcNow;
+                                                     break;
 
-                        case EntityState.Modified:
-                            entry.Property(nameof(BaseEntity.CreatedOn)).IsModified = false;
-                            ((BaseEntity)entry.Entity).ModifiedOn = DateTime.UtcNow;
-                            break;
-                    }
-                }
-                return base.SaveChanges(acceptAllChangesOnSuccess);
-            }
-            """;
+                                                 case EntityState.Modified:
+                                                     entry.Property(nameof(BaseEntity.CreatedOn)).IsModified = false;
+                                                     ((BaseEntity)entry.Entity).ModifiedOn = DateTime.UtcNow;
+                                                     break;
+                                             }
+                                         }
+                                         return base.SaveChanges(acceptAllChangesOnSuccess);
+                                     }
+                                     """;
         result.AppendFormat("public class {0}: DbContext\n{{\n", dbContextName);
         result.AppendFormat(
             "protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => "
-                + "optionsBuilder.UseNpgsql(\"{0}\");",
+            + "optionsBuilder.UseNpgsql(\"{0}\");",
             connectionString
         );
         result.AppendLine(
@@ -355,6 +366,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         {
             result.AppendFormat("public DbSet<{0}> {0} {{ get; set; }}\n", table.Name);
         }
+
         result.Append("}\n");
 
         return result;
@@ -390,6 +402,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                 );
             }
         }
+
         foreach (var relationship in toThisTable)
         {
             result.AppendFormat(
@@ -419,16 +432,20 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             {
                 fieldsConfig.AppendFormat(".HasMaxLength({0})\n", field.Size);
             }
+
             if (field.DefaultValue is not null)
             {
                 fieldsConfig.AppendFormat(".HasDefaultValue({0})\n", field.DefaultValue);
             }
+
             if (field.IsRequired)
             {
                 fieldsConfig.AppendFormat(".IsRequired()");
             }
+
             fieldsConfig.Append(";\n");
         }
+
         foreach (var index in table.Fields.Where(x => x.IsIndexed))
         {
             fieldsConfig.AppendFormat("builder").AppendFormat(".HasIndex(b => b.{0})", index.Name);
@@ -436,8 +453,10 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             {
                 fieldsConfig.AppendFormat(".IsUnique()");
             }
+
             fieldsConfig.Append(";\n");
         }
+
         foreach (var index in table.Fields.Where(x => !x.IsIndexed && x.IsUnique))
         {
             fieldsConfig
@@ -445,6 +464,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
                 .AppendFormat(".HasAlternateKey(b => b.{0})", index.Name);
             fieldsConfig.Append(";\n");
         }
+
         //var primaryKey = table.Fields.First(x => x.IsPrimaryKey);
         //Now when all entities are derived from base entity no need to create primary key manually
         fieldsConfig.AppendFormat("builder").AppendFormat(".HasKey(b => b.{0})", "Id");
@@ -461,12 +481,14 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
             {
                 fieldsConfig.AppendFormat(".HasConstraintName(\"{0}\")", rel.ConstraintName);
             }
+
             fieldsConfig.AppendFormat(
                 ".OnDelete({0})",
                 MapDeleteBehaviorToEfCoreEnum(rel.DeleteBehavior)
             );
             fieldsConfig.Append(";\n");
         }
+
         fieldsConfig.Append(";\n");
         fieldsConfig.AppendFormat(
             """
@@ -527,6 +549,7 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         {
             type += "?";
         }
+
         return type;
     }
 

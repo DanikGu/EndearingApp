@@ -32,8 +32,6 @@ public class CrudOdataController : ODataController
     public IActionResult Get(string entityset)
     {
         var dbSet = _customEntityQueryableProvider.GetDbSet(entityset);
-        var method = HttpContext.GetRouteValue("method") as string;
-        
         return Ok(dbSet);
     }
     [EnableQuery]

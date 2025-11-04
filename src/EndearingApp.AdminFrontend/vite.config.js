@@ -9,6 +9,7 @@ export default ({ mode }) => {
       proxy: {
         '/api': {
           target: loadEnv(mode, process.cwd()).VITE_API_URL,
+          secure: false,
           configure: (proxy, _options) => {
             let log = console.log;
             if (mode !== "development") {

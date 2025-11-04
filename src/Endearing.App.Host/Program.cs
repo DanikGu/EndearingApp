@@ -79,7 +79,7 @@ var back = builder
 var front = builder
     .AddNpmApp("front", "../EndearingApp.AdminFrontend", "dev")
     .WithEndpoint(targetPort: 5173, scheme: "http", name: "http")
-    .WithEnvironment("VITE_API_URL", back.GetEndpoint("http"))
+    .WithEnvironment("VITE_API_URL", back.GetEndpoint("https"))
     .WithExternalHttpEndpoints()
     .WithReference(back)
     .PublishAsDockerComposeService((resource, service) =>
