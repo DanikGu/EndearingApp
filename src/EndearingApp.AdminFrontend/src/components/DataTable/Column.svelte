@@ -1,19 +1,37 @@
 <script>
   import { useSortable } from "@dnd-kit-svelte/sortable";
   import { FieldDto } from "@apiclients/src";
+  import { flip } from "svelte/animate";
+  import { CSS, styleObjectToString } from "@dnd-kit-svelte/utilities";
 
-  /** @type {FieldDto} */
-  export let field;
+  /** @type {{field: FieldDto}} */
+  let { field } = $props();
 
-  const { attributes, listeners, node } = useSortable({
+  const {
+    attributes,
+    listeners,
+    node,
+    isDragging,
+    transform,
+    isSorting,
+    transition,
+  } = useSortable({
     id: field.name,
   });
+  const style = $derived(
+    styleObjectToString({
+      transform: CSS.Transform.toString(transform.current),
+      transition: isSorting.current ? transition.current : undefined,
+      zIndex: isDragging.current ? 1 : undefined,
+    }),
+  );
 </script>
 
 <div
   bind:this={node.current}
   {...attributes.current}
   {...listeners.current}
+  {style}
   class="p-2 border rounded-md bg-gray-100 cursor-grab noselect"
 >
   {field.displayName}
@@ -30,4 +48,3 @@
                                   supported by Chrome, Edge, Opera and Firefox */
   }
 </style>
-

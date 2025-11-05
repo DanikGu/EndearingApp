@@ -11,10 +11,12 @@
   import {
     SortableContext,
     arrayMove,
-    useSortable,
+    verticalListSortingStrategy,
   } from "@dnd-kit-svelte/sortable";
   import Column from "./Column.svelte";
   import Droppable from "./Droppable.svelte";
+  import { dropAnimation, sensors } from "./DropAnimation.js";
+  import { crossfade } from "svelte/transition";
 
   import {
     CustomeEntityDTO,
@@ -22,24 +24,17 @@
     OptionSetDefinitionDTO,
   } from "@apiclients/src";
 
-  /** @typedef {import('@dnd-kit-svelte/core').DragStartEvent} DragStartEvent */
-  /** @typedef {import('@dnd-kit-svelte/core').DragEndEvent } DragEndEvent  */
   /** @typedef {import('@dnd-kit-svelte/core').DragOverEvent } DragOverEvent   */
+  /** @typedef {import('@dnd-kit-svelte/core').DragEndEvent } DragEndEvent    */
   /** @typedef {import('@dnd-kit-svelte/core').UniqueIdentifier } UniqueIdentifier */
 
-  /**
-   * @type {any[]}
-   */
+  /** @type {any[]} */
   export let data = [];
 
-  /**
-   * @type {CustomeEntityDTO}
-   */
+  /** @type {CustomeEntityDTO} */
   export let customEntity;
 
-  /**
-   * @type {OptionSetDefinitionDTO[]}
-   */
+  /** @type {OptionSetDefinitionDTO[]} */
   export let optionSets = [];
 
   /** @type {boolean} */
@@ -85,9 +80,7 @@
     modal = false;
   };
 
-  /**
-   * @param {DragOverEvent} event
-   */
+  /** @param {DragOverEvent} event */
   const handleDragOver = (event) => {
     const { active, over } = event;
     if (!over) return;
@@ -108,6 +101,29 @@
       moveToSelected(avaliableColumn);
       return;
     }
+    const overColAvaliable = availableColumns.find((x) => x.name === over.id);
+    const overColSelected = selectedColumns.find((x) => x.name === over.id);
+
+    if (!overColAvaliable && !overColSelected) {
+      return;
+    }
+    let targetArray = !!overColSelected ? selectedColumns : availableColumns;
+    const newIndex = targetArray.findIndex((x) => x.name === over.id);
+
+    if (!!overColSelected && !!avaliableColumn) {
+      moveToSelected(avaliableColumn, newIndex);
+    } else if (!overColSelected && !!selectedColumn) {
+      moveToAvaliable(selectedColumn, newIndex);
+    }
+  };
+  /** @param {DragEndEvent} event */
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (!over) return;
+
+    let selectedColumn = selectedColumns.find((x) => x.name == active.id);
+    let avaliableColumn = availableColumns.find((x) => x.name == active.id);
 
     const overColAvaliable = availableColumns.find((x) => x.name === over.id);
     const overColSelected = selectedColumns.find((x) => x.name === over.id);
@@ -182,14 +198,18 @@
     <ModalHeader {toggle}>Select and Order Columns</ModalHeader>
     <ModalBody>
       <DndContext
-        onDragEnd={handleDragEnd}
         onDragStart={(e) => (activeId = e.active.id)}
         onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+        {sensors}
       >
         <div class="grid grid-cols-2 gap-4">
           <div>
             <h3 class="text-lg font-medium mb-2">Available Columns</h3>
-            <SortableContext items={availableColumns.map((f) => f.name)}>
+            <SortableContext
+              items={availableColumns.map((f) => f.name)}
+              strategy={verticalListSortingStrategy}
+            >
               <Droppable id="available">
                 <div class="space-y-2">
                   {#each availableColumns as field (field.name)}
@@ -201,7 +221,10 @@
           </div>
           <div>
             <h3 class="text-lg font-medium mb-2">Selected Columns</h3>
-            <SortableContext items={selectedColumns.map((f) => f.name)}>
+            <SortableContext
+              items={selectedColumns.map((f) => f.name)}
+              strategy={verticalListSortingStrategy}
+            >
               <Droppable id="selected">
                 <div class="space-y-2">
                   {#each selectedColumns as field (field.name)}
@@ -212,7 +235,7 @@
             </SortableContext>
           </div>
         </div>
-        <DragOverlay>
+        <DragOverlay {dropAnimation}>
           {#if activeId}
             {@const activeField = customEntity.fields.find(
               (/** @type {any} */ f) => f.name === activeId,
