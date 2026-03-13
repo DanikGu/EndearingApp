@@ -21,7 +21,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 
 builder.Services.Configure<ServiceConfig>(config =>
 {
-    config.Services = new List<ServiceDescriptor>(builder.Services);
+    config.Services = [.. builder.Services];
     config.Path = "/listservices";
 });
 
@@ -36,10 +36,8 @@ builder.AddOdataBeast();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
-    
 
 var app = builder.Build();
-
 
 if (app.Environment.IsDevelopment())
 {
@@ -87,5 +85,4 @@ using (var scope = app.Services.CreateScope())
 app.Run();
 
 // Make the implicit Program.cs class public, so integration tests can reference the correct assembly for host building
-public partial class Program {
-}
+public partial class Program { }
