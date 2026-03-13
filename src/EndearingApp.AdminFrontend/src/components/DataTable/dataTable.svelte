@@ -17,6 +17,7 @@
   import Droppable from "./Droppable.svelte";
   import { dropAnimation, sensors } from "./DropAnimation.js";
   import { crossfade } from "svelte/transition";
+  import { ResizableColumns } from "svelte-resizable-columns";
 
   import {
     CustomeEntityDTO,
@@ -116,6 +117,7 @@
       moveToAvaliable(selectedColumn, newIndex);
     }
   };
+
   /** @param {DragEndEvent} event */
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -147,6 +149,7 @@
       );
     }
   };
+
   /** @param {FieldDto} column
    *  @param {number | null} position*/
   const moveToAvaliable = (column, position = null) => {
@@ -168,6 +171,7 @@
       selectedColumns = [...selectedColumns.filter((x) => x != column)];
     }
   };
+
   /** @param {FieldDto} column
    *  @param {number | null} position*/
   const moveToSelected = (column, position = null) => {
@@ -258,7 +262,7 @@
 
   <!-- Main Table -->
   <div class="overflow-x-auto mt-4">
-    <Table bordered>
+    <table class="table" use:ResizableColumns>
       <thead>
         <tr>
           {#each orderedColumns as column (column.name)}
@@ -285,7 +289,7 @@
           {/each}
         {/if}
       </tbody>
-    </Table>
+    </table>
   </div>
 </div>
 
