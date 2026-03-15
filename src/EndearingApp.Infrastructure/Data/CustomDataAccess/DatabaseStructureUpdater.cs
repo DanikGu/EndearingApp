@@ -9,6 +9,8 @@ using EfSchemaCompare;
 using EndearingApp.Core.CustomDataAccsess.Interfaces;
 using EndearingApp.Core.CustomEntityAggregate.DbStructureModels;
 using EndearingApp.Core.CustomEntityAggregate.Interfaces;
+using EndearingApp.Core.MigrationHistoryAggregate;
+using EndearingApp.SharedKernel.Interfaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -18,21 +20,26 @@ namespace EndearingApp.Infrastructure.Data.CustomDataAccess;
 //TODO: Add ability to specify odata atrributes
 public class DatabaseStructureUpdater : IDatabaseStructureUpdater
 {
+    
+    const string DbContextName = "AppDbContext";
     private readonly AppDbContext _appDbContext;
     private readonly ICustomEntityQueryProvider _customEntityQueryDataProvider;
     private readonly DbContextAssemblyLoader _contextAssemblyLoader;
+    private readonly IRepository<MigrationHistory> _migrationHistoryRepository;
     private readonly ILogger? _logger;
 
     public DatabaseStructureUpdater(
         AppDbContext appDbContext,
         ICustomEntityQueryProvider customEntityQueryDataProvider,
         DbContextAssemblyLoader contextAssemblyLoader,
+        IRepository<MigrationHistory> migrationHistoryRepository,
         ILogger<DatabaseStructureUpdater> logger
     )
     {
         _appDbContext = appDbContext;
         _customEntityQueryDataProvider = customEntityQueryDataProvider;
         _contextAssemblyLoader = contextAssemblyLoader;
+        _migrationHistoryRepository = migrationHistoryRepository;
         _logger = logger;
     }
 
@@ -45,10 +52,9 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         }
 
         var projectName = "CustomEntitiesDbContext";
-        var dbContextName = "AppDbContext";
         var appContextText = GetAllTablesClasses(
             projectName,
-            dbContextName,
+            DbContextName,
             dbStructure,
             connectionString!
         );
@@ -64,70 +70,23 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         string folderPath
     )
     {
-        if (!Directory.Exists(folderPath))
+        if (File.Exists(folderPath + $"/{DbContextName}.cs"))
         {
-            Directory.CreateDirectory(folderPath);
-            await CallDotnetCli(
-                $"new classlib --name {projectName} --output \"{folderPath}\" ",
-                folderPath
-            );
-            var packagesToInstall = new List<string>
-            {
-                "Microsoft.EntityFrameworkCore",
-                "Npgsql.EntityFrameworkCore.PostgreSQL",
-                "Microsoft.OData.ModelBuilder",
-                "Microsoft.EntityFrameworkCore.Design",
-            };
-            foreach (var package in packagesToInstall)
-            {
-                var version = GetPackageVersion(package);
-                if (!string.IsNullOrEmpty(version))
-                {
-                    version = "-v " + version;
-                }
-
-                await CallDotnetCli($"add package {package} {version}", folderPath);
-            }
-
-            await CallDotnetCli("new tool-manifest", folderPath);
-            await CallDotnetCli("tool restore", folderPath);
-            DisableWarningsAsErrors(folderPath);
-            await CallDotnetCli("tool install dotnet-ef", folderPath);
-            File.WriteAllText(folderPath + "/AppContext.cs", appContext);
-            File.Delete(folderPath + "/Class1.cs");
-
-            await CallDotnetCli("ef migrations add InitialCreate", folderPath);
-            await CallDotnetCli("dotnet publish", folderPath);
-            // if (GetIsDatabaseUpToDate())
-            // {
-            //     ClearInitialMigration(folderPath + "/Migrations/");
-            // }
-            // try
-            // {
-            //     await CallDotnetCli("ef database update", folderPath);
-            // }
-            // catch
-            // {
-            //     throw new InvalidOperationException(
-            //         "Initial migration of custom schema failed"
-            //             + "Database structure have to be up to date or empty;"
-            //     );
-            // }
-        }
-
-        if (File.Exists(folderPath + "/AppContext.cs"))
-        {
-            var currDbContext = File.ReadAllText(folderPath + "/AppContext.cs");
+            var currDbContext = await File.ReadAllTextAsync(folderPath + $"/{DbContextName}.cs");
             if (currDbContext == appContext)
             {
                 return;
             }
         }
+        
+        if (!Directory.Exists(folderPath))
+        {
+            await CreateDataProject(folderPath, projectName, appContext);
+        }
 
-        File.WriteAllText(folderPath + "/AppContext.cs", appContext);
-        await CallDotnetCli("ef migrations add " + GetNewMigrationName(), folderPath);
-        await CallDotnetCli("ef database update", folderPath);
-        await CallDotnetCli("dotnet publish", folderPath);
+        await File.WriteAllTextAsync(folderPath + $"/{DbContextName}.cs", appContext);
+        await AddMigration(folderPath, GetNewMigrationName());
+        await ApplyChanges(folderPath);
     }
 
     private string GetPackageVersion(string packageName)
@@ -145,6 +104,12 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         return version;
     }
 
+    private async Task ApplyChanges(string folderPath)
+    {
+        await CallDotnetCli("ef database update", folderPath);
+        await CallDotnetCli("dotnet publish", folderPath);
+    }
+
     private void DisableWarningsAsErrors(string folderPath)
     {
         //<TreatWarningsAsErrors>False</TreatWarningsAsErrors>
@@ -158,13 +123,16 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         {
             var newElem = xmlDocument.CreateElement("TreatWarningsAsErrors");
             newElem.InnerText = "False";
-            propertyGroup[0].AppendChild(newElem);
+            propertyGroup[0]?.AppendChild(newElem);
         }
         else
         {
             foreach (var warning in warningsAsErrors)
             {
-                (warning as XmlNode).InnerText = "False";
+                if (warning is XmlNode node)
+                {
+                    node.InnerText = "False";
+                }
             }
         }
 
@@ -172,64 +140,111 @@ public class DatabaseStructureUpdater : IDatabaseStructureUpdater
         File.WriteAllText(projectFile, resultXml);
     }
 
-    private bool GetIsDatabaseUpToDate()
+    /// <summary>
+    /// This method is used to create data project either in the new context (Clean app)
+    /// or to restore data context of existing project in case it been cleared / redeployed
+    /// will put app context and restore Migration folder or create Initial Migration 
+    /// </summary>
+    /// <param name="folderPath">Path to data project</param>
+    /// <param name="projectName">Data project Name</param>
+    /// <param name="appContextFileContent">Data project db context</param>
+    private async Task CreateDataProject(string folderPath, string projectName, string appContextFileContent)
     {
-        //var dbContext = _customEntityQueryDataProvider.GetDbContext();
-        //var comparer = new CompareEfSql();
-        //var hasErrors = comparer.CompareEfWithDb(dbContext);
-        //_contextAssemblyLoader.FreePreviousAssembly();
-        //
-        //return !hasErrors;
-        return true;
+        await InitCleanProject(folderPath, projectName, appContextFileContent);
+        var existingMigration = await _migrationHistoryRepository.ListAsync();
+        if (existingMigration.Any())
+        {
+            await RestoreMigrationFolder(folderPath, existingMigration);
+        }
+        else
+        {
+            await AddMigration(folderPath, "Initial");
+        }
     }
 
-    private void ClearInitialMigration(string migrationFolder)
+    private async Task InitCleanProject(string folderPath, string projectName, string appContextFileContent)
     {
-        var files = Directory.GetFiles(migrationFolder);
-        var migratonFile = files.FirstOrDefault(x => x.Contains("InitialCreate.cs"));
-        if (migratonFile is null)
+        Directory.CreateDirectory(folderPath);
+        await CallDotnetCli(
+            $"new classlib --name {projectName} --output \"{folderPath}\" ",
+            folderPath
+        );
+        var packagesToInstall = new List<string>
         {
-            throw new ArgumentException("Migration is not found");
+            "Microsoft.EntityFrameworkCore",
+            "Npgsql.EntityFrameworkCore.PostgreSQL",
+            "Microsoft.OData.ModelBuilder",
+            "Microsoft.EntityFrameworkCore.Design",
+        };
+        foreach (var package in packagesToInstall)
+        {
+            var version = GetPackageVersion(package);
+            if (!string.IsNullOrEmpty(version))
+            {
+                version = "-v " + version;
+            }
+
+            await CallDotnetCli($"add package {package} {version}", folderPath);
         }
 
-        var fileText = File.ReadAllText(migratonFile);
-        fileText = RemoveFunctionBody(fileText, "Up(MigrationBuilder migrationBuilder)");
-        fileText = RemoveFunctionBody(fileText, "Down(MigrationBuilder migrationBuilder)");
-        File.WriteAllText(migratonFile, fileText);
+        await CallDotnetCli("new tool-manifest", folderPath);
+        await CallDotnetCli("tool restore", folderPath);
+        DisableWarningsAsErrors(folderPath);
+        await CallDotnetCli("tool install dotnet-ef", folderPath);
+        await File.WriteAllTextAsync(folderPath + $"/{DbContextName}.cs", appContextFileContent);
+        File.Delete(folderPath + "/Class1.cs");
     }
 
-    private string RemoveFunctionBody(string fileText, string functionStart)
+    private async Task RestoreMigrationFolder(string folderPath, List<MigrationHistory> history)
     {
-        var upIndex = fileText.IndexOf(functionStart);
-        var startDeletionIndex = fileText.IndexOf('{', upIndex);
-        int openBracketsCount = 0;
-        int indexToEndDeletion = -1;
-        for (int i = startDeletionIndex; i < fileText.Length; i++)
+        var createdDir = Directory.CreateDirectory(Path.Combine(folderPath, "Migrations"));
+        foreach (var historyItem in history)
         {
-            if (fileText[i] == '{')
-            {
-                openBracketsCount++;
-            }
-            else if (fileText[i] == '}')
-            {
-                openBracketsCount--;
-            }
+            await File.WriteAllTextAsync(
+                Path.Combine(createdDir.FullName, historyItem.Name + ".cs"),
+                historyItem.MigrationContent,
+                Encoding.UTF8);
 
-            if (openBracketsCount == 0)
-            {
-                indexToEndDeletion = i;
-                break;
-            }
+            await File.WriteAllTextAsync(
+                Path.Combine(createdDir.FullName, historyItem.Name + ".Designer.cs"),
+                historyItem.MigrationDesignerContent,
+                Encoding.UTF8);
         }
 
-        if (indexToEndDeletion == -1)
-        {
-            throw new Exception("Something wrong I can feel it");
-        }
+        var lastSnapshot = history.OrderBy(x => x.CreatedOn).Last().SnapshotContent;
 
-        fileText =
-            fileText.Substring(0, startDeletionIndex + 1) + fileText.Substring(indexToEndDeletion);
-        return fileText;
+        await File.WriteAllTextAsync(
+            Path.Combine(createdDir.FullName, $"{DbContextName}ModelSnapshot.cs"),
+            lastSnapshot,
+            Encoding.UTF8);
+    }
+
+    private async Task AddMigration(string folderPath, string migrationName)
+    {
+        await CallDotnetCli($"ef migrations add {migrationName}", folderPath);
+        try
+        {
+            var migrationsFolder = Path.Combine(folderPath, "Migrations");
+            var migrationFiles = Directory.GetFiles(migrationsFolder).ToList();
+            var migrationFileName = Path.GetFileName(migrationFiles.First(x => x.EndsWith($"{migrationName}.cs"))).Replace(".cs", "");
+            var createdMigrationPath = Path.Combine(folderPath, "Migrations", migrationFileName + ".cs");
+            var createdMigrationDesignerPath = Path.Combine(folderPath, "Migrations", $"{migrationFileName}.Designer.cs");
+            var createdSnapshotPath = Path.Combine(folderPath, "Migrations", $"{DbContextName}ModelSnapshot.cs");
+            await _migrationHistoryRepository.AddAsync(
+                new MigrationHistory()
+                {
+                    Name = migrationFileName,
+                    MigrationContent = await File.ReadAllTextAsync(createdMigrationPath),
+                    MigrationDesignerContent = await File.ReadAllTextAsync(createdMigrationDesignerPath),
+                    SnapshotContent = await File.ReadAllTextAsync(createdSnapshotPath),
+                    CreatedOn = DateTimeOffset.UtcNow
+                });
+        }
+        catch (Exception e)
+        {
+            await CallDotnetCli($"dotnet ef migrations remove", folderPath);
+            throw new Exception("Could not add migration", e);
+        }
     }
 
     private async Task CallDotnetCli(string command, string folderPath)
