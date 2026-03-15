@@ -26,6 +26,7 @@
   import QueryBuilder from "../../../components/QueryBuilder/queryBuilder.svelte";
   import { ConditionGroup } from "../../../components/QueryBuilder/typeDefinitions";
   import { convertToOdataFilter } from "../../../components/QueryBuilder/queryToOdataUrlParams";
+  import { ensureCustomEntities, ensureOptionSets, customEntities, optionSets } from "../../../stores/global.js";
 
   /** @typedef {import('svelte-jsoneditor').Mode} Mode */
 
@@ -38,29 +39,14 @@
   /** @type {string | null} */
   let selectedFormId = $state(null);
 
-  /** @type {CustomeEntityDTO[]} */
-  let customEntities = $state([]);
+
   let odataMetaUrl = "/api/odata/$metadata";
   let namespace = "CustomEntitiesDbContext";
   let rootQuery = new ConditionGroup("and", []);
 
   /** @type {any} */
   let odataSchema;
-  let loadCustomEntities = () => {
-    let api = new CustomEntitiesApi();
-    api.apiCustomEntitiesGet(
-      (
-        /** @type {string} */ error,
-        /** @type {CustomeEntityDTO[]} */ elems,
-      ) => {
-        if (error) {
-          handleError(error);
-        } else if (elems) {
-          customEntities = elems;
-        }
-      },
-    );
-  };
+
 
   const loadForms = async () => {
     const api = new FormApi();
@@ -88,27 +74,12 @@
     alertError("Error occurred: " + error);
   };
 
-  /** @type {OptionSetDefinitionDTO[]} */
-  let optionSetDefinitions = $state([]);
-  let loadOptionSets = () => {
-    let api = new OptionSetDefinitionsApi();
-    api.apiOptionSetDefinitionsGet(
-      (
-        /** @type {string} */ error,
-        /** @type {OptionSetDefinitionDTO[]} */ elems,
-      ) => {
-        if (error) {
-          handleError(error);
-        } else if (elems) {
-          optionSetDefinitions = elems;
-        }
-      },
-    );
-  };
+
+
 
   let loadData = async () => {
-    loadCustomEntities();
-    loadOptionSets();
+    await ensureCustomEntities();
+    await ensureOptionSets();
     await loadForms();
   };
   const prepareQuery = async () => {
@@ -307,7 +278,7 @@
     reloadFromInput();
   };
   let typesItems = $derived(
-    customEntities.map((x) => ({ value: x.id, name: x.name })),
+    $customEntities.map((x) => ({ value: x.id, name: x.name })),
   );
   let formsForEntity = $derived(
     !!selectedEntityId
@@ -320,7 +291,7 @@
     selectedEntityId && browser
       ? window.location.origin +
           "/api/odata/" +
-          customEntities.find((x) => x.id === selectedEntityId)?.name
+          $customEntities.find((x) => x.id === selectedEntityId)?.name
       : "",
   );
   let firstPageUrl = $derived(
@@ -454,8 +425,6 @@
       <Button on:click={queryBuilderSearchClick}>Search</Button>
       <QueryBuilder
         rootGroup={rootQuery}
-        {customEntities}
-        {optionSetDefinitions}
         bind:customEntityId={selectedEntityId}
       ></QueryBuilder>
     </Col>

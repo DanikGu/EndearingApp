@@ -14,6 +14,7 @@
   import { alertError, alertSuccsess, assignLoader } from "@utils/uiutils";
   import { onMount } from "svelte";
   import fieldtypesutils, { getTypeId } from "@utils/fieldtypesutils";
+  import { customEntities as customEntitiesStore, optionSets as optionSetsStore, ensureCustomEntities, ensureOptionSets } from "../../../stores/global";
   import {
     Container,
     Row,
@@ -33,11 +34,9 @@
 
   /** @typedef {import('../../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
 
-  /** @type {OptionSetDefinitionDTO[]} */
-  let optionSetDefinitions = [];
 
-  /** @type {CustomEntity[]} */
-  let customEntities = $state([]);
+
+
   /** @type {FormDTO[]} */
   let forms = $state([]);
 
@@ -55,14 +54,14 @@
 
   const updateBuilder = () => {
     console.log("Update builder called");
-    const customEntity = customEntities.find(
+    const customEntity = $customEntitiesStore.find(
       (x) => x.id == editedForm?.customEntityId,
     );
     if (!customEntity) {
       console.log("Update short curcuit");
       return;
     }
-    currentObj = convertToFormioComponents(customEntity, optionSetDefinitions);
+    currentObj = convertToFormioComponents(customEntity, $optionSetsStore);
     currentSchema = JSON.parse(editedForm?.jsonSchema ?? "{}");
     console.log("schema changed");
   };
@@ -164,50 +163,13 @@
       api.apiFormGet(callback);
     });
   };
-  let loadCustomEntities = async () => {
-    let api = new CustomEntitiesApi();
-    customEntities = await new Promise((res) => {
-      api.apiCustomEntitiesGet(
-        (/** @type {string} */ error, /** @type {CustomEntity[]} */ elems) => {
-          if (error) {
-            alertError("Error while retrieving customEntities: " + error);
-            res([]);
-            return;
-          } else if (elems) {
-            res(elems);
-            return;
-          }
-        },
-      );
-    });
-  };
 
-  let loadOptionSets = async () => {
-    let api = new OptionSetDefinitionsApi();
-    optionSetDefinitions = await new Promise((res) => {
-      api.apiOptionSetDefinitionsGet(
-        (
-          /** @type {string} */ error,
-          /** @type {OptionSetDefinitionDTO[]} */ elems,
-        ) => {
-          if (error) {
-            alertError("Error while retrieving option sets: " + error);
-            res([]);
-            return;
-          } else if (elems) {
-            res(elems);
-            return;
-          }
-        },
-      );
-    });
-  };
+
+
 
   const reloadData = async () => {
     const formProm = getForms();
-    const etnsProm = loadCustomEntities();
-    const optsProm = loadOptionSets();
-    await Promise.all([formProm, etnsProm, optsProm]);
+    await Promise.all([ensureCustomEntities(), ensureOptionSets(), formProm]);
   };
   /**
    * @param {CustomEntity} customEntity
@@ -302,11 +264,11 @@
    * @returns {Object}
    */
   function createRelationshipComponent(relationship) {
-    let entityName = customEntities.find(
+    let entityName = $customEntitiesStore.find(
       (x) => x.id === relationship.referencedCustomEntityId,
     )?.name;
     /** @type { FieldDto | undefined } */
-    let field = customEntities
+    let field = $customEntitiesStore
       .find((x) => x.id === relationship.sourceCustomEntityId)
       ?.fields.find(
         (/** @type {FieldDto} */ x) => x.id === relationship.sourceFieldId,
@@ -393,8 +355,8 @@
     <Col md="3" class="p-0 d-flex flex-column border-end">
       <div class="flex-grow-1 overflow-auto">
         <Accordion stayOpen class="rounded-0">
-          {#key customEntities}
-            {#each customEntities as elem (elem.id)}
+          {#key $customEntitiesStore}
+            {#each $customEntitiesStore as elem (elem.id)}
               <AccordionItem
                 class="entity-accordion-item p-0"
                 header={elem.displayName}

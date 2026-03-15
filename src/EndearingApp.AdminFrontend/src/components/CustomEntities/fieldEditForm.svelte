@@ -1,8 +1,10 @@
 <script>
   import { run } from "svelte/legacy";
+  import { onMount } from "svelte";
 
-  import { OptionSetDefinitionDTO, OptionSetDefinitionsApi } from "@apiclients";
+  import { OptionSetDefinitionDTO } from "@apiclients";
   import { getTypesArray, getTypeId } from "@utils/fieldtypesutils";
+  import { optionSets, optionSetsLoading, optionSetsError, ensureOptionSets } from "../../stores/global";
   /** @typedef {import('../../apiclient/src/model/FieldDto').default} FieldEntity */
   import {
     InputGroup,
@@ -22,27 +24,16 @@
   /** @type {Props} */
   let { editedField = $bindable(), isNew = $bindable(false) } = $props();
 
+  onMount(() => {
+    ensureOptionSets();
+  });
+
   let typesItems = getTypesArray().map((x) => ({
     value: x.id.toString(),
     name: x.name,
   }));
 
-  /** @returns {Promise<OptionSetDefinitionDTO[]>} */
-  const getOptionSetPromise = async () => {
-    return new Promise((resolve, reject) => {
-      // @ts-ignore
-      const callback = (error, data, response) => {
-        if (error) {
-          console.error("Error fetching option sets:", error);
-          reject(error);
-        } else {
-          resolve(data || []);
-        }
-      };
-      // @ts-ignore
-      new OptionSetDefinitionsApi().apiOptionSetDefinitionsGet(callback);
-    });
-  };
+
   let isReadOnlyForm = $state(!!editedField.isSystemField);
   // @ts-ignore
   let isSizeApplicable = $state(
@@ -121,9 +112,13 @@
       </FormGroup>
       {#key fieldType}
         {#if editedField.type == getTypeId("Option Set") || editedField.type == getTypeId("Option Set MultiSelect")}
-          {#await getOptionSetPromise()}
+          {#if $optionSetsLoading}
             <p>Loading option sets...</p>
-          {:then optionSetData}
+          {:else if $optionSetsError}
+            <p class="text-danger">
+              Error loading option sets: {$optionSetsError.message || $optionSetsError}
+            </p>
+          {:else}
             <FormGroup>
               <Label for="optionSetDefinition">Option Set Definition</Label>
               <Input
@@ -132,8 +127,8 @@
                 bind:value={editedField.optionSetDefinitionId}
                 disabled={isReadOnlyForm}
               >
-                {#if optionSetData && optionSetData.length > 0}
-                  {#each optionSetData as os (os.id)}
+                {#if $optionSets && $optionSets.length > 0}
+                  {#each $optionSets as os (os.id)}
                     <option value={os.id}>{os.name}</option>
                   {/each}
                 {:else}
@@ -141,11 +136,7 @@
                 {/if}
               </Input>
             </FormGroup>
-          {:catch error}
-            <p class="text-danger">
-              Error loading option sets: {error.message || error}
-            </p>
-          {/await}
+          {/if}
         {/if}
         <InputGroup>
           <Input

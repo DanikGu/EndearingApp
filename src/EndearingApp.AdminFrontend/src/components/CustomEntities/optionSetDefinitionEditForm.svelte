@@ -10,24 +10,21 @@
   import { applyChangesToDbApi } from "../../apiClientsWrapper";
   import { assignBlockingLoader, assignLoader } from "@utils/uiutils";
   import { OptionDTO, OptionSetDefinitionsApi } from "@apiclients/src";
+  import { fetchOptionSets } from "../../stores/global";
 
   /** @typedef {import('../../apiclient/src/model/OptionSetDefinitionDTO').default} OptionSetDefinitionDTO */
   /** @typedef {import('../../apiclient/src/model/OptionDTO').default} OptionDTO_local */
 
   /**
    * @typedef {Object} Props
-   * @property {OptionSetDefinitionDTO[]} optionSets
-   * @property {OptionSetDefinitionDTO} optionSet
+   * @property {OptionSetDefinitionDTO | null} optionSet
    * @property {boolean} isNew
-   * @property {Function} reloadParentData
    */
 
   /** @type {Props} */
   let {
-    optionSets = $bindable(),
     optionSet = $bindable(),
     isNew = $bindable(),
-    reloadParentData,
   } = $props();
 
   let optionsKey = $state(crypto.randomUUID());
@@ -40,6 +37,8 @@
   };
 
   const saveOptionSet = async () => {
+    if (!optionSet) return;
+    const os = optionSet; // local non-null reference
     var api = new OptionSetDefinitionsApi();
     if (isNew) {
       let prom = new Promise((res, rej) => {
@@ -50,31 +49,23 @@
         ) => {
           if (data) {
             isNew = false;
-            optionSet.id = data.id;
-            if (!optionSet.options) optionSet.options = [];
-
-            const existingIndex = optionSets.findIndex(
-              (os) => os.id === data.id,
-            );
-            if (existingIndex > -1) {
-              optionSets[existingIndex] = { ...optionSet, ...data };
-            } else {
-              optionSets.push({ ...optionSet, ...data });
-            }
-            optionSet = { ...optionSet, ...data }; // Ensure local optionSet is updated
-
+            os.id = data.id;
+            if (!os.options) os.options = [];
+            // Update local optionSet with data from server
+            optionSet = { ...os, ...data };
+            // Refresh the global store
+            fetchOptionSets();
             res(data);
           } else if (error) {
             rej(error);
           }
-          reloadParentData();
         };
         api.apiOptionSetDefinitionsPost(
           {
             /** @type { Partial<OptionSetDefinitionDTO> } */
             body: {
-              name: optionSet.name,
-              options: optionSet.options || [],
+              name: os.name,
+              options: os.options || [],
             },
           },
           callback,
@@ -87,18 +78,21 @@
       let prom = new Promise((res, rej) => {
         // @ts-ignore
         const callback = (error, data) => {
-          reloadParentData();
           if (error) rej(error);
-          else res(data);
+          else {
+            // Refresh the global store
+            fetchOptionSets();
+            res(data);
+          }
         };
         api.apiOptionSetDefinitionsIdPut(
-          optionSet.id,
+          os.id,
           {
             /** @type { Partial<OptionSetDefinitionDTO> } */
             body: {
-              id: optionSet.id,
-              name: optionSet.name,
-              options: optionSet.options || [],
+              id: os.id,
+              name: os.name,
+              options: os.options || [],
             },
           },
           callback,
@@ -113,24 +107,23 @@
   const deleteOptionSet = async () => {
     var api = new OptionSetDefinitionsApi();
     if (isNew || !optionSet || !optionSet.id) {
-      const index = optionSets.indexOf(optionSet);
-      if (index > -1) optionSets.splice(index, 1);
-      reloadParentData();
+      // If it's a new unsaved option set, clear selection
+      optionSet = null;
       return;
     }
+    const os = optionSet; // local non-null reference
     let prom = new Promise((res, rej) => {
       // @ts-ignore
       const callback = (error, data) => {
         if (error) {
           rej(error);
         } else {
-          const index = optionSets.findIndex((os) => os.id === optionSet.id);
-          if (index > -1) optionSets.splice(index, 1);
+          // Refresh the global store
+          fetchOptionSets();
           res(true);
         }
-        reloadParentData();
       };
-      api.apiOptionSetDefinitionsIdDelete(optionSet.id, callback);
+      api.apiOptionSetDefinitionsIdDelete(os.id, callback);
     });
 
     assignLoader("Deleting Option Set", prom);
@@ -145,6 +138,7 @@
   let valueInput = $state("");
 
   function addItem() {
+    if (!optionSet) return;
     const numericKey = parseInt(keyInput);
     if (isNaN(numericKey) || !valueInput.trim()) {
       return;
@@ -158,7 +152,7 @@
 
   /** @param {OptionDTO_local} optionToDelete */
   function deleteItem(optionToDelete) {
-    if (!optionSet.options) return;
+    if (!optionSet || !optionSet.options) return;
     optionSet.options = optionSet.options.filter(
       (/** @type {OptionDTO_local} */ option) =>
         !(
@@ -170,6 +164,7 @@
   }
 </script>
 
+{#if optionSet}
 <div class="position-relative d-flex flex-column p-3" bind:this={formContainer}>
   <Row class="mb-4 align-items-start">
     <Col md="6">
@@ -196,7 +191,7 @@
         on:click={deleteOptionSet}
         outline
         color="danger"
-        disabled={isNew && !optionSet.id}>Delete Option Set</Button
+        disabled={isNew && !optionSet?.id}>Delete Option Set</Button
       >
     </Col>
   </Row>
@@ -214,8 +209,7 @@
           {#each optionSet.options as item, i (item.value + "-" + i)}
             <Row class="g-2 mb-2 align-items-center">
               <Col xs="12" md>
-                <Label for={`optionKey-${i}`} class="visually-hidden">Key</Label
-                >
+                <Label for={`optionKey-${i}`} class="visually-hidden">Key</Label>
                 <Input
                   id={`optionKey-${i}`}
                   bind:value={item.value}
@@ -224,9 +218,7 @@
                 />
               </Col>
               <Col xs="12" md>
-                <Label for={`optionName-${i}`} class="visually-hidden"
-                  >Value</Label
-                >
+                <Label for={`optionName-${i}`} class="visually-hidden">Value</Label>
                 <Input
                   id={`optionName-${i}`}
                   bind:value={item.name}
@@ -239,8 +231,7 @@
                   color="danger"
                   size="sm"
                   on:click={() => deleteItem(item)}
-                  class="w-100">Delete</Button
-                >
+                  class="w-100">Delete</Button>
               </Col>
             </Row>
           {/each}
@@ -280,3 +271,4 @@
     </Col>
   </Row>
 </div>
+{/if}

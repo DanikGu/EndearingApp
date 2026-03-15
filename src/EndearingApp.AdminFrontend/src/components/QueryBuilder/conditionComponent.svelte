@@ -10,6 +10,7 @@
   } from "@apiclients/src";
   import { getTypeId } from "@utils/fieldtypesutils";
   import Svelecte from "svelecte";
+  import { customEntities as customEntitiesStore, optionSets as optionSetsStore } from "../../stores/global";
 
   /** @typedef {import('@sveltestrap/sveltestrap').InputType} InputType */
 
@@ -39,10 +40,21 @@
   let isSelect = $state(false);
 
   onMount(() => {
-    customEntities = getContext("etnStructure");
-    optionSetDefinitions = getContext("optionSets");
+    // Subscribe to stores
+    const unsubscribeCustomEntities = customEntitiesStore.subscribe(value => {
+      customEntities = value;
+    });
+    const unsubscribeOptionSets = optionSetsStore.subscribe(value => {
+      optionSetDefinitions = value;
+    });
+    
     currEntityId = getContext("customEntityId");
     onFieldTypeChange(true);
+    
+    return () => {
+      unsubscribeCustomEntities();
+      unsubscribeOptionSets();
+    };
   });
 
   /** @param {boolean} mount */
