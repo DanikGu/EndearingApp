@@ -28,6 +28,7 @@
     saveFieldApi,
     saveRelationshipApi,
   } from "../../apiClientsWrapper";
+  import { customEntities, fetchCustomEntities, fetchOptionSets } from "../../stores/global";
 
   /** @typedef {import('../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
   /** @typedef {import('../../apiclient/src/model/FieldDto').default} FieldEntity */
@@ -35,18 +36,14 @@
 
   /**
    * @typedef {Object} Props
-   * @property {CustomEntity[]} customEntities
    * @property {CustomEntity} customEntity
    * @property {boolean} [isNew]
-   * @property {Function} reloadParentData
    */
 
   /** @type {Props} */
   let {
-    customEntities,
     customEntity = $bindable(),
     isNew = $bindable(false),
-    reloadParentData,
   } = $props();
 
   /** @type {boolean} */
@@ -117,7 +114,7 @@
     const prom = deleteRelationshipApi(id);
     assignLoader("Deleting relationship", prom);
     await prom;
-    reloadParentData();
+    fetchCustomEntities();
   };
 
   /** @param {string} id */
@@ -125,7 +122,7 @@
     const prom = deleteFieldApi(id);
     assignLoader("Deleting field", prom);
     await prom;
-    reloadParentData();
+    fetchCustomEntities();
   };
 
   const saveField = async () => {
@@ -136,7 +133,7 @@
     assignLoader("Saving field", prom);
     await prom;
     editFieldModal = false;
-    reloadParentData();
+    fetchCustomEntities();
   };
   const saveRelationship = async () => {
     if (!editedRelationship) {
@@ -146,14 +143,14 @@
     assignLoader("Saving relationship", prom);
     await prom;
     editRelationshipModal = false;
-    reloadParentData();
+    fetchCustomEntities();
   };
 
   const deleteCustomEntity = async () => {
     const prom = deleteCustomEntityApi(customEntity);
     assignBlockingLoader("Deleting Entity", prom, formContainer);
     await prom;
-    reloadParentData();
+    fetchCustomEntities();
   };
 
   const saveCustomEntity = async () => {
@@ -164,7 +161,7 @@
       customEntity.id = updatedEntity.id;
     }
     isNew = false;
-    reloadParentData();
+    fetchCustomEntities();
   };
   const applyChangesToDb = () => {
     const prom = applyChangesToDbApi();
@@ -330,7 +327,7 @@
                 <tr>
                   <td>{relationship.constraintName}</td>
                   <td>
-                    {customEntities.find(
+                    {$customEntities.find(
                       (ce) => ce.id === relationship.targetCustomEntityId,
                     )?.displayName || relationship.targetCustomEntityId}
                   </td>
@@ -416,7 +413,7 @@
       <RelationshipEditForm
         currentEntity={customEntity}
         bind:relationship={editedRelationship}
-        {customEntities}
+
         bind:isNew={isNewRelationship}
       ></RelationshipEditForm>
     {:else}

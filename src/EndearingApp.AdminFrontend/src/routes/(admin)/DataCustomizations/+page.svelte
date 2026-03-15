@@ -1,12 +1,13 @@
 <script>
-  import {
-    CustomeEntityDTO,
-    CustomEntitiesApi,
-    OptionSetDefinitionDTO,
-    OptionSetDefinitionsApi,
-  } from "@apiclients";
+  import { CustomeEntityDTO, OptionSetDefinitionDTO } from "@apiclients";
   import { alertError } from "@utils/uiutils";
   import { onMount } from "svelte";
+  import {
+    customEntities,
+    optionSets,
+    ensureCustomEntities,
+    ensureOptionSets,
+  } from "../../../stores/global";
   import CustomEntityEditForm from "../../../components/CustomEntities/customEntityEditForm.svelte";
   import OptionSetDefinitionEditForm from "../../../components/CustomEntities/optionSetDefinitionEditForm.svelte";
   import {
@@ -23,8 +24,11 @@
 
   /** @typedef {import('../../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
 
+  // Use store values in local state for reactivity
   /** @type {CustomEntity[]} */
-  let customEntities = $state([]);
+  let customEntitiesLocal = $state([]);
+  /** @type {OptionSetDefinitionDTO[]} */
+  let optionSetDefinitionsLocal = $state([]);
 
   /** @type { CustomEntity | null } */
   let selectedEntity = $state(null);
@@ -32,91 +36,51 @@
   /** @type { boolean } */
   let isNewEntity = $state(false);
 
-  /** @type {OptionSetDefinitionDTO[]} */
-  let optionSetDefinitions = $state([]);
-
   /** @type { OptionSetDefinitionDTO | null } */
   let selectedOptionSet = $state(null);
 
   /** @type { boolean } */
   let isNewOptionSet = $state(false);
 
-  /* Accordion manages its own open/close state, so dropdown-specific state variables are not needed. */
-
-  let loadData = () => {
-    loadCustomEntities();
-    loadOptionSets();
-  };
-
-  let loadOptionSets = () => {
-    let api = new OptionSetDefinitionsApi();
-    api.apiOptionSetDefinitionsGet(
-      (
-        /** @type {string} */ error,
-        /** @type {OptionSetDefinitionDTO[]} */ elems,
-      ) => {
-        if (error) {
-          handleError(error);
-        } else if (elems) {
-          setOptionSetDefinitions(elems);
+  $effect(() => {
+    const unsubscribe = customEntities.subscribe((value) => {
+      customEntitiesLocal = value;
+      if (selectedEntity && selectedEntity.id) {
+        const exists = value.some((x) => x.id == selectedEntity?.id);
+        if (!exists) {
+          selectedEntity = null;
+        } else {
+          selectedEntity =
+            value.find((x) => x.id == selectedEntity?.id) ?? null;
         }
-      },
-    );
-  };
+      }
+    });
+    return unsubscribe;
+  });
 
-  let loadCustomEntities = () => {
-    let api = new CustomEntitiesApi();
-    api.apiCustomEntitiesGet(
-      (/** @type {string} */ error, /** @type {CustomEntity[]} */ elems) => {
-        if (error) {
-          handleError(error);
-        } else if (elems) {
-          setCustomEntities(elems);
+  $effect(() => {
+    const unsubscribe = optionSets.subscribe((value) => {
+      optionSetDefinitionsLocal = value;
+      if (selectedOptionSet && selectedOptionSet.id) {
+        const exists = value.some((x) => x.id == selectedOptionSet?.id);
+        if (!exists) {
+          selectedOptionSet = null;
+        } else {
+          selectedOptionSet =
+            value.find((x) => x.id == selectedOptionSet?.id) ?? null;
         }
-      },
-    );
-  };
+      }
+    });
+    return unsubscribe;
+  });
 
   onMount(() => {
     loadData();
   });
 
-  /** @param {OptionSetDefinitionDTO[]} elems */
-  let setOptionSetDefinitions = (elems) => {
-    optionSetDefinitions = elems;
-    if (!selectedOptionSet || !selectedOptionSet.id) {
-      return;
-    }
-    const isOptionSetExists = optionSetDefinitions.some(
-      (x) => x.id == selectedOptionSet?.id,
-    );
-    if (isOptionSetExists) {
-      selectedOptionSet =
-        optionSetDefinitions.find((x) => x.id == selectedOptionSet?.id) ?? null;
-    } else {
-      selectedOptionSet = null;
-    }
-  };
-
-  /** @param {CustomEntity[]} elems */
-  let setCustomEntities = (elems) => {
-    customEntities = elems;
-    if (!selectedEntity) {
-      return;
-    }
-    if (!selectedEntity.id) {
-      selectedEntity = null;
-      return;
-    }
-    const isSlelectedEntityExists = customEntities.some(
-      (x) => x.id == selectedEntity?.id,
-    );
-    if (isSlelectedEntityExists) {
-      selectedEntity =
-        customEntities.find((x) => x.id == selectedEntity?.id) ?? null;
-    } else {
-      selectedEntity = null;
-    }
+  let loadData = () => {
+    ensureCustomEntities();
+    ensureOptionSets();
   };
 
   /** @param {string} error */
@@ -165,8 +129,8 @@
         <Accordion stayOpen class="rounded-0">
           <AccordionItem class="p-0" header="Entities">
             <ListGroup flush>
-              {#key customEntities}
-                {#each customEntities as elem}
+              {#key customEntitiesLocal}
+                {#each customEntitiesLocal as elem}
                   <ListGroupItem
                     action
                     active={!isNewEntity && elem.id == selectedEntity?.id}
@@ -177,7 +141,7 @@
                   </ListGroupItem>
                 {/each}
               {/key}
-              {#if customEntities.length > 0}
+              {#if customEntitiesLocal.length > 0}
                 <ListGroupItem class="m-0 p-0 border-0">
                   <hr />
                 </ListGroupItem>
@@ -195,8 +159,8 @@
 
           <AccordionItem header="Option Sets">
             <ListGroup flush>
-              {#key optionSetDefinitions}
-                {#each optionSetDefinitions as elem}
+              {#key optionSetDefinitionsLocal}
+                {#each optionSetDefinitionsLocal as elem}
                   <ListGroupItem
                     action
                     active={!isNewOptionSet && selectedOptionSet?.id == elem.id}
@@ -207,7 +171,7 @@
                   </ListGroupItem>
                 {/each}
               {/key}
-              {#if optionSetDefinitions.length > 0}
+              {#if optionSetDefinitionsLocal.length > 0}
                 <ListGroupItem class="p-0 border-0">
                   <hr />
                 </ListGroupItem>
@@ -232,8 +196,6 @@
           <CustomEntityEditForm
             bind:customEntity={selectedEntity}
             bind:isNew={isNewEntity}
-            reloadParentData={loadData}
-            {customEntities}
           />
         {/if}
       {/key}
@@ -241,9 +203,7 @@
         {#if selectedOptionSet !== null}
           <OptionSetDefinitionEditForm
             bind:optionSet={selectedOptionSet}
-            bind:optionSets={optionSetDefinitions}
             bind:isNew={isNewOptionSet}
-            reloadParentData={loadData}
           />
         {/if}
       {/key}

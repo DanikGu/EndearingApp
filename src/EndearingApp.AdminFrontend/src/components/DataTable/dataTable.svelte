@@ -24,6 +24,7 @@
     FieldDto,
     OptionSetDefinitionDTO,
   } from "@apiclients/src";
+  import { optionSets } from "../../stores/global";
 
   /** @typedef {import('@dnd-kit-svelte/core').DragOverEvent } DragOverEvent   */
   /** @typedef {import('@dnd-kit-svelte/core').DragEndEvent } DragEndEvent    */
@@ -35,8 +36,7 @@
   /** @type {CustomeEntityDTO} */
   export let customEntity;
 
-  /** @type {OptionSetDefinitionDTO[]} */
-  export let optionSets = [];
+
 
   /** @type {boolean} */
   let modal = false;

@@ -1,5 +1,6 @@
 <script>
   import { Input, Label, FormGroup, Row, Col } from "@sveltestrap/sveltestrap";
+  import { customEntities } from "../../stores/global";
   /** @typedef {import('../../apiclient/src/model/RelationshipDTO').default} Relationship */
   /** @typedef {import('../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
   /** @typedef {import('../../apiclient/src/model/FieldDto').default} FieldDto */
@@ -8,7 +9,6 @@
    * @typedef {Object} Props
    * @property {boolean} [isNew]
    * @property {Relationship} relationship
-   * @property {CustomEntity[]} customEntities
    * @property {CustomEntity} currentEntity
    */
 
@@ -16,7 +16,6 @@
   let {
     isNew = $bindable(false),
     relationship = $bindable(),
-    customEntities,
     currentEntity,
   } = $props();
 
@@ -30,8 +29,8 @@
   );
 
   let selectedTargetEntity = $derived(
-    customEntities
-      ? customEntities.find(
+    $customEntities
+      ? $customEntities.find(
           (x) => x.id === relationship.referencedCustomEntityId,
         )
       : undefined,
@@ -50,8 +49,8 @@
   );
 
   let customEntitySelectItems = $derived(
-    customEntities
-      ? customEntities.map((x) => ({
+    $customEntities
+      ? $customEntities.map((x) => ({
           name: x.displayName,
           value: x.id,
         }))

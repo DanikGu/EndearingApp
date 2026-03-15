@@ -10,6 +10,7 @@
   import { alertError, alertSuccsess, assignLoader } from "@utils/uiutils";
   import { onMount } from "svelte";
   import { browser } from "$app/environment";
+  import { customEntities as customEntitiesStore, optionSets as optionSetsStore, ensureCustomEntities, ensureOptionSets } from "../../../stores/global";
   import {
     Button,
     Col,
@@ -36,8 +37,7 @@
   /** @type {string | null } */
   let editedEntityId = $state(null);
 
-  /** @type {CustomeEntityDTO[]} */
-  let customEntities = $state([]);
+
   let odataMetaUrl = "/api/odata/$metadata";
   let namespace = "CustomEntitiesDbContext";
   let rootQuery = new ConditionGroup("and", []);
@@ -45,19 +45,7 @@
   /** @type {any} */
   let odataSchema;
   let loadCustomEntities = () => {
-    let api = new CustomEntitiesApi();
-    api.apiCustomEntitiesGet(
-      (
-        /** @type {string} */ error,
-        /** @type {CustomeEntityDTO[]} */ elems,
-      ) => {
-        if (error) {
-          handleError(error);
-        } else if (elems) {
-          customEntities = elems;
-        }
-      },
-    );
+    ensureCustomEntities();
   };
 
   const loadForms = async () => {
@@ -86,22 +74,9 @@
     alertError("Error occurred: " + error);
   };
 
-  /** @type {OptionSetDefinitionDTO[]} */
-  let optionSetDefinitions = $state([]);
+
   let loadOptionSets = () => {
-    let api = new OptionSetDefinitionsApi();
-    api.apiOptionSetDefinitionsGet(
-      (
-        /** @type {string} */ error,
-        /** @type {OptionSetDefinitionDTO[]} */ elems,
-      ) => {
-        if (error) {
-          handleError(error);
-        } else if (elems) {
-          optionSetDefinitions = elems;
-        }
-      },
-    );
+    ensureOptionSets();
   };
 
   let loadData = async () => {
@@ -178,16 +153,16 @@
     assignLoader("Load data from: " + getUrlValue, prom);
   };
   let typesItems = $derived(
-    customEntities.map((x) => ({ value: x.id, name: x.name })),
+    $customEntitiesStore.map((x) => ({ value: x.id, name: x.name })),
   );
   let selectedEntity = $derived(
-    customEntities.find((x) => x.id === selectedEntityId),
+    $customEntitiesStore.find((x) => x.id === selectedEntityId),
   );
   let resourceUrl = $derived(
     selectedEntityId && browser
       ? window.location.origin +
           "/api/odata/" +
-          customEntities.find((x) => x.id === selectedEntityId)?.name
+          $customEntitiesStore.find((x) => x.id === selectedEntityId)?.name
       : "",
   );
   let firstPageUrl = $derived(
@@ -227,8 +202,6 @@
     <Col md="12" class="d-flex gap-2">
       <QueryBuilder
         rootGroup={rootQuery}
-        {customEntities}
-        {optionSetDefinitions}
         customEntityId={selectedEntityId}
       ></QueryBuilder>
     </Col>
@@ -237,7 +210,6 @@
         <DataTable
           data={content.json}
           customEntity={selectedEntity}
-          optionSets={optionSetDefinitions}
         ></DataTable>
       {/if}
     </Col>

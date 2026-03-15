@@ -7,6 +7,7 @@
   } from "@apiclients/src";
   import { showBlockingLoader } from "@utils/uiutils";
   import { onMount } from "svelte";
+  import { customEntities, ensureCustomEntities } from "../../stores/global";
   /** @typedef {import('@formio/js').Form} Form */
 
   /**
@@ -208,7 +209,13 @@
     await import("@formio/js/dist/formio.full.min.css");
     await import("../AppComponents/styles/layout.css");
 
-    customEntity = await getCustomEntity(form.customEntityId);
+    await ensureCustomEntities();
+    let found = $customEntities.find(ce => ce.id === form.customEntityId);
+    if (found) {
+        customEntity = found;
+    } else {
+        customEntity = await getCustomEntity(form.customEntityId);
+    }
 
     if (form?.jsonSchema) {
       formioForm = await Formio.createForm(
