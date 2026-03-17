@@ -5,19 +5,20 @@ services:
     image: prom/prometheus:v3.2.1
     container_name: endearingapp_prometheus
     volumes:
-     - ./src/TelemetryStuff/prometheus:/etc/prometheus:ro
+      - ./src/TelemetryStuff/prometheus:/etc/prometheus:ro,Z
+      - prometheus_data:/prometheus:Z
     command:
       - "--web.enable-otlp-receiver"
       - "--config.file=/etc/prometheus/prometheus.yml"
     ports:
-      - "9090:9090"
+      - "9091:9090"
 
   loki:
     image: grafana/loki:3.0.0
     container_name: endearingapp_loki
     volumes:
-      - ./src/TelemetryStuff/loki:/etc/loki:ro
-      - loki_data:/loki
+      - ./src/TelemetryStuff/loki:/etc/loki:ro,Z
+      - loki_data:/loki:Z
     command:
       - "-config.file=/etc/loki/loki-config.yaml"
     ports:
@@ -27,8 +28,8 @@ services:
     image: grafana/tempo:latest
     container_name: endearingapp_tempo
     volumes:
-      - ./src/TelemetryStuff/tempo:/etc/tempo:ro
-      - tempo-data:/var/tempo
+      - ./src/TelemetryStuff/tempo:/etc/tempo:ro,Z
+      - tempo_data:/var/tempo:Z
     command:
       - "-config.file=/etc/tempo/tempo.yaml"
     ports:
@@ -41,36 +42,30 @@ services:
     image: grafana/grafana:latest
     container_name: endearingapp_grafana
     volumes:
-      - ./src/TelemetryStuff/grafana/config:/etc/grafana:ro
-      - ./src/TelemetryStuff/grafana/dashboards:/var/lib/grafana/dashboards:ro
-      - grafana_data:/var/lib/grafana
+      - ./src/TelemetryStuff/grafana/config:/etc/grafana:ro,Z
+      - ./src/TelemetryStuff/grafana/dashboards:/var/lib/grafana/dashboards:ro,Z
+      - grafana_data:/var/lib/grafana:Z
     environment:
-      PROMETHEUS_ENDPOINT: "http://prometheus:9090"
+      PROMETHEUS_ENDPOINT: "http://prometheus:9091"
       LOKI_ENDPOINT: "http://loki:3100"
       TEMPO_ENDPOINT_GRAFANA: "http://tempo:3200"
     ports:
       - "3002:3000"
-    depends_on:
-      - prometheus
-      - loki
-      - tempo
 
   otelcollector:
     image: otel/opentelemetry-collector-contrib:latest
     container_name: endearingapp_otelcollector
     volumes:
-      - ./src/TelemetryStuff/otelcollector/config.yaml:/etc/otelcol-contrib/config.yaml:ro
+      - ./src/TelemetryStuff/otelcollector/config.yaml:/etc/otelcol-contrib/config.yaml:ro,Z
     command:
       - "--config=/etc/otelcol-contrib/config.yaml"
     environment:
-      PROMETHEUS_ENDPOINT: "http://prometheus:9090"
+      PROMETHEUS_ENDPOINT: "http://prometheus:9091"
       LOKI_ENDPOINT: "http://loki:3100"
       TEMPO_ENDPOINT: "http://tempo:4319" 
     ports:
       - "4317:4317"
       - "4318:4318"
-    depends_on:
-      - tempo
 
   postgres:
     image: postgres:15
@@ -82,7 +77,7 @@ services:
     ports:
       - "5500:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data:Z
 
   backend:
     image: mcr.microsoft.com/dotnet/aspnet:9.0
@@ -108,9 +103,6 @@ services:
       DOTNET_ROOT: "/usr/share/dotnet"
     ports:
       - "8080:8080"
-    depends_on:
-      - postgres
-      - otelcollector
 
   frontend:
     image: node:22.7.0
@@ -119,16 +111,15 @@ services:
       context: ./src/EndearingApp.AdminFrontend
       dockerfile: Dockerfile
     environment:
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otelcollector:4321"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otelcollector:4318"
       OTEL_SERVICE_NAME: "front"
       VITE_API_URL: "http://backend:8080"
     ports:
       - "3000:3000"
-    depends_on:
-      - backend
-      - otelcollector
+
 volumes:
   postgres_data:
   loki_data:
   grafana_data:
-  tempo-data:
+  tempo_data:
+  prometheus_data:
