@@ -10,6 +10,7 @@ services:
     command:
       - "--web.enable-otlp-receiver"
       - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
     ports:
       - "9091:9090"
 
