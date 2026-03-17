@@ -3,7 +3,7 @@ name: Deploy via SSH
 on:
   push:
     branches:
-      - test 
+      - master 
   workflow_dispatch:
 
 jobs:
