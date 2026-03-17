@@ -7,9 +7,8 @@ receivers:
         endpoint: 0.0.0.0:4318
 
 exporters:
-
-  loki:
-    endpoint: "${env:LOKI_ENDPOINT}/loki/api/v1/push"
+  otlphttp/loki:
+    endpoint: "${env:LOKI_ENDPOINT}/otlp"
     tls:
         insecure: true
 
@@ -28,11 +27,10 @@ processors:
 
 service:
   pipelines:
-    
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [loki]
+      exporters: [otlphttp/loki]
     
     metrics:
       receivers: [otlp]
