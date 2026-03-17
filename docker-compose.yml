@@ -124,9 +124,6 @@ services:
       VITE_API_URL: "http://backend:8080"
     ports:
       - "3000:3000"
-    #depends_on:
-      #- backend
-      #- otelcollector
 volumes:
   postgres_data:
   loki_data:
