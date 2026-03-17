@@ -125,8 +125,8 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - backend
-      - otelcollector
+      #- backend
+      #- otelcollector
 volumes:
   postgres_data:
   loki_data:
