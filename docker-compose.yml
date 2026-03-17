@@ -17,6 +17,7 @@ services:
   loki:
     image: grafana/loki:3.0.0
     container_name: endearingapp_loki
+    user: root
     volumes:
       - ./src/TelemetryStuff/loki:/etc/loki:ro,Z
       - loki_data:/loki:Z
