@@ -11,7 +11,7 @@ services:
       - "--web.enable-otlp-receiver"
       - "--config.file=/etc/prometheus/prometheus.yml"
     ports:
-      - "9090:9090"
+      - "9091:9090"
 
   loki:
     image: grafana/loki:3.0.0
@@ -46,7 +46,7 @@ services:
       - ./src/TelemetryStuff/grafana/dashboards:/var/lib/grafana/dashboards:ro,Z
       - grafana_data:/var/lib/grafana
     environment:
-      PROMETHEUS_ENDPOINT: "http://prometheus:9090"
+      PROMETHEUS_ENDPOINT: "http://prometheus:9091"
       LOKI_ENDPOINT: "http://loki:3100"
       TEMPO_ENDPOINT_GRAFANA: "http://tempo:3200"
     ports:
@@ -64,7 +64,7 @@ services:
     command:
       - "--config=/etc/otelcol-contrib/config.yaml"
     environment:
-      PROMETHEUS_ENDPOINT: "http://prometheus:9090"
+      PROMETHEUS_ENDPOINT: "http://prometheus:9091"
       LOKI_ENDPOINT: "http://loki:3100"
       TEMPO_ENDPOINT: "http://tempo:4319" 
     ports:
