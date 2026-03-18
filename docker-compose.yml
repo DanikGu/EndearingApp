@@ -5,7 +5,8 @@ services:
     image: prom/prometheus:v3.2.1
     container_name: endearingapp_prometheus
     volumes:
-     - ./src/TelemetryStuff/prometheus:/etc/prometheus:ro
+     - ./src/TelemetryStuff/prometheus:/etc/prometheus:ro,Z
+     - prometheus_data:/prometheus
     command:
       - "--web.enable-otlp-receiver"
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -16,7 +17,7 @@ services:
     image: grafana/loki:3.0.0
     container_name: endearingapp_loki
     volumes:
-      - ./src/TelemetryStuff/loki:/etc/loki:ro
+      - ./src/TelemetryStuff/loki:/etc/loki:ro,Z
       - loki_data:/loki
     command:
       - "-config.file=/etc/loki/loki-config.yaml"
@@ -24,10 +25,10 @@ services:
       - "3100:3100"
 
   tempo:
-    image: grafana/tempo:latest
+    image: grafana/tempo:2.6.1 # Змінено на стабільну версію
     container_name: endearingapp_tempo
     volumes:
-      - ./src/TelemetryStuff/tempo:/etc/tempo:ro
+      - ./src/TelemetryStuff/tempo:/etc/tempo:ro,Z
       - tempo-data:/var/tempo
     command:
       - "-config.file=/etc/tempo/tempo.yaml"
@@ -41,8 +42,8 @@ services:
     image: grafana/grafana:latest
     container_name: endearingapp_grafana
     volumes:
-      - ./src/TelemetryStuff/grafana/config:/etc/grafana:ro
-      - ./src/TelemetryStuff/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - ./src/TelemetryStuff/grafana/config:/etc/grafana:ro,Z
+      - ./src/TelemetryStuff/grafana/dashboards:/var/lib/grafana/dashboards:ro,Z
       - grafana_data:/var/lib/grafana
     environment:
       PROMETHEUS_ENDPOINT: "http://prometheus:9090"
@@ -59,7 +60,7 @@ services:
     image: otel/opentelemetry-collector-contrib:latest
     container_name: endearingapp_otelcollector
     volumes:
-      - ./src/TelemetryStuff/otelcollector/config.yaml:/etc/otelcol-contrib/config.yaml:ro
+      - ./src/TelemetryStuff/otelcollector/config.yaml:/etc/otelcol-contrib/config.yaml:ro,Z
     command:
       - "--config=/etc/otelcol-contrib/config.yaml"
     environment:
@@ -119,13 +120,18 @@ services:
       context: ./src/EndearingApp.AdminFrontend
       dockerfile: Dockerfile
     environment:
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otelcollector:4321"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otelcollector:4318" # Змінено порт 4321 на 4318 (стандартний HTTP для OTLP)
       OTEL_SERVICE_NAME: "front"
       VITE_API_URL: "http://backend:8080"
     ports:
       - "3000:3000"
+    depends_on:
+      - backend
+      - otelcollector
+
 volumes:
   postgres_data:
   loki_data:
   grafana_data:
   tempo-data:
+  prometheus_data:
