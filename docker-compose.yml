@@ -116,13 +116,13 @@ services:
       - otelcollector
 
   frontend:
-    image: node:22.7.0
+    image: endearingapp_frontend_img
     container_name: endearingapp_frontend
     build:
       context: ./src/EndearingApp.AdminFrontend
       dockerfile: Dockerfile
     environment:
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otelcollector:4318" # Змінено порт 4321 на 4318 (стандартний HTTP для OTLP)
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otelcollector:4318"
       OTEL_SERVICE_NAME: "front"
       VITE_API_URL: "http://backend:8080"
     ports:
