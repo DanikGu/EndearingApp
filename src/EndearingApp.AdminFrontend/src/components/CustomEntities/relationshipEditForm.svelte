@@ -1,6 +1,7 @@
 <script>
   import { Input, Label, FormGroup, Row, Col } from "@sveltestrap/sveltestrap";
   import { customEntities } from "../../stores/global";
+
   /** @typedef {import('../../apiclient/src/model/RelationshipDTO').default} Relationship */
   /** @typedef {import('../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
   /** @typedef {import('../../apiclient/src/model/FieldDto').default} FieldDto */
@@ -19,60 +20,79 @@
     currentEntity,
   } = $props();
 
-  let selectedSourceField = $derived(
-    currentEntity && currentEntity.fields
-      ? currentEntity.fields.find(
-          /** @param {FieldDto} x */
-          (x) => x.id === relationship.sourceFieldId,
-        )
-      : undefined,
-  );
+  let manualTrigger = $state(0);
 
-  let selectedTargetEntity = $derived(
-    $customEntities
-      ? $customEntities.find(
-          (x) => x.id === relationship.referencedCustomEntityId,
-        )
-      : undefined,
-  );
+  function refreshItems() {
+    manualTrigger++;
+  }
 
-  let fromFieldSelectItems = $derived(
-    currentEntity && currentEntity.fields
-      ? currentEntity.fields.map(
-          /** @param {FieldDto} x */
-          (x) => ({
-            name: x.displayName,
-            value: x.id,
-          }),
-        )
-      : [],
-  );
+  /** @type {FieldDto | undefined} */
+  let selectedSourceField = $derived.by(() => {
+    manualTrigger;
+    const fields = currentEntity?.fields;
+    const targetId = relationship?.sourceFieldId;
 
-  let customEntitySelectItems = $derived(
-    $customEntities
-      ? $customEntities.map((x) => ({
+    return fields && targetId
+      ? fields.find((/** @type {any} */ x) => x.id === targetId)
+      : undefined;
+  });
+
+  let selectedTargetEntity = $derived.by(() => {
+    manualTrigger;
+    const entities = $customEntities;
+    const targetId = relationship?.referencedCustomEntityId;
+
+    return entities && targetId
+      ? entities.find((x) => x.id === targetId)
+      : undefined;
+  });
+
+  let fromFieldSelectItems = $derived.by(() => {
+    manualTrigger;
+    const fields = currentEntity?.fields;
+
+    return fields
+      ? fields.map((/** @type {any} */ x) => ({
           name: x.displayName,
           value: x.id,
         }))
-      : [],
-  );
+      : [];
+  });
 
-  let toFieldSelectItems = $derived(
-    selectedTargetEntity?.fields && selectedSourceField
-      ? selectedTargetEntity.fields
-          .filter(
-            /** @param {FieldDto} x */
-            (x) => x.type === selectedSourceField.type,
-          )
-          .map(
-            /** @param {FieldDto} x */
-            (x) => ({
-              name: x.displayName,
-              value: x.id,
-            }),
-          )
-      : [],
-  );
+  let customEntitySelectItems = $derived.by(() => {
+    manualTrigger;
+    const entities = $customEntities;
+
+    return entities
+      ? entities.map((x) => ({
+          name: x.displayName,
+          value: x.id,
+        }))
+      : [];
+  });
+
+  let toFieldSelectItems = $derived.by(() => {
+    manualTrigger;
+    const fields = selectedTargetEntity?.fields;
+    const sourceField = selectedSourceField;
+    const rel = relationship;
+
+    if (
+      !fields ||
+      !rel?.referencedCustomEntityId ||
+      !rel?.sourceFieldId ||
+      !sourceField?.id
+    ) {
+      return [];
+    }
+
+    return fields
+      .filter((/** @type {any} */ x) => x.type === sourceField.type)
+      .map((/** @type {any} */ x) => ({
+        name: x.displayName,
+        value: x.id,
+      }));
+  });
 </script>
 
 <Row class="g-3 w-100">
@@ -93,6 +113,17 @@
         id="relationshipSourceField"
         bind:value={relationship.sourceFieldId}
         disabled={!isNew}
+        on:change={() => {
+          console.log(relationship.sourceFieldId);
+          console.log(relationship.referencedCustomEntityId);
+          console.log(
+            isNew,
+            selectedTargetEntity,
+            selectedSourceField,
+            manualTrigger,
+          );
+          refreshItems();
+        }}
       >
         <option value={undefined} selected={relationship.sourceFieldId == null}
           >Select source field...</option
@@ -111,6 +142,17 @@
         type="select"
         id="relationshipReferencedEntity"
         bind:value={relationship.referencedCustomEntityId}
+        on:change={() => {
+          console.log(relationship.sourceFieldId);
+          console.log(relationship.referencedCustomEntityId);
+          console.log(
+            isNew,
+            selectedTargetEntity,
+            selectedSourceField,
+            manualTrigger,
+          );
+          refreshItems();
+        }}
         disabled={!isNew}
       >
         <option
@@ -128,27 +170,29 @@
 
     <FormGroup>
       <Label for="relationshipReferencedField">To Field</Label>
-      <Input
-        type="select"
-        id="relationshipReferencedField"
-        bind:value={relationship.referencedFieldId}
-        disabled={!isNew || !selectedTargetEntity || !selectedSourceField}
-      >
-        <option
-          value={undefined}
-          selected={relationship.referencedFieldId == null}
-          >Select target field...</option
+      {#key manualTrigger}
+        <Input
+          type="select"
+          id="relationshipReferencedField"
+          bind:value={relationship.referencedFieldId}
+          disabled={!isNew || !selectedTargetEntity || !selectedSourceField}
         >
-        {#if toFieldSelectItems && toFieldSelectItems.length > 0}
-          {#each toFieldSelectItems as item (item.value)}
-            <option value={item.value}>{item.name}</option>
-          {/each}
-        {:else if selectedTargetEntity && selectedSourceField}
-          <option value={undefined} disabled
-            >No matching type fields in target</option
+          <option
+            value={undefined}
+            selected={relationship.referencedFieldId == null}
+            >Select target field...</option
           >
-        {/if}
-      </Input>
+          {#if toFieldSelectItems && toFieldSelectItems.length > 0}
+            {#each toFieldSelectItems as item (item.value)}
+              <option value={item.value}>{item.name}</option>
+            {/each}
+          {:else if selectedTargetEntity && selectedSourceField}
+            <option value={undefined} disabled
+              >No matching type fields in target</option
+            >
+          {/if}
+        </Input>
+      {/key}
     </FormGroup>
   </Col>
 </Row>
