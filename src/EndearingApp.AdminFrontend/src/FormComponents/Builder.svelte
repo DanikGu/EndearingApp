@@ -37,11 +37,15 @@
     });
   });
   onMount(async () => {
-    await import("../FormComponents/FormIoComponents/ActionButtons");
-    await import("../FormComponents/FormIoComponents/LookupComponent");
-    await import("@formio/js/dist/formio.full.min.css");
-    await import("../FormComponents/styles/main.css");
-    Formio = (await import("@formio/js")).Formio;
+    try {
+      await import("../FormComponents/FormIoComponents/ActionButtons");
+      await import("../FormComponents/FormIoComponents/LookupComponent");
+      await import("@formio/js/dist/formio.full.min.css");
+      await import("../FormComponents/styles/main.css");
+      Formio = (await import("@formio/js")).Formio;
+    } catch (ex) {
+      console.error("Failed to load foem io resources", ex);
+    }
   });
 </script>
 
