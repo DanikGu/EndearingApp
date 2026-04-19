@@ -1,0 +1,37 @@
+name: .NET CI Pipeline
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Завантаження коду
+    - uses: actions/checkout@v3
+
+    # 2. Встановлення .NET
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x' # Вказуємо версію .NET
+
+    # 3. Відновлення залежностей
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # 4. Static analysis (Статичний аналіз під час збірки)
+    - name: Build & Static Analysis
+      run: dotnet build --no-restore
+
+    # 5. Linting (Перевірка форматування коду)
+    - name: Linting
+      run: dotnet format --verify-no-changes
+      continue-on-error: true # Дозволяємо продовжити, якщо є дрібні проблеми з форматуванням
+
+    # 6. Запуск Unit-тестів
+    - name: Unit Tests
+      # Якщо цей крок падає (тест не проходить), весь CI буде світитися червоним
+      run: dotnet test --no-build --verbosity normal
