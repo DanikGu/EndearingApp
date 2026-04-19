@@ -3,7 +3,16 @@ name: .NET CI Pipeline
 on:
   pull_request:
     branches: [ "main" ]
-
+    types:
+      - opened
+      - edited
+      - labeled
+      - unlabeled
+  issue_comment:
+    types:
+      - created
+      - edited
+      - deleted
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
