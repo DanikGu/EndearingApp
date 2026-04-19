@@ -1,0 +1,115 @@
+name: DevOps Lab 3 - Final Pipeline
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+    - name: Run Unit Tests
+      run: dotnet test --verbosity normal
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Publish App
+      run: dotnet publish src/EndearingApp.Web/EndearingApp.Web.csproj -c Release -o ./publish
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: endearing-app-binary
+        path: ./publish
+
+  deploy_staging:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+    - name: Download Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: endearing-app-binary
+        path: ./publish
+        
+    - name: Deploy and Start Staging
+      env:
+        PRIVATE_KEY: ${{ secrets.ARTIFACT_SSH_KEY }}
+      run: |
+        echo "$PRIVATE_KEY" | tr -d '\r' > private_key.pem
+        chmod 600 private_key.pem
+        
+        # Створюємо архів для передачі
+        tar -czf app.tar.gz -C ./publish .
+        scp -P ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no -i private_key.pem app.tar.gz ${{ secrets.USER }}@${{ secrets.HOST }}:/tmp/app-stage.tar.gz
+        
+        ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.USER }}@${{ secrets.HOST }} <<EOF
+          mkdir -p ~/EndearingAppStage
+          
+          # Зупиняємо попередню версію, якщо вона запущена
+          pkill -f "EndearingApp.Web.dll" || true
+          
+          # Оновлюємо файли
+          rm -rf ~/EndearingAppStage/*
+          tar -xzf /tmp/app-stage.tar.gz -C ~/EndearingAppStage
+          
+          # Запускаємо додаток у фоні
+          cd ~/EndearingAppStage
+          nohup dotnet EndearingApp.Web.dll --urls "http://0.0.0.0:5000" > app.log 2>&1 &
+          sleep 5
+        EOF
+        rm -f private_key.pem
+
+  verify_staging:
+    needs: deploy_staging
+    runs-on: ubuntu-latest
+    steps:
+    - name: SSH and Verify Localhost
+      env:
+        PRIVATE_KEY: ${{ secrets.ARTIFACT_SSH_KEY }}
+      run: |
+        echo "$PRIVATE_KEY" | tr -d '\r' > private_key.pem
+        chmod 600 private_key.pem
+        # Виконуємо запит всередині сервера на localhost
+        ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.USER }}@${{ secrets.HOST }} "curl -f http://localhost:5000/health || exit 1"
+        rm -f private_key.pem
+
+  deploy_production:
+    needs: verify_staging
+    runs-on: ubuntu-latest
+    environment: production # Тут спрацює Manual Approval
+    steps:
+    - name: Download Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: endearing-app-binary
+        path: ./publish
+        
+    - name: Deploy to Prod Folder
+      env:
+        PRIVATE_KEY: ${{ secrets.ARTIFACT_SSH_KEY }}
+      run: |
+        echo "$PRIVATE_KEY" | tr -d '\r' > private_key.pem
+        chmod 600 private_key.pem
+        tar -czf app.tar.gz -C ./publish .
+        scp -P ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no -i private_key.pem app.tar.gz ${{ secrets.USER }}@${{ secrets.HOST }}:/tmp/app-prod.tar.gz
+        
+        ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.USER }}@${{ secrets.HOST }} <<EOF
+          mkdir -p ~/EndearingAppProd
+          # Для Prod можна використовувати інший порт, наприклад 5001
+          pkill -f "EndearingApp.Web.dll" || true 
+          rm -rf ~/EndearingAppProd/*
+          tar -xzf /tmp/app-prod.tar.gz -C ~/EndearingAppProd
+          cd ~/EndearingAppProd
+          nohup dotnet EndearingApp.Web.dll --urls "http://0.0.0.0:5001" > prod.log 2>&1 &
+        EOF
+        rm -f private_key.pem
