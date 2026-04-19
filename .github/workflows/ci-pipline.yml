@@ -2,12 +2,8 @@ name: .NET CI Pipeline
 
 on:
   pull_request:
-    branches: [ "main" ]
-    types:
-      - opened
-      - edited
-      - labeled
-      - unlabeled
+    branches: [ "master" ]
+
   issue_comment:
     types:
       - created
