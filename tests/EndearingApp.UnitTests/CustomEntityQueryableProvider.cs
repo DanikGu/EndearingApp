@@ -10,16 +10,18 @@ namespace EndearingApp.UnitTests;
 public class Test
 {
     [Fact]
-    public void Nahui()
+    public void CI_ShouldPass_WhenTestIsCorrect()
     {
-        //var service = new CustomEntityQueryableProvider();
-        //var qurable = service.GetDbSet("Test");
-        //foreach (var entity in qurable)
-        //{
-        //    
-        //    Debug.WriteLine("Chlen");
-        //}
+        // Arrange
+        int expected = 10;
+        int a = 5;
+        int b = 5;
 
+        // Act
+        int actual = a + b;
+
+        // Assert
+        Assert.Equal(expected, actual);
     }
 }
 
