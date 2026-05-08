@@ -22,6 +22,8 @@
     customEntityId = $bindable(""),
   } = $props();
 
+  setContext("customEntityId", customEntityId);
+
   /** @type {Field[]} */
   let selectedTableFields = $state([]);
 
@@ -44,10 +46,6 @@
       }
     }
     selectedTableFields = newFields;
-  });
-
-  $effect(() => {
-    setContext("customEntityId", customEntityId);
   });
 
 

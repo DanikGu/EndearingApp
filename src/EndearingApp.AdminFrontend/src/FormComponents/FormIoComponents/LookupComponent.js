@@ -179,7 +179,6 @@ class LookupComponent extends Formio.Components.components.component {
     }
   }
   /**
-     * Called when a dropdown item is selected.
      * @param {EntityRef} item 
      */
   selectResult(item) {
@@ -190,13 +189,13 @@ class LookupComponent extends Formio.Components.components.component {
   setValue(value, flags = {}) {
     this.loadExistingValue(value).then(() => super.setValue(value, flags));
   }
-  /** Fetches an entity by its ID.
+  /**
     * @param {string} id
     * @returns {Promise<EntityRef>} */
   async getEntityById(id) {
     try {
       const resourceUrl = `/${this.odataPath}/${this.entityName}`;
-      const url = resourceUrl + `(${id})?select=id,name`;
+      const url = resourceUrl + `(${encodeURIComponent(id)})?$select=id,name`;
       const response = await fetch(url);
       const result = await response.json();
       return result;
@@ -211,8 +210,8 @@ class LookupComponent extends Formio.Components.components.component {
    *  @returns {Promise<EntityRef[]>}*/
   async searchEtnByQuery(query) {
     const resourceUrl = `/${this.schema.odataPath}/${this.schema.entityName}`;
-    const fullTextSearch = resourceUrl + `/fullTextSearch/${query}/?select=id,name&top=5`;
-    const firstpage = resourceUrl + "/?select=id,name&top=5";
+    const fullTextSearch = resourceUrl + `/fullTextSearch/${encodeURIComponent(query)}?$select=id,name&$top=5`;
+    const firstpage = resourceUrl + `?$select=id,name&$top=5`;
     const response = query && query.length > 0 ?
       await fetch(fullTextSearch) :
       await fetch(firstpage);

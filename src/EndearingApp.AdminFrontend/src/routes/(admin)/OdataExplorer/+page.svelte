@@ -6,8 +6,6 @@
     CustomEntitiesApi,
     FormApi,
     FormDTO,
-    OptionSetDefinitionDTO,
-    OptionSetDefinitionsApi,
   } from "@apiclients";
   import { alertError, alertSuccsess, assignLoader } from "@utils/uiutils";
   import { onMount } from "svelte";
@@ -27,6 +25,7 @@
   import { ConditionGroup } from "../../../components/QueryBuilder/typeDefinitions";
   import { convertToOdataFilter } from "../../../components/QueryBuilder/queryToOdataUrlParams";
   import { ensureCustomEntities, ensureOptionSets, customEntities, optionSets } from "../../../stores/global.js";
+  import { fetchEntities, createEntity, updateEntity, deleteEntity } from "$lib/api/odata";
 
   /** @typedef {import('svelte-jsoneditor').Mode} Mode */
 
@@ -40,12 +39,7 @@
   let selectedFormId = $state(null);
 
 
-  let odataMetaUrl = "/api/odata/$metadata";
-  let namespace = "CustomEntitiesDbContext";
   let rootQuery = new ConditionGroup("and", []);
-
-  /** @type {any} */
-  let odataSchema;
 
 
   const loadForms = async () => {
@@ -112,71 +106,51 @@
   };
 
   const getFirstPage = async () => {
-    if (!browser || !selectedEntityId || !firstPageUrl) {
+    if (!browser || !selectedEntityId) {
       content.json = {};
-      getUrlValue = firstPageUrl;
       return;
     }
-    try {
-      const response = await fetch(firstPageUrl, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+    const entityName = $customEntities.find((x) => x.id === selectedEntityId)?.name;
+    if (!entityName) return;
 
-      if (!response.ok) {
-        alertError(`HTTP error! Status: ${response.status}`);
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      let items = await response.json();
-      items = items.value;
-      content.json = items;
-      getUrlValue = firstPageUrl;
-    } catch (error) {
-      handleError("Failed to fetch first page data: " + error);
+    const { data, error } = await fetchEntities(entityName, { top: 100, orderBy: 'createdon desc' });
+    if (error) {
+      handleError("Failed to fetch data: " + error.message);
       content.json = {};
-      getUrlValue = firstPageUrl;
+      return;
     }
+    content.json = data?.value || {};
+    getUrlValue = `${entityName}?orderby=createdon%20desc&top=100`;
   };
 
   const putData = async (url = "", data = {}) => {
     if (!browser) return;
-    const response = await fetch(url, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    const entityName = $customEntities.find((x) => x.id === selectedEntityId)?.name;
+    if (!entityName) return;
+    const id = url.split('(')[1]?.split(')')[0];
+    if (!id) return;
 
-    if (!response.ok) {
-      alertError(`HTTP error! Status: ${response.status}`);
-      throw new Error(`HTTP error! Status: ${response.status}`);
+    const { error } = await updateEntity(entityName, id, data);
+    if (error) {
+      alertError("Failed to update: " + error.message);
+      return;
     }
     await getFirstPage();
-    alertSuccsess(`Entity updated`);
-    return await response.json();
+    alertSuccsess("Entity updated");
   };
 
   const postData = async (url = "", data = {}) => {
     if (!browser) return;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    const entityName = $customEntities.find((x) => x.id === selectedEntityId)?.name;
+    if (!entityName) return;
 
-    if (!response.ok) {
-      alertError(`HTTP error! Status: ${response.status}`);
-      throw new Error(`HTTP error! Status: ${response.status}`);
+    const { error } = await createEntity(entityName, data);
+    if (error) {
+      alertError("Failed to create: " + error.message);
+      return;
     }
     await getFirstPage();
-    alertSuccsess(`Entity created`);
-    return await response.json();
+    alertSuccsess("Entity created");
   };
 
   /** @type {string | null } */
@@ -196,7 +170,6 @@
   };
 
   /** @returns {Mode} */
-  // @ts-ignore
   const getMode = () => "table";
 
   /** @param { string } formId
@@ -204,7 +177,6 @@
   const loadFormById = (formId) => {
     return new Promise((res) => {
       const formApi = new FormApi();
-      // @ts-ignore
       const callback = (error, form) => {
         if (form) {
           res(form);
@@ -222,7 +194,6 @@
   const getCustomEntity = async (customEntityId) => {
     return new Promise((res) => {
       const api = new CustomEntitiesApi();
-      // @ts-ignore
       let callBack = (error, customEntity) => {
         res(customEntity ?? {});
       };

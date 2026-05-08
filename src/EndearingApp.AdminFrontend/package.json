@@ -35,6 +35,7 @@
     "autoprefixer": "^10.4.20",
     "flowbite": "^2.5.2",
     "flowbite-svelte-icons": "^2.0.2",
+    "odata-query": "^8.0.7",
     "superagent": "^10.1.1",
     "svelecte": "^5.2.0",
     "svelte-jsoneditor": "^2.4.0",
