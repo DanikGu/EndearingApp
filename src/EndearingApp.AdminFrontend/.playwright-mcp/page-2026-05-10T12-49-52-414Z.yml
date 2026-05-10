@@ -1,0 +1,33 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - link "App Logo EndearingApp" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]:
+          - img "App Logo" [ref=e10]
+          - generic [ref=e12]: EndearingApp
+      - list [ref=e13]:
+        - listitem [ref=e14]:
+          - link "Data Customizations" [ref=e15] [cursor=pointer]:
+            - /url: /DataCustomizations
+        - listitem [ref=e16]:
+          - link "Form Editor" [ref=e17] [cursor=pointer]:
+            - /url: /FormEditor
+        - listitem [ref=e18]:
+          - link "Query Builder" [ref=e19] [cursor=pointer]:
+            - /url: /QueryBuilder
+      - button "" [ref=e20] [cursor=pointer]:
+        - generic [ref=e21]: 
+  - generic [ref=e22]:
+    - generic [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e27]: Entity
+        - combobox "Entity" [ref=e28]:
+          - option "Select an Entity..." [selected]
+          - option "Test"
+          - option "Test2"
+      - button "Apply" [ref=e29] [cursor=pointer]
+    - generic [ref=e32]:
+      - generic [ref=e33]: Current OData URL
+      - textbox "Current OData URL" [ref=e34]:
+        - /placeholder: ""

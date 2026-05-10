@@ -1,7 +1,7 @@
 <script>
   import ConditionGroupComponent from "./conditionGroupComponent.svelte";
-  import { Button, Col, Icon, Row, Input } from "@sveltestrap/sveltestrap";
-  import { Condition, ConditionGroup, Field } from "./typeDefinitions";
+  import { Button, Col, Icon, Row } from "@sveltestrap/sveltestrap";
+  import { Condition, ConditionGroup, Field } from "../logic/typeDefinitions";
   import ConditionComponent from "./conditionComponent.svelte";
 
   /**
@@ -17,17 +17,17 @@
   /** @param {ConditionGroup} parentElem */
   const addCondition = (parentElem) => {
     parentElem.children.push(new Condition("", "", "", null));
-    console.log(parentElem.children);
     v = crypto.randomUUID();
   };
 
   /** @param {ConditionGroup} parentElem */
   const addGroup = (parentElem) => {
     parentElem.children.push(new ConditionGroup("and", []));
-    console.log(parentElem.children);
     v = crypto.randomUUID();
   };
+
   let v = $state(crypto.randomUUID());
+
   /** @param {Condition | ConditionGroup} child */
   const deleteChild = (child) => {
     group.children = group.children.filter((item) => item !== child);
@@ -53,13 +53,13 @@
     </Col>
     <Col md="1" class="flex flex-row pt-3 pb-3 pl-0 pr-0 items-center">
       <Col md="10" class="text-end pr-1">
-        <select class="focus-visible:outline-0" bind:value={group.operator}>
+        <select class="focus-visible:outline-0 dark:bg-gray-700 dark:text-white" bind:value={group.operator}>
           <option value="and">And</option>
           <option value="or">Or</option>
         </select>
       </Col>
       <Col md="2" class="h-full">
-        <div class="border-l-2 border-t-2 border-b-2 h-full"></div>
+        <div class="border-l-2 border-t-2 border-b-2 dark:border-gray-600 h-full"></div>
       </Col>
     </Col>
     <Col md="11">

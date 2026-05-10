@@ -13,7 +13,7 @@ export const FILTER_OPERATORS = {
   'Binary Data': [],
   'Unique Identifier': ['eq', 'ne', 'in'],
   'Option Set': ['eq', 'ne', 'in'],
-  'Option Set MultiSelect': ['eq', 'ne', 'in'],
+  'Option Set MultiSelect': ['any_eq', 'any_in', 'all_in', 'allonly'],
 };
 
 /** @type {{ [key: string]: string }} */
@@ -28,4 +28,8 @@ export const OPERATOR_LABELS = {
   startswith: 'Starts With',
   endswith: 'Ends With',
   in: 'In',
+  any_eq: 'Contains',
+  any_in: 'Contains Any Of',
+  all_in: 'Contains All',
+  allonly: 'Contains Only',
 };

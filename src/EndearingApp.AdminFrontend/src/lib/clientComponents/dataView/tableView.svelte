@@ -2,6 +2,8 @@
   import { ResizableColumns } from "svelte-resizable-columns";
   import { getTypeId } from "@utils/fieldtypesutils";
 
+  const resizeAction = /** @type {any} */ (ResizableColumns);
+
   /**
    * @typedef {Object} ColumnDef
    * @property {string} id
@@ -57,8 +59,8 @@
    *  @returns {{ display: string, href: string | null }} */
   function resolveCell(col, row) {
     const raw = col.type === 'expand' && col.navigationProp
-      ? row[col.navigationProp]?.[col.fieldName]
-      : row[col.fieldName];
+      ? row[col.navigationProp]?.[col.fieldName ?? '']
+      : row[col.fieldName ?? ''];
 
     if (raw === null || raw === undefined) return { display: '', href: null };
 
@@ -117,7 +119,7 @@
 </script>
 
 <div class="overflow-x-auto">
-  <table class="table" use:ResizableColumns>
+  <table class="table" use:resizeAction>
     <thead>
       <tr>
         {#each columns as col (col.id)}

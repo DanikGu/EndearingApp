@@ -31,3 +31,8 @@
 ## Component Conventions
 - Use Svelte 5 runes syntax (`$state`, `$derived`, `$effect`, `$props`, `$bindable`)
 - Use TypeScript via JSDoc annotations
+
+## Type Safety
+- All components and logic files must use JSDoc annotations for TypeScript checking
+- After any refactoring or new code, run `npm run check` and fix all issues in affected files
+- No file should be left with unresolved svelte-check errors or warnings

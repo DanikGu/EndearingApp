@@ -1,16 +1,46 @@
 import { success, failure } from './result';
+import buildQuery from 'odata-query';
 
 const API_BASE = '/api/odata';
 
 /**
  * @typedef {Object} ODataQueryOptions
- * @property {string} [filter]
+ * @property {Object|string} [filter] - Structured filter object or raw OData filter string
  * @property {string[]} [select]
- * @property {string} [expand]
+ * @property {string|Object|string[]} [expand]
  * @property {number} [top]
  * @property {number} [skip]
- * @property {string} [orderBy]
+ * @property {string|string[]} [orderBy]
  */
+
+/**
+ * Builds OData query string from structured options using odata-query's buildQuery.
+ * @param {ODataQueryOptions} opts
+ * @returns {string} Query string starting with '?' or empty string
+ */
+function buildQueryString(opts) {
+  /** @type {Record<string, any>} */
+  const queryObj = {};
+
+  if (opts.filter) queryObj.filter = opts.filter;
+  if (opts.select && opts.select.length > 0) queryObj.select = opts.select;
+  if (opts.expand) queryObj.expand = opts.expand;
+  if (opts.top != null) queryObj.top = opts.top;
+  if (opts.skip != null) queryObj.skip = opts.skip;
+  if (opts.orderBy) queryObj.orderBy = opts.orderBy;
+
+  return buildQuery(queryObj);
+}
+
+/**
+ * Builds a full OData URL for a given entity with query options
+ * @param {string} entityName
+ * @param {ODataQueryOptions} [opts]
+ * @returns {string}
+ */
+export function buildODataUrl(entityName, opts = {}) {
+  return `${API_BASE}/${entityName}${buildQueryString(opts)}`;
+}
 
 /** @param {string} url
  *  @param {{ method?: string, body?: any, headers?: Record<string,string> }} [options]
@@ -24,12 +54,17 @@ async function request(url, options = {}) {
     });
     if (!response.ok) {
       const text = await response.text().catch(() => '');
-      return failure(new Error(`HTTP ${response.status}: ${response.statusText}${text ? ' — ' + text.slice(0,200) : ''}`));
+      return failure(new Error(`HTTP ${response.status}: ${response.statusText}${text ? ' — ' + text.slice(0, 200) : ''}`));
     }
-    const data = await response.json();
-    return success(data);
+    const text = await response.text();
+    if (!text) return success(null);
+    try {
+      return success(JSON.parse(text));
+    } catch {
+      return success(text);
+    }
   } catch (err) {
-    return failure(/** @type {Error} */ (err));
+    return failure(/** @type {Error} */(err));
   }
 }
 
@@ -37,21 +72,20 @@ async function request(url, options = {}) {
  *  @param {ODataQueryOptions} [opts]
  *  @returns {Promise<import('./result').ApiResult<any>>} */
 export async function fetchEntities(entityName, opts = {}) {
-  const params = buildParams(opts);
-  const qs = params.toString();
-  return request(`${API_BASE}/${entityName}${qs ? '?' + qs : ''}`);
+  return request(buildODataUrl(entityName, opts));
 }
 
 /** @param {string} entityName
  *  @param {string} id
- *  @param {{ select?: string[], expand?: string }} [opts]
+ *  @param {{ select?: string[], expand?: string|Object }} [opts]
  *  @returns {Promise<import('./result').ApiResult<any>>} */
 export async function fetchEntityById(entityName, id, opts = {}) {
-  const params = new URLSearchParams();
-  if (opts.select) params.set('$select', opts.select.join(','));
-  if (opts.expand) params.set('$expand', opts.expand);
-  const qs = params.toString();
-  return request(`${API_BASE}/${entityName}(${encodeURIComponent(id)})${qs ? '?' + qs : ''}`);
+  /** @type {Record<string, any>} */
+  const queryObj = {};
+  if (opts.select && opts.select.length > 0) queryObj.select = opts.select;
+  if (opts.expand) queryObj.expand = opts.expand;
+  const qs = buildQuery(queryObj);
+  return request(`${API_BASE}/${entityName}(${encodeURIComponent(id)})${qs}`);
 }
 
 /** @param {string} entityName
@@ -59,21 +93,22 @@ export async function fetchEntityById(entityName, id, opts = {}) {
  *  @param {{ select?: string[], top?: number }} [opts]
  *  @returns {Promise<import('./result').ApiResult<any>>} */
 export async function fullTextSearch(entityName, query, opts = {}) {
-  const params = new URLSearchParams();
-  if (opts.select) params.set('$select', opts.select.join(','));
-  if (opts.top) params.set('$top', String(opts.top));
-  return request(`${API_BASE}/${entityName}/fullTextSearch/${encodeURIComponent(query)}?${params.toString()}`);
+  /** @type {Record<string, any>} */
+  const queryObj = {};
+  if (opts.select && opts.select.length > 0) queryObj.select = opts.select;
+  if (opts.top) queryObj.top = opts.top;
+  return request(`${API_BASE}/${entityName}/fullTextSearch/${encodeURIComponent(query)}${buildQuery(queryObj)}`);
 }
 
 /** @param {string} entityName
  *  @param {{ select?: string[], top?: number }} [opts]
  *  @returns {Promise<import('./result').ApiResult<any>>} */
 export async function fetchFirstPage(entityName, opts = {}) {
-  const params = new URLSearchParams();
-  if (opts.select) params.set('$select', opts.select.join(','));
-  if (opts.top) params.set('$top', String(opts.top));
-  params.set('$orderby', 'createdon desc');
-  return request(`${API_BASE}/${entityName}?${params.toString()}`);
+  /** @type {Record<string, any>} */
+  const queryObj = { orderBy: 'createdon desc' };
+  if (opts.select && opts.select.length > 0) queryObj.select = opts.select;
+  if (opts.top) queryObj.top = opts.top;
+  return request(`${API_BASE}/${entityName}${buildQuery(queryObj)}`);
 }
 
 /** @param {string} entityName
@@ -96,17 +131,4 @@ export async function updateEntity(entityName, id, data) {
  *  @returns {Promise<import('./result').ApiResult<any>>} */
 export async function deleteEntity(entityName, id) {
   return request(`${API_BASE}/${entityName}(${encodeURIComponent(id)})`, { method: 'DELETE' });
-}
-
-/** @param {ODataQueryOptions} opts
- *  @returns {URLSearchParams} */
-function buildParams(opts) {
-  const params = new URLSearchParams();
-  if (opts.filter) params.set('$filter', opts.filter);
-  if (opts.select && opts.select.length > 0) params.set('$select', opts.select.join(','));
-  if (opts.expand) params.set('$expand', opts.expand);
-  if (opts.top) params.set('$top', String(opts.top));
-  if (opts.skip) params.set('$skip', String(opts.skip));
-  if (opts.orderBy) params.set('$orderby', opts.orderBy);
-  return params;
 }

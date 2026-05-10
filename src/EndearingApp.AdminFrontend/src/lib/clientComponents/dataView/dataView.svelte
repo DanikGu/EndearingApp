@@ -3,7 +3,7 @@
   import Toolbar from "./toolbar.svelte";
   import ColumnManager from "./columnManager.svelte";
   import TableView from "./tableView.svelte";
-  import QueryBuilder from "../../../components/QueryBuilder/queryBuilder.svelte";
+  import QueryBuilder from "../queryBuilder/components/queryBuilder.svelte";
   import { optionSets, customEntities, userSettings } from "../../../stores/global";
   import { get } from "svelte/store";
   import { getTypeId } from "@utils/fieldtypesutils";
@@ -29,9 +29,10 @@
 
   let {
     entityName = '',
-    data = [],
+    data = $bindable([]),
     customEntity,
     expands = $bindable([]),
+    fieldNames = $bindable([]),
     rootQuery = $bindable(),
     onFiltersDone = null,
     onRefresh = null,
@@ -40,8 +41,11 @@
   let filterModal = $state(false);
   let showColumnManager = $state(false);
 
+  /** @type {any[]} */
   let optionSetDefs = $state([]);
+  /** @type {any[]} */
   let allEntities = $state([]);
+  /** @type {{ timezone: string }} */
   let settings = $state({ timezone: '' });
 
   $effect(() => {
@@ -56,17 +60,22 @@
     }
   };
 
+  /** @type {ColumnDef[]} */
   let orderedColumns = $state([]);
   let prevEntityId = $state(null);
+  let prevAllEntitiesLen = $state(0);
 
   $effect(() => {
-    if (customEntity?.id && customEntity?.fields && customEntity.id !== prevEntityId) {
+    const len = allEntities.length;
+    if (customEntity?.id && customEntity?.fields && (customEntity.id !== prevEntityId || len !== prevAllEntitiesLen)) {
       prevEntityId = customEntity.id;
+      prevAllEntitiesLen = len;
       orderedColumns = customEntity.fields.map(buildFieldColumnDef);
     }
   });
 
   $effect(() => {
+    /** @type {Record<string, { navigationProp: string, select: string[] }>} */
     const expandMap = {};
     for (const col of orderedColumns) {
       if (col.type === 'expand' && col.navigationProp && col.fieldName) {
@@ -77,8 +86,23 @@
           expandMap[col.navigationProp].select.push(col.fieldName);
         }
       }
+      if (col.type === 'field' && col.lookupNavProp) {
+        if (!expandMap[col.lookupNavProp]) {
+          expandMap[col.lookupNavProp] = { navigationProp: col.lookupNavProp, select: ['Id', 'Name'] };
+        }
+      }
     }
     expands = Object.values(expandMap);
+  });
+
+  $effect(() => {
+    const names = orderedColumns
+      .filter(col => col.type === 'field' && col.fieldName)
+      .map(col => /** @type {string} */ (col.fieldName));
+    if (!names.includes('Id')) {
+      names.push('Id');
+    }
+    fieldNames = names;
   });
 
   /** @param {any} field
@@ -95,9 +119,9 @@
       fieldName: field.name,
       field,
       isNameField: field.name === 'name' || field.name === 'Name',
-      lookupEntityName: lookupInfo ? lookupInfo.entityName : null,
-      lookupNavProp: lookupInfo ? lookupInfo.navProp : null,
-      optionSetDefId: field.optionSetDefinitionId || null,
+      lookupEntityName: lookupInfo ? lookupInfo.entityName : undefined,
+      lookupNavProp: lookupInfo ? lookupInfo.navProp : undefined,
+      optionSetDefId: field.optionSetDefinitionId || undefined,
       isSelect: field.type === getTypeId("Option Set") || field.type === getTypeId("Option Set MultiSelect"),
       isDateTime: field.type === dtId,
       isDateOnly: field.type === dId,

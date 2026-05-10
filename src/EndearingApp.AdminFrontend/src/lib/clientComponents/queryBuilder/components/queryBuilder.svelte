@@ -1,20 +1,25 @@
 <script>
   import { onMount, setContext } from "svelte";
-  import { ConditionGroup, Field } from "./typeDefinitions";
+  import { ConditionGroup, Field } from "../logic/typeDefinitions";
   import { Col, Container, Row } from "@sveltestrap/sveltestrap";
   import ConditionGroupComponent from "./conditionGroupComponent.svelte";
-   import {
+  import {
     CustomeEntityDTO,
     FieldDto,
     OptionSetDefinitionDTO,
   } from "@apiclients/src";
-  import { customEntities, optionSets, ensureCustomEntities, ensureOptionSets } from "../../stores/global";
+  import {
+    customEntities,
+    optionSets,
+    ensureCustomEntities,
+    ensureOptionSets,
+  } from "../../../../stores/global";
 
-   /**
-    * @typedef {Object} Props
-    * @property {any} [rootGroup]
-    * @property {string | null} [customEntityId]
-    */
+  /**
+   * @typedef {Object} Props
+   * @property {any} [rootGroup]
+   * @property {string | null} [customEntityId]
+   */
 
   /** @type {Props} */
   let {
@@ -47,8 +52,6 @@
     }
     selectedTableFields = newFields;
   });
-
-
 </script>
 
 <Container>

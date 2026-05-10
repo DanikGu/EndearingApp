@@ -1,6 +1,9 @@
-import buildQuery, { guid, duration } from 'odata-query';
+import buildQuery, { guid, duration, ITEM_ROOT } from 'odata-query';
 import { Condition, ConditionGroup } from './typeDefinitions';
 import { getTypeName } from '@utils/fieldtypesutils';
+
+/** @type {Set<string>} */
+const collectionOps = new Set(['any_eq', 'any_in', 'all_in', 'allonly']);
 
 /** @param {import('./typeDefinitions').ConditionGroup} query
  *  @returns {string} */
@@ -33,6 +36,11 @@ function buildFilterObject(item) {
   if (item instanceof Condition) {
     const { field, operation, value, fieldDto } = item;
     if (!field || !operation || !fieldDto) return null;
+
+    if (collectionOps.has(operation)) {
+      return buildCollectionFilter(field, operation, value);
+    }
+
     if (value === null || value === undefined || value === '') {
       if (operation === 'eq' || operation === 'ne') {
         return { [field]: { [operation]: null } };
@@ -49,8 +57,37 @@ function buildFilterObject(item) {
   return null;
 }
 
+/** @param {string} field
+ *  @param {string} operation
+ *  @param {any} value
+ *  @returns {Object | null} */
+function buildCollectionFilter(field, operation, value) {
+  const values = Array.isArray(value) ? value.filter(v => v != null && v !== '') : [value].filter(v => v != null && v !== '');
+  if (values.length === 0) return null;
+
+  const numberValues = values.map(v => Number(v));
+
+  if (operation === 'any_eq') {
+    return { [field]: { any: { [ITEM_ROOT]: { eq: numberValues[0] } } } };
+  }
+
+  if (operation === 'any_in') {
+    return { [field]: { any: { [ITEM_ROOT]: { in: numberValues } } } };
+  }
+
+  if (operation === 'all_in') {
+    return { and: numberValues.map(v => ({ [field]: { any: { [ITEM_ROOT]: { eq: v } } } })) };
+  }
+
+  if (operation === 'allonly') {
+    return { [field]: { all: { [ITEM_ROOT]: { in: numberValues } } } };
+  }
+
+  return null;
+}
+
 /** @param {any} value
- *  @param {import('@apiclients/src').default.FieldDto} fieldDefinition
+ *  @param {import('@apiclients/src').FieldDto} fieldDefinition
  *  @param {string} operation
  *  @returns {any} */
 function formatValueForOdataQuery(value, fieldDefinition, operation) {

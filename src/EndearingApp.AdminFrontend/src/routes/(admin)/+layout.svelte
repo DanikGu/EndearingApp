@@ -56,9 +56,6 @@
       <NavLink href="/FormEditor">Form Editor</NavLink>
     </NavItem>
     <NavItem>
-      <NavLink href="/OdataExplorer">Odata Explorer</NavLink>
-    </NavItem>
-    <NavItem>
       <NavLink href="/QueryBuilder">Query Builder</NavLink>
     </NavItem>
   </Nav>

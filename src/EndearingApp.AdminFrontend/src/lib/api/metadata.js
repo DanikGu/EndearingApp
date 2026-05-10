@@ -109,5 +109,5 @@ export function getEntityByIdFromStore(entityId) {
  *  @param {string} id
  *  @returns {Promise<import('./result').ApiResult<any>>} */
 export async function loadEntityWithName(entityName, id) {
-  return fetchEntityById(entityName, id, { select: ['id', 'name'] });
+  return fetchEntityById(entityName, id, { select: ['Id', 'Name'] });
 }

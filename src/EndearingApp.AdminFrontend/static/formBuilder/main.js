@@ -49,9 +49,12 @@ const setupColors = () => {
     updateColorSchma();
   });
   const checkMode = () => {
-    let isDarkMode = window.localStorage.getItem("color-theme") === "dark";
+    let isDarkMode =
+      parent.document.documentElement.getAttribute("data-bs-theme") === "dark" ||
+      window.localStorage.getItem("themePreference") === "dark";
     let attrValue = isDarkMode ? "dark" : "light";
     document.body.dataset["bsTheme"] = attrValue;
+    document.documentElement.classList.toggle("dark", isDarkMode);
   }
   checkMode();
   const updateColorSchma = () => {

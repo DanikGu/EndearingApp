@@ -1,5 +1,6 @@
 export { success, failure } from './result';
 export {
+  buildODataUrl,
   fetchEntities,
   fetchEntityById,
   fullTextSearch,

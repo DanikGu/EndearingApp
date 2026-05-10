@@ -1,5 +1,7 @@
 // @ts-nocheck
 
+import { fetchEntityById, fullTextSearch, fetchFirstPage } from '$lib/api/odata';
+
 /** @typedef EntityRef
  *  @prop {string} Id 
  *  @prop {string} Name 
@@ -194,11 +196,8 @@ class LookupComponent extends Formio.Components.components.component {
     * @returns {Promise<EntityRef>} */
   async getEntityById(id) {
     try {
-      const resourceUrl = `/${this.odataPath}/${this.entityName}`;
-      const url = resourceUrl + `(${encodeURIComponent(id)})?$select=id,name`;
-      const response = await fetch(url);
-      const result = await response.json();
-      return result;
+      const { data } = await fetchEntityById(this.entityName, id, { select: ['id', 'name'] });
+      return data;
     }
     catch (ex) {
       console.error(ex);
@@ -209,15 +208,10 @@ class LookupComponent extends Formio.Components.components.component {
   /** @param {string} query 
    *  @returns {Promise<EntityRef[]>}*/
   async searchEtnByQuery(query) {
-    const resourceUrl = `/${this.schema.odataPath}/${this.schema.entityName}`;
-    const fullTextSearch = resourceUrl + `/fullTextSearch/${encodeURIComponent(query)}?$select=id,name&$top=5`;
-    const firstpage = resourceUrl + `?$select=id,name&$top=5`;
-    const response = query && query.length > 0 ?
-      await fetch(fullTextSearch) :
-      await fetch(firstpage);
-    const values = await response.json();
-    const etns = values.value;
-    return etns;
+    const { data } = query && query.length > 0 ?
+      await fullTextSearch(this.entityName, query, { select: ['id', 'name'], top: 5 }) :
+      await fetchFirstPage(this.entityName, { select: ['id', 'name'], top: 5 });
+    return data?.value || [];
   }
 
   async loadExistingValue(value) {

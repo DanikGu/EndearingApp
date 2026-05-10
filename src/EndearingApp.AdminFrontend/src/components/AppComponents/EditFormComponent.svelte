@@ -8,6 +8,7 @@
   import { showBlockingLoader } from "@utils/uiutils";
   import { onMount } from "svelte";
   import { customEntities, ensureCustomEntities } from "../../stores/global";
+  import { createEntity, updateEntity, deleteEntity, fetchEntityById } from "$lib/api/odata";
   /** @typedef {import('@formio/js').Form} Form */
 
   /**
@@ -87,57 +88,34 @@
 
   const saveEntity = async () => {
     if (entityData.Id) {
-      const url = `/api/odata/${customEntity.name}(${entityData.Id})`;
-      await patchData(url, entityData);
+      const { error: updateError } = await updateEntity(customEntity.name, entityData.Id, entityData);
+      if (updateError) {
+        alertError(updateError.message);
+        throw updateError;
+      }
       alertMsg(`Entity updated`);
     } else {
-      const url = `/api/odata/${customEntity.name}`;
-      entityData = await postData(url, entityData);
+      const { data, error: createError } = await createEntity(customEntity.name, entityData);
+      if (createError) {
+        alertError(createError.message);
+        throw createError;
+      }
+      entityData = data;
       alertMsg(`Entity created`);
       return;
     }
 
     updateFormFromEntityData();
   };
-  const patchData = async (url = "", data = {}) => {
-    const response = await fetch(url, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      alertError(`HTTP error! Status: ${response.status}`);
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-  };
-
-  const postData = async (url = "", data = {}) => {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      alertError(`HTTP error! Status: ${response.status}`);
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    return await response.json();
-  };
   const loadEntityData = async () => {
     console.log(entityData);
     if (!entityData?.Id) {
       return;
     }
-    const url = `/api/odata/${customEntity.name}(${entityData.Id})`;
-    const response = await fetch(url);
-    const etn = await response.json();
-    entityData = etn;
+    const { data, error } = await fetchEntityById(customEntity.name, entityData.Id);
+    if (!error && data) {
+      entityData = data;
+    }
   };
 
   /** @param {any} dateStr */
@@ -189,15 +167,9 @@
       alertWarning("Entity have to be saved before deleted ");
       return;
     }
-    const url = `/api/odata/${customEntity.name}(${entityData.Id})`;
-    const response = await fetch(url, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      alertError(`HTTP error! Status: ${response.status}`);
+    const { error: deleteError } = await deleteEntity(customEntity.name, entityData.Id);
+    if (deleteError) {
+      alertError(`HTTP error! ${deleteError.message}`);
     }
   };
   onMount(async () => {

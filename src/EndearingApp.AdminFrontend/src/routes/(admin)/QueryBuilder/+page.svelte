@@ -1,7 +1,12 @@
 <script>
   import { onMount } from "svelte";
   import { browser } from "$app/environment";
-  import { customEntities as customEntitiesStore, optionSets as optionSetsStore, ensureCustomEntities, ensureOptionSets } from "../../../stores/global";
+  import {
+    customEntities as customEntitiesStore,
+    optionSets as optionSetsStore,
+    ensureCustomEntities,
+    ensureOptionSets,
+  } from "../../../stores/global";
   import {
     Button,
     Col,
@@ -11,24 +16,29 @@
     Label,
     Row,
   } from "@sveltestrap/sveltestrap";
-  import { ConditionGroup } from "../../../components/QueryBuilder/typeDefinitions";
-  import { convertToOdataFilter } from "../../../components/QueryBuilder/queryToOdataUrlParams";
+  import { ConditionGroup } from "../../../lib/clientComponents/queryBuilder/logic/typeDefinitions";
+  import { convertToOdataFilter } from "../../../lib/clientComponents/queryBuilder/logic/queryToOdataUrlParams";
   import DataView from "../../../lib/clientComponents/dataView/dataView.svelte";
-  import { fetchEntities } from "$lib/api/odata";
+  import { fetchEntities, buildODataUrl } from "$lib/api/odata";
   import { alertError, assignLoader } from "@utils/uiutils";
+  import buildQuery from "odata-query";
 
   /** @type {string | null} */
   let selectedEntityId = $state(null);
 
-  let rootQuery = new ConditionGroup("and", []);
+  /** @type {ConditionGroup} */
+  let rootQuery = $state(new ConditionGroup("and", []));
 
   let getUrlValue = $state("");
 
   /** @type {any} */
   let content = $state({ json: [] });
 
-  /** @type {any[]} */
+  /** @type {{ navigationProp: string, select: string[] }[]} */
   let selectedExpands = $state([]);
+
+  /** @type {string[]} */
+  let selectedFieldNames = $state([]);
 
   onMount(async () => {
     await ensureCustomEntities();
@@ -38,7 +48,6 @@
   $effect(() => {
     if (selectedEntityId) {
       rootQuery = new ConditionGroup("and", []);
-      selectedExpands = [];
     }
   });
 
@@ -46,23 +55,15 @@
     $customEntitiesStore.find((x) => x.id === selectedEntityId),
   );
 
-  let autoExpands = $derived.by(() => {
-    if (!selectedEntity?.fields || !selectedEntity?.relationships) return [];
-    const map = {};
-    for (const rel of selectedEntity.relationships) {
-      const field = selectedEntity.fields.find((/** @type {any} */ f) => f.id === rel.sourceFieldId);
-      if (!field) continue;
-      const navProp = `${field.name}_Etn`;
-      map[navProp] = { navigationProp: navProp, select: ['id', 'name'] };
-    }
-    return Object.values(map);
-  });
-
   let allExpands = $derived.by(() => {
+    /** @type {Record<string, { navigationProp: string, select: string[] }>} */
     const map = {};
-    for (const ex of [...autoExpands, ...selectedExpands]) {
+    for (const ex of selectedExpands) {
       if (!map[ex.navigationProp]) {
-        map[ex.navigationProp] = { navigationProp: ex.navigationProp, select: [] };
+        map[ex.navigationProp] = {
+          navigationProp: ex.navigationProp,
+          select: [],
+        };
       }
       for (const f of ex.select) {
         if (!map[ex.navigationProp].select.includes(f)) {
@@ -74,34 +75,44 @@
   });
 
   let entityName = $derived(
-    selectedEntityId ? $customEntitiesStore.find((x) => x.id === selectedEntityId)?.name : '',
+    selectedEntityId
+      ? $customEntitiesStore.find((x) => x.id === selectedEntityId)?.name
+      : "",
   );
 
   function buildODataOptions() {
-    const opts = { top: 100, orderBy: 'createdon desc' };
+    /** @type {{ top: number, orderBy: string, filter?: string, select?: string[], expand?: Record<string, { select: string[] }> }} */
+    const opts = { top: 100, orderBy: "createdon desc" };
     const filter = convertToOdataFilter(rootQuery);
     if (filter) opts.filter = filter;
+    if (selectedFieldNames.length > 0) opts.select = selectedFieldNames;
     if (allExpands.length > 0) {
-      opts.expand = allExpands.map((/** @type {any} */ ex) =>
-        `${ex.navigationProp}($select=${ex.select.join(',')})`,
-      ).join(';');
+      /** @type {Record<string, { select: string[] }>} */
+      const expandObj = {};
+      for (const ex of allExpands) {
+        expandObj[ex.navigationProp] = { select: ex.select };
+      }
+      opts.expand = expandObj;
     }
     return opts;
   }
 
   function buildUrlString() {
-    if (!entityName) return '';
-    const params = new URLSearchParams();
+    if (!entityName) return "";
+    /** @type {Record<string, any>} */
+    const queryObj = { top: 100, orderBy: "createdon desc" };
     const filter = convertToOdataFilter(rootQuery);
-    if (filter) params.set('$filter', filter);
+    if (filter) queryObj.filter = filter;
+    if (selectedFieldNames.length > 0) queryObj.select = selectedFieldNames;
     if (allExpands.length > 0) {
-      params.set('$expand', allExpands.map((/** @type {any} */ ex) =>
-        `${ex.navigationProp}($select=${ex.select.join(',')})`,
-      ).join(';'));
+      /** @type {Record<string, { select: string[] }>} */
+      const expandObj = {};
+      for (const ex of allExpands) {
+        expandObj[ex.navigationProp] = { select: ex.select };
+      }
+      queryObj.expand = expandObj;
     }
-    params.set('$top', '100');
-    params.set('$orderby', 'createdon desc');
-    return `/api/odata/${entityName}?${params.toString()}`;
+    return `/api/odata/${entityName}${buildQuery(queryObj)}`;
   }
 
   let loadId = $state(0);
@@ -139,7 +150,11 @@
 
     const prom = (async () => {
       const { data, error } = await fetchEntities(entityName, opts);
-      if (error) { alertError(error.message); content.json = []; return; }
+      if (error) {
+        alertError(error.message);
+        content.json = [];
+        return;
+      }
       content.json = data?.value || [];
     })();
     assignLoader("Load data", prom);
@@ -156,11 +171,7 @@
       <div class="d-flex gap-2 align-items-end">
         <FormGroup class="mb-0">
           <Label for="entitySelect">Entity</Label>
-          <Input
-            type="select"
-            id="entitySelect"
-            bind:value={selectedEntityId}
-          >
+          <Input type="select" id="entitySelect" bind:value={selectedEntityId}>
             <option value={null} selected={selectedEntityId === null}>
               Select an Entity...
             </option>
@@ -193,11 +204,12 @@
     <Col md="12">
       {#if selectedEntity}
         <DataView
-          entityName={entityName}
+          {entityName}
           bind:data={content.json}
           customEntity={selectedEntity}
           bind:expands={selectedExpands}
-          bind:rootQuery={rootQuery}
+          bind:fieldNames={selectedFieldNames}
+          bind:rootQuery
           onFiltersDone={queryBuilderSearchClick}
           onRefresh={queryBuilderSearchClick}
         ></DataView>

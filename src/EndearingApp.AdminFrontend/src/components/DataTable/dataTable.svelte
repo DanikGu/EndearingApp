@@ -6,8 +6,8 @@
     ModalBody,
     ModalFooter,
   } from "@sveltestrap/sveltestrap";
-  import QueryBuilder from "../QueryBuilder/queryBuilder.svelte";
-  import { ConditionGroup } from "../QueryBuilder/typeDefinitions";
+import QueryBuilder from "../../lib/clientComponents/queryBuilder/components/queryBuilder.svelte";
+import { ConditionGroup } from "../../lib/clientComponents/queryBuilder/logic/typeDefinitions";
   import { DndContext, DragOverlay } from "@dnd-kit-svelte/core";
   import {
     SortableContext,
@@ -21,6 +21,8 @@
   import { getTypeId } from "@utils/fieldtypesutils";
   import { optionSets, customEntities, userSettings } from "../../stores/global";
   import { get } from "svelte/store";
+
+  const resizeAction = /** @type {any} */ (ResizableColumns);
 
   /** @typedef {import('@dnd-kit-svelte/core').DragOverEvent } DragOverEvent */
   /** @typedef {import('@dnd-kit-svelte/core').DragEndEvent } DragEndEvent */
@@ -58,10 +60,11 @@
    * @property {'field' | 'group' | 'expand'} type
    * @property {any} [field]
    * @property {string} [groupLabel]
+   * @property {string} [navigationProp]
+   * @property {string} [targetEntityName]
    * @property {ColumnDef} [colDef]
    */
 
-  /** @type {any[]} */
   let { data = [], customEntity, expands = $bindable([]), rootQuery = $bindable() } = $props();
 
   /** @type {boolean} */
@@ -98,15 +101,20 @@
     allEntities = get(customEntities);
   });
 
-  const entityName = customEntity?.name || '';
+  const entityName = $derived(customEntity?.name || '');
+
+  let prevAllEntitiesLen = $state(0);
 
   $effect(() => {
-    if (customEntity?.fields && orderedColumns.length === 0) {
+    const len = allEntities.length;
+    if (customEntity?.fields && (orderedColumns.length === 0 || len !== prevAllEntitiesLen)) {
+      prevAllEntitiesLen = len;
       orderedColumns = customEntity.fields.map(buildFieldColumnDef);
     }
   });
 
   $effect(() => {
+    /** @type {Record<string, { navigationProp: string, select: string[] }>} */
     const expandMap = {};
     for (const col of orderedColumns) {
       if (col.type === 'expand' && col.navigationProp && col.fieldName) {
@@ -135,9 +143,9 @@
       fieldName: field.name,
       field,
       isNameField: field.name === 'name' || field.name === 'Name',
-      lookupEntityName: lookupInfo ? lookupInfo.entityName : null,
-      lookupNavProp: lookupInfo ? lookupInfo.navProp : null,
-      optionSetDefId: field.optionSetDefinitionId || null,
+      lookupEntityName: lookupInfo ? lookupInfo.entityName : undefined,
+      lookupNavProp: lookupInfo ? lookupInfo.navProp : undefined,
+      optionSetDefId: field.optionSetDefinitionId || undefined,
       isSelect: field.type === getTypeId("Option Set") || field.type === getTypeId("Option Set MultiSelect"),
       isDateTime: field.type === dtId,
       isDateOnly: field.type === dId,
@@ -173,6 +181,7 @@
   }
 
   function buildAvailableItems() {
+    /** @type {AvailableItem[]} */
     const items = [];
     const selectedIds = new Set(selectedColumns.map(c => c.id));
 
@@ -198,6 +207,7 @@
         const navProp = sourceField ? `${sourceField.name}_Etn` : null;
         if (!navProp) continue;
 
+        /** @type {AvailableItem[]} */
         const expandFields = [];
 
         for (const f of target.fields) {
@@ -319,7 +329,7 @@
     return null;
   }
 
-  /** @param {ColumnDef | AvailableItem} col */
+  /** @param {any} col */
   function moveToAvailable(col) {
     let colDef = 'field' in col && col.type === 'field' ? buildFieldColumnDef(col.field) :
                  col.type === 'expand' ? buildColumnDefFromAvailable(col) : null;
@@ -397,8 +407,8 @@
    *  @returns {{ display: string, href: string | null }} */
   function resolveCell(col, row) {
     const raw = col.type === 'expand' && col.navigationProp
-      ? row[col.navigationProp]?.[col.fieldName]
-      : row[col.fieldName];
+      ? row[col.navigationProp]?.[col.fieldName ?? '']
+      : row[col.fieldName ?? ''];
 
     if (raw === null || raw === undefined) return { display: '', href: null };
 
@@ -542,7 +552,7 @@
   </Modal>
 
   <div class="overflow-x-auto mt-4">
-    <table class="table" use:ResizableColumns>
+    <table class="table" use:resizeAction>
       <thead>
         <tr>
           {#each orderedColumns as col (col.id)}

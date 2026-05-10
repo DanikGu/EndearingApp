@@ -1,16 +1,17 @@
 <script>
   import { useDroppable } from "@dnd-kit-svelte/core";
 
-  /** @type {string} */
-  export let id;
+  let { id, children } = $props();
 
-  const { setNodeRef, isOver } = useDroppable({ id });
+  const { setNodeRef, isOver } = useDroppable({
+    get id() { return id; }
+  });
 
-  $: containerStyle = `border-dashed border-2 p-4 rounded-md ${
-    isOver ? "border-blue-500" : "border-gray-300"
-  }`;
+  let containerStyle = $derived(`border-dashed border-2 p-4 rounded-md ${
+    isOver ? "border-blue-500 dark:border-blue-400" : "border-gray-300 dark:border-gray-600"
+  }`);
 </script>
 
 <div use:setNodeRef class={containerStyle}>
-  <slot />
+  {@render children?.()}
 </div>

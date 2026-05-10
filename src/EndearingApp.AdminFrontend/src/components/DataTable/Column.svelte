@@ -1,10 +1,9 @@
 <script>
   import { useSortable } from "@dnd-kit-svelte/sortable";
-  import { FieldDto } from "@apiclients/src";
   import { flip } from "svelte/animate";
   import { CSS, styleObjectToString } from "@dnd-kit-svelte/utilities";
 
-  /** @type {{field: FieldDto}} */
+  /** @type {{field: { name?: string, displayName?: string }}} */
   let { field } = $props();
 
   const {
@@ -16,7 +15,7 @@
     isSorting,
     transition,
   } = useSortable({
-    id: field.name,
+    get id() { return field.name || 'unknown'; },
   });
   const style = $derived(
     styleObjectToString({
@@ -32,7 +31,7 @@
   {...attributes.current}
   {...listeners.current}
   {style}
-  class="p-2 border rounded-md bg-gray-100 cursor-grab noselect"
+  class="p-2 border rounded-md bg-gray-100 dark:bg-gray-700 dark:text-white dark:border-gray-600 cursor-grab noselect"
 >
   {field.displayName}
 </div>

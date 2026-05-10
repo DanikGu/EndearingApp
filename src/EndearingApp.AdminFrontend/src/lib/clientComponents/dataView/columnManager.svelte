@@ -1,13 +1,27 @@
 <script>
-  import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "@sveltestrap/sveltestrap";
+  import {
+    Button,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+  } from "@sveltestrap/sveltestrap";
   import { DndContext, DragOverlay } from "@dnd-kit-svelte/core";
-  import { SortableContext, arrayMove, verticalListSortingStrategy } from "@dnd-kit-svelte/sortable";
+  import {
+    SortableContext,
+    arrayMove,
+    verticalListSortingStrategy,
+  } from "@dnd-kit-svelte/sortable";
   import Column from "../../../components/DataTable/Column.svelte";
 
   import Droppable from "../../../components/DataTable/Droppable.svelte";
 
-  import { dropAnimation, sensors } from "../../../components/DataTable/DropAnimation.js";
+  import {
+    dropAnimation,
+    sensors,
+  } from "../../../components/DataTable/DropAnimation.js";
   import { getTypeId } from "@utils/fieldtypesutils";
+  import { untrack } from "svelte";
 
   /** @typedef {import('@dnd-kit-svelte/core').DragOverEvent } DragOverEvent */
   /** @typedef {import('@dnd-kit-svelte/core').DragEndEvent } DragEndEvent */
@@ -39,10 +53,19 @@
    * @property {'field' | 'group' | 'expand'} type
    * @property {any} [field]
    * @property {string} [groupLabel]
+   * @property {string} [navigationProp]
+   * @property {string} [targetEntityName]
    * @property {ColumnDef} [colDef]
    */
 
-  let { show = false, fields = [], relationships = [], allEntities = [], columns = $bindable([]), onClose } = $props();
+  let {
+    show = false,
+    fields = [],
+    relationships = [],
+    allEntities = [],
+    columns = $bindable([]),
+    onClose,
+  } = $props();
 
   /** @type {ColumnDef[]} */
   let selectedColumns = $state([]);
@@ -56,7 +79,9 @@
   $effect(() => {
     if (show) {
       selectedColumns = [...columns];
-      availableItems = buildAvailableItems();
+      untrack(() => {
+        availableItems = buildAvailableItems();
+      });
     }
   });
 
@@ -69,15 +94,17 @@
     const tId = getTypeId("Time");
     return {
       id: field.id || field.name,
-      type: 'field',
+      type: "field",
       label: field.displayName || field.name,
       fieldName: field.name,
       field,
-      isNameField: field.name === 'name' || field.name === 'Name',
-      lookupEntityName: lookupInfo ? lookupInfo.entityName : null,
-      lookupNavProp: lookupInfo ? lookupInfo.navProp : null,
-      optionSetDefId: field.optionSetDefinitionId || null,
-      isSelect: field.type === getTypeId("Option Set") || field.type === getTypeId("Option Set MultiSelect"),
+      isNameField: field.name === "name" || field.name === "Name",
+      lookupEntityName: lookupInfo ? lookupInfo.entityName : undefined,
+      lookupNavProp: lookupInfo ? lookupInfo.navProp : undefined,
+      optionSetDefId: field.optionSetDefinitionId || undefined,
+      isSelect:
+        field.type === getTypeId("Option Set") ||
+        field.type === getTypeId("Option Set MultiSelect"),
       isDateTime: field.type === dtId,
       isDateOnly: field.type === dId,
       isTimeOnly: field.type === tId,
@@ -92,7 +119,9 @@
       (/** @type {any} */ r) => r.sourceFieldId === field.id,
     );
     if (!rel) return null;
-    const target = allEntities.find((/** @type {any} */ e) => e.id === rel.referencedCustomEntityId);
+    const target = allEntities.find(
+      (/** @type {any} */ e) => e.id === rel.referencedCustomEntityId,
+    );
     if (!target) return null;
     return { entityName: target.name, navProp: `${field.name}_Etn` };
   }
@@ -102,7 +131,7 @@
   function buildExpandColumnDef(colDef) {
     return {
       id: `${colDef.navigationProp}.${colDef.fieldName}`,
-      type: 'expand',
+      type: "expand",
       label: `${colDef.targetEntityName || colDef.navigationProp}.${colDef.fieldLabel || colDef.fieldName}`,
       fieldName: colDef.fieldName,
       navigationProp: colDef.navigationProp,
@@ -112,8 +141,9 @@
   }
 
   function buildAvailableItems() {
+    /** @type {AvailableItem[]} */
     const items = [];
-    const selectedIds = new Set(selectedColumns.map(c => c.id));
+    const selectedIds = new Set(selectedColumns.map((c) => c.id));
 
     if (fields) {
       for (const field of fields) {
@@ -121,7 +151,7 @@
           items.push({
             id: field.id || field.name,
             label: field.displayName || field.name,
-            type: 'field',
+            type: "field",
             field,
           });
         }
@@ -130,13 +160,18 @@
 
     if (relationships) {
       for (const rel of relationships) {
-        const target = allEntities.find((/** @type {any} */ e) => e.id === rel.referencedCustomEntityId);
+        const target = allEntities.find(
+          (/** @type {any} */ e) => e.id === rel.referencedCustomEntityId,
+        );
         if (!target || !target.fields) continue;
 
-        const sourceField = fields?.find((/** @type {any} */ f) => f.id === rel.sourceFieldId);
+        const sourceField = fields?.find(
+          (/** @type {any} */ f) => f.id === rel.sourceFieldId,
+        );
         const navProp = sourceField ? `${sourceField.name}_Etn` : null;
         if (!navProp) continue;
 
+        /** @type {AvailableItem[]} */
         const expandFields = [];
 
         for (const f of target.fields) {
@@ -145,7 +180,7 @@
             expandFields.push({
               id: colId,
               label: `${target.displayName || target.name}.${f.displayName || f.name}`,
-              type: 'expand',
+              type: "expand",
               field: f,
               navigationProp: navProp,
               targetEntityName: target.name,
@@ -158,7 +193,7 @@
           items.push({
             id: `__group_${navProp}`,
             label: target.displayName || target.name,
-            type: 'group',
+            type: "group",
             groupLabel: target.displayName || target.name,
           });
           items.push(...expandFields);
@@ -172,10 +207,10 @@
   /** @param {AvailableItem} item
    *  @returns {ColumnDef | null} */
   function buildColumnDefFromAvailable(item) {
-    if (item.type === 'field' && item.field) {
+    if (item.type === "field" && item.field) {
       return buildFieldColumnDef(item.field);
     }
-    if (item.type === 'expand') {
+    if (item.type === "expand") {
       return buildExpandColumnDef({
         navigationProp: item.navigationProp,
         fieldName: item.field?.name,
@@ -189,12 +224,17 @@
 
   /** @param {ColumnDef | AvailableItem} col */
   function moveToAvailable(col) {
-    let colDef = 'field' in col && col.type === 'field' ? buildFieldColumnDef(col.field) :
-                 col.type === 'expand' ? buildColumnDefFromAvailable(col) : null;
-    if (!colDef) colDef = col.type === 'field' ? buildFieldColumnDef(col) : null;
+    let colDef =
+      "field" in col && col.type === "field"
+        ? buildFieldColumnDef(col.field)
+        : col.type === "expand"
+          ? buildColumnDefFromAvailable(col)
+          : null;
+    if (!colDef)
+      colDef = col.type === "field" ? buildFieldColumnDef(col) : null;
     if (!colDef) return;
 
-    selectedColumns = selectedColumns.filter(c => c.id !== colDef.id);
+    selectedColumns = selectedColumns.filter((c) => c.id !== colDef.id);
     availableItems = buildAvailableItems();
   }
 
@@ -204,7 +244,7 @@
     const colDef = buildColumnDefFromAvailable(item);
     if (!colDef) return;
 
-    if (selectedColumns.find(c => c.id === colDef.id)) return;
+    if (selectedColumns.find((c) => c.id === colDef.id)) return;
 
     if (position !== null && position >= 0) {
       selectedColumns = selectedColumns.toSpliced(position, 0, colDef);
@@ -219,23 +259,33 @@
     const { active, over } = event;
     if (!over) return;
 
-    const selCol = selectedColumns.find(c => c.id === active.id);
-    const availItem = availableItems.find(i => i.id === active.id);
+    const selCol = selectedColumns.find((c) => c.id === active.id);
+    const availItem = availableItems.find((i) => i.id === active.id);
     if (!selCol && !availItem) return;
 
     const inSelected = !!selCol;
-    const overSel = selectedColumns.find(c => c.id === over.id);
-    const overTarget = over.id === 'available' ? 'available' : (over.id === 'selected' || overSel) ? 'selected' : null;
+    const overSel = selectedColumns.find((c) => c.id === over.id);
+    const overTarget =
+      over.id === "available"
+        ? "available"
+        : over.id === "selected" || overSel
+          ? "selected"
+          : null;
     if (!overTarget) return;
 
-    if (inSelected && overTarget === 'available') {
+    if (inSelected && overTarget === "available") {
       moveToAvailable(selCol);
       return;
     }
 
-    if (!inSelected && overTarget === 'selected' && availItem && availItem.type !== 'group') {
+    if (
+      !inSelected &&
+      overTarget === "selected" &&
+      availItem &&
+      availItem.type !== "group"
+    ) {
       if (overSel) {
-        const newIndex = selectedColumns.findIndex(c => c.id === over.id);
+        const newIndex = selectedColumns.findIndex((c) => c.id === over.id);
         moveToSelected(availItem, newIndex);
       } else {
         moveToSelected(availItem);
@@ -248,21 +298,21 @@
     const { active, over } = event;
     if (!over) return;
 
-    const selCol = selectedColumns.find(c => c.id === active.id);
-    const availItem = availableItems.find(i => i.id === active.id);
-    const overSel = selectedColumns.find(c => c.id === over.id);
+    const selCol = selectedColumns.find((c) => c.id === active.id);
+    const availItem = availableItems.find((i) => i.id === active.id);
+    const overSel = selectedColumns.find((c) => c.id === over.id);
 
-    if (!overSel && over.id !== 'available') return;
+    if (!overSel && over.id !== "available") return;
 
     if (overSel) {
-      const newIndex = selectedColumns.findIndex(c => c.id === over.id);
+      const newIndex = selectedColumns.findIndex((c) => c.id === over.id);
       if (selCol) {
-        const oldIndex = selectedColumns.findIndex(c => c.id === selCol.id);
+        const oldIndex = selectedColumns.findIndex((c) => c.id === selCol.id);
         if (oldIndex !== -1 && oldIndex !== newIndex) {
           selectedColumns = arrayMove(selectedColumns, oldIndex, newIndex);
         }
         availableItems = buildAvailableItems();
-      } else if (availItem && availItem.type !== 'group') {
+      } else if (availItem && availItem.type !== "group") {
         moveToSelected(availItem, newIndex);
       }
     } else if (selCol) {
@@ -293,16 +343,22 @@
         <div>
           <h3 class="text-lg font-medium mb-2">Available Columns</h3>
           <SortableContext
-            items={availableItems.filter(i => i.type !== 'group').map(i => i.id)}
+            items={availableItems
+              .filter((i) => i.type !== "group")
+              .map((i) => i.id)}
             strategy={verticalListSortingStrategy}
           >
             <Droppable id="available">
               <div class="space-y-2">
                 {#each availableItems as item (item.id)}
-                  {#if item.type === 'group'}
-                    <div class="text-xs font-bold text-muted mt-3 mb-1 px-2">{item.groupLabel}</div>
+                  {#if item.type === "group"}
+                    <div class="text-xs font-bold text-muted dark:text-gray-400 mt-3 mb-1 px-2">
+                      {item.groupLabel}
+                    </div>
                   {:else}
-                    <Column field={{ name: item.id, displayName: item.label }} />
+                    <Column
+                      field={{ name: item.id, displayName: item.label }}
+                    />
                   {/if}
                 {/each}
               </div>
@@ -312,7 +368,7 @@
         <div>
           <h3 class="text-lg font-medium mb-2">Selected Columns</h3>
           <SortableContext
-            items={selectedColumns.map(c => c.id)}
+            items={selectedColumns.map((c) => c.id)}
             strategy={verticalListSortingStrategy}
           >
             <Droppable id="selected">
@@ -327,9 +383,14 @@
       </div>
       <DragOverlay {dropAnimation}>
         {#if activeId}
-          {@const activeCol = [...selectedColumns, ...availableItems.filter(i => i.type !== 'group').map(i => ({ id: i.id, label: i.label }))].find(c => c.id === activeId)}
+          {@const activeCol = [
+            ...selectedColumns,
+            ...availableItems
+              .filter((i) => i.type !== "group")
+              .map((i) => ({ id: i.id, label: i.label })),
+          ].find((c) => c.id === activeId)}
           {#if activeCol}
-            <div class="p-2 border rounded-md bg-gray-200 cursor-grabbing">
+            <div class="p-2 border rounded-md bg-gray-200 dark:bg-gray-600 dark:text-white cursor-grabbing">
               {activeCol.label}
             </div>
           {/if}
