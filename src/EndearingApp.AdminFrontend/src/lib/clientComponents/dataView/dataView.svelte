@@ -15,9 +15,13 @@
     optionSets,
     customEntities,
     userSettings,
-  } from "../../../stores/global";
-  import { get } from "svelte/store";
+    getOptionSets,
+    getCustomEntities,
+    getCachedCustomEntities,
+  } from "@stores/global";
   import { getTypeId } from "@utils/fieldtypesutils";
+
+  const DEFAULT_APP_ID = "00000000-0000-0000-0000-000000000000";
 
   /**
    * @typedef {Object} ColumnDef
@@ -42,6 +46,25 @@
    * @property {string} [aggregateFn]
    */
 
+  /**
+   * @typedef {Object} Props
+   * @property {string} entityName
+   * @property {any[]} data
+   * @property {any} customEntity
+   * @property {Array<{navigationProp: string, select: string[]}>} expands
+   * @property {string[]} fieldNames
+   * @property {any} rootQuery
+   * @property {(() => void) | null} onFiltersDone
+   * @property {(() => void) | null} onRefresh
+   * @property {number} page
+   * @property {number} pageSize
+   * @property {number} totalCount
+   * @property {string} orderBy
+   * @property {((s: string) => void) | null} onSortChange
+   * @property {string} editBaseUrl
+   * @property {Array<{id: string, label: string, collectionNavProp: string, sourceField: string, fn: string}>} aggregates
+   */
+
   let {
     entityName = "",
     data = $bindable([]),
@@ -54,7 +77,6 @@
     page = $bindable(1),
     pageSize = $bindable(25),
     totalCount = $bindable(0),
-    loading = $bindable(false),
     orderBy = $bindable("createdon desc"),
     onSortChange = null,
     editBaseUrl = "",
@@ -71,54 +93,44 @@
   /** @type {any[]} */
   let optionSetDefs = $state([]);
   /** @type {any[]} */
-  let allEntities = $state([]);
-  /** @type {{ timezone: string }} */
-  let settings = $state({ timezone: "" });
+  let allEntities = $state(getCachedCustomEntities());
+  let settings = $userSettings;
 
   $effect(() => {
-    optionSetDefs = get(optionSets);
-    allEntities = get(customEntities);
-    settings = get(userSettings);
+    getOptionSets().then((v) => (optionSetDefs = v));
+    getCustomEntities().then((v) => (allEntities = v));
   });
 
   const openAddNew = () => {
     if (entityName) {
       const currentPath = window.location.pathname;
-      const appId =
-        currentPath.split("/")[2] || "00000000-0000-0000-0000-000000000000";
+      const appId = currentPath.split("/")[2] || DEFAULT_APP_ID;
       window.location.href = `/app/${appId}/${entityName}/edit`;
     }
   };
 
   /** @type {ColumnDef[]} */
   let orderedColumns = $state([]);
-  let prevFieldNamesKey = $state("");
+  let prevColumnKey = $state("");
   let prevAggregateIds = $state("");
-  let columnsSelectedFor = $state("");
 
-  // fill grid if no columns is selected, probably should call for the current view here
   $effect(() => {
-    console.log(customEntity);
-    console.log(columnsSelectedFor);
     if (!customEntity?.fields) return;
-    if (orderedColumns.length > 0 && columnsSelectedFor == customEntity?.name) {
+    const currentKey = `${customEntity.name}::${fieldNames.join(",")}`;
+    if (orderedColumns.length > 0 && prevColumnKey === currentKey) {
       return;
     }
     const allCols = customEntity.fields.map(buildFieldColumnDef);
     const fnKey = fieldNames.join(",");
-    if (fnKey && fnKey !== prevFieldNamesKey) {
-      prevFieldNamesKey = fnKey;
+    if (fnKey) {
       const nameSet = new Set(fieldNames);
       orderedColumns = allCols.filter(
         (/** @type {any} */ c) => c.fieldName && nameSet.has(c.fieldName),
       );
-      console.table(orderedColumns);
-    } else if (!fnKey && orderedColumns.length === 0) {
+    } else {
       orderedColumns = allCols;
-
-      console.table(orderedColumns);
     }
-    columnsSelectedFor = customEntity?.name;
+    prevColumnKey = currentKey;
     tableKey = new Date().toString();
   });
 
@@ -153,8 +165,6 @@
         }
       }
       orderedColumns = cols;
-
-      console.table(orderedColumns);
     }
   });
 
@@ -275,7 +285,7 @@
     <ModalFooter>
       <Button
         color="primary"
-        on:click={() => {
+        onclick={() => {
           filterModal = false;
           onFiltersDone?.();
         }}>Done</Button
@@ -311,16 +321,6 @@
   />
 
   <div class="position-relative">
-    {#if loading}
-      <div
-        class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-body bg-opacity-50 z-3"
-        style="min-height: 200px;"
-      >
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    {/if}
     {#key tableKey}
       <TableView
         columns={orderedColumns}

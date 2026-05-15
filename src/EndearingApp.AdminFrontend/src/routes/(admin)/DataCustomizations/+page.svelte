@@ -2,12 +2,7 @@
   import { CustomeEntityDTO, OptionSetDefinitionDTO } from "@apiclients";
   import { alertError } from "@utils/uiutils";
   import { onMount } from "svelte";
-  import {
-    customEntities,
-    optionSets,
-    ensureCustomEntities,
-    ensureOptionSets,
-  } from "../../../stores/global";
+  import { getCustomEntities, getOptionSets } from "@stores/global";
   import CustomEntityEditForm from "../../../components/CustomEntities/customEntityEditForm.svelte";
   import OptionSetDefinitionEditForm from "../../../components/CustomEntities/optionSetDefinitionEditForm.svelte";
   import {
@@ -43,7 +38,8 @@
   let isNewOptionSet = $state(false);
 
   $effect(() => {
-    const unsubscribe = customEntities.subscribe((value) => {
+    getCustomEntities().then(value => {
+      if (!value) return;
       customEntitiesLocal = value;
       if (selectedEntity && selectedEntity.id) {
         const exists = value.some((x) => x.id == selectedEntity?.id);
@@ -55,11 +51,11 @@
         }
       }
     });
-    return unsubscribe;
   });
 
   $effect(() => {
-    const unsubscribe = optionSets.subscribe((value) => {
+    getOptionSets().then(value => {
+      if (!value) return;
       optionSetDefinitionsLocal = value;
       if (selectedOptionSet && selectedOptionSet.id) {
         const exists = value.some((x) => x.id == selectedOptionSet?.id);
@@ -71,7 +67,6 @@
         }
       }
     });
-    return unsubscribe;
   });
 
   onMount(() => {
@@ -79,8 +74,8 @@
   });
 
   let loadData = () => {
-    ensureCustomEntities();
-    ensureOptionSets();
+    getCustomEntities();
+    getOptionSets();
   };
 
   /** @param {string} error */

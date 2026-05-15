@@ -19,8 +19,7 @@ import { ConditionGroup } from "../../lib/clientComponents/queryBuilder/logic/ty
   import { dropAnimation, sensors } from "./DropAnimation.js";
   import { ResizableColumns } from "svelte-resizable-columns";
   import { getTypeId } from "@utils/fieldtypesutils";
-  import { optionSets, customEntities, userSettings } from "../../stores/global";
-  import { get } from "svelte/store";
+  import { getOptionSets, getCustomEntities, userSettings } from "@stores/global";
 
   const resizeAction = /** @type {any} */ (ResizableColumns);
 
@@ -99,8 +98,8 @@ import { ConditionGroup } from "../../lib/clientComponents/queryBuilder/logic/ty
   let allEntities = $state([]);
 
   $effect(() => {
-    optionSetDefs = get(optionSets);
-    allEntities = get(customEntities);
+    getOptionSets().then(v => { if (v) optionSetDefs = v; });
+    getCustomEntities().then(v => { if (v) allEntities = v; });
   });
 
   const entityName = $derived(customEntity?.name || '');
@@ -362,7 +361,8 @@ import { ConditionGroup } from "../../lib/clientComponents/queryBuilder/logic/ty
   let settings = $state({ timezone: '' });
 
   $effect(() => {
-    settings = get(userSettings);
+    const unsub = userSettings.subscribe(v => { settings = v; });
+    return unsub;
   });
 
   /** @param {string | Date} value

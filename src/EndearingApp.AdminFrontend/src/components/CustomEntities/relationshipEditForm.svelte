@@ -1,6 +1,6 @@
 <script>
   import { Input, Label, FormGroup, Row, Col } from "@sveltestrap/sveltestrap";
-  import { customEntities } from "../../stores/global";
+  import { getCustomEntities } from "@stores/global";
 
   /** @typedef {import('../../apiclient/src/model/RelationshipDTO').default} Relationship */
   /** @typedef {import('../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
@@ -21,10 +21,16 @@
   } = $props();
 
   let manualTrigger = $state(0);
+  /** @type {any[]} */
+  let entities = $state([]);
 
   function refreshItems() {
     manualTrigger++;
   }
+
+  $effect(() => {
+    getCustomEntities().then(v => { if (v) entities = v; });
+  });
 
   /** @type {FieldDto | undefined} */
   let selectedSourceField = $derived.by(() => {
@@ -39,7 +45,6 @@
 
   let selectedTargetEntity = $derived.by(() => {
     manualTrigger;
-    const entities = $customEntities;
     const targetId = relationship?.referencedCustomEntityId;
 
     return entities && targetId
@@ -61,7 +66,6 @@
 
   let customEntitySelectItems = $derived.by(() => {
     manualTrigger;
-    const entities = $customEntities;
 
     return entities
       ? entities.map((x) => ({

@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { ensureTypeConfig } from "../../utils/fieldtypesutils";
+  import { ensureTypeConfig } from "@utils/fieldtypesutils";
   import "../../app.css";
   import {
     Nav,

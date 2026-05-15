@@ -10,7 +10,7 @@
   import { applyChangesToDbApi } from "../../apiClientsWrapper";
   import { assignBlockingLoader, assignLoader } from "@utils/uiutils";
   import { OptionDTO, OptionSetDefinitionsApi } from "@apiclients/src";
-  import { fetchOptionSets } from "../../stores/global";
+  import { getOptionSets } from "@stores/global";
 
   /** @typedef {import('../../apiclient/src/model/OptionSetDefinitionDTO').default} OptionSetDefinitionDTO */
   /** @typedef {import('../../apiclient/src/model/OptionDTO').default} OptionDTO_local */
@@ -54,7 +54,7 @@
             // Update local optionSet with data from server
             optionSet = { ...os, ...data };
             // Refresh the global store
-            fetchOptionSets();
+            getOptionSets();
             res(data);
           } else if (error) {
             rej(error);
@@ -81,7 +81,7 @@
           if (error) rej(error);
           else {
             // Refresh the global store
-            fetchOptionSets();
+            getOptionSets();
             res(data);
           }
         };
@@ -119,7 +119,7 @@
           rej(error);
         } else {
           // Refresh the global store
-          fetchOptionSets();
+          getOptionSets();
           res(true);
         }
       };

@@ -12,9 +12,8 @@
 <Input
   type="select"
   class="flex h-full w-full justify-center items-center"
-  on:change={(e) => {
+  onchange={(e) => {
     value = /** @type {HTMLInputElement} */ (e.target).value === "true";
-    console.log(value);
   }}
 >
   <option value="true">True</option>

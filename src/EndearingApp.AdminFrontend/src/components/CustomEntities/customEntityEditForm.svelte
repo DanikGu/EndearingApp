@@ -14,10 +14,10 @@
     Icon,
     Theme,
   } from "@sveltestrap/sveltestrap";
-  import { getTypeName } from "../../utils/fieldtypesutils";
+  import { getTypeName } from "@utils/fieldtypesutils";
   import FieldEditForm from "./fieldEditForm.svelte";
   import { FieldDto, RelationshipDTO } from "@apiclients/src";
-  import { assignLoader, assignBlockingLoader } from "../../utils/uiutils";
+  import { assignLoader, assignBlockingLoader } from "@utils/uiutils";
   import RelationshipEditForm from "./relationshipEditForm.svelte";
   import {
     applyChangesToDbApi,
@@ -28,7 +28,14 @@
     saveFieldApi,
     saveRelationshipApi,
   } from "../../apiClientsWrapper";
-  import { customEntities, fetchCustomEntities, fetchOptionSets } from "../../stores/global";
+  import { getCustomEntities, getOptionSets } from "@stores/global";
+
+  /** @type {any[]} */
+  let allEntities = $state([]);
+
+  $effect(() => {
+    getCustomEntities().then(v => { if (v) allEntities = v; });
+  });
 
   /** @typedef {import('../../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
   /** @typedef {import('../../apiclient/src/model/FieldDto').default} FieldEntity */
@@ -114,7 +121,7 @@
     const prom = deleteRelationshipApi(id);
     assignLoader("Deleting relationship", prom);
     await prom;
-    fetchCustomEntities();
+    getCustomEntities();
   };
 
   /** @param {string} id */
@@ -122,7 +129,7 @@
     const prom = deleteFieldApi(id);
     assignLoader("Deleting field", prom);
     await prom;
-    fetchCustomEntities();
+    getCustomEntities();
   };
 
   const saveField = async () => {
@@ -133,7 +140,7 @@
     assignLoader("Saving field", prom);
     await prom;
     editFieldModal = false;
-    fetchCustomEntities();
+    getCustomEntities();
   };
   const saveRelationship = async () => {
     if (!editedRelationship) {
@@ -143,14 +150,14 @@
     assignLoader("Saving relationship", prom);
     await prom;
     editRelationshipModal = false;
-    fetchCustomEntities();
+    getCustomEntities();
   };
 
   const deleteCustomEntity = async () => {
     const prom = deleteCustomEntityApi(customEntity);
     assignBlockingLoader("Deleting Entity", prom, formContainer);
     await prom;
-    fetchCustomEntities();
+    getCustomEntities();
   };
 
   const saveCustomEntity = async () => {
@@ -161,7 +168,7 @@
       customEntity.id = updatedEntity.id;
     }
     isNew = false;
-    fetchCustomEntities();
+    getCustomEntities();
   };
   const applyChangesToDb = () => {
     const prom = applyChangesToDbApi();
@@ -327,7 +334,7 @@
                 <tr>
                   <td>{relationship.constraintName}</td>
                   <td>
-                    {$customEntities.find(
+                    {allEntities.find(
                       (ce) => ce.id === relationship.targetCustomEntityId,
                     )?.displayName || relationship.targetCustomEntityId}
                   </td>

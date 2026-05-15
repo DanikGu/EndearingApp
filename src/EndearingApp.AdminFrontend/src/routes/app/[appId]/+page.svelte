@@ -1,12 +1,13 @@
 <script>
-  import { onMount } from "svelte";
-  import { customEntities, ensureCustomEntities } from "../../../stores/global";
+  import { getCustomEntities } from "@stores/global";
   import { goto } from "$app/navigation";
   import { page as pageStore } from "$app/stores";
-  // import "../../../app.css";
 
-  onMount(() => {
-    ensureCustomEntities();
+  /** @type {any[]} */
+  let entities = $state([]);
+
+  $effect(() => {
+    getCustomEntities().then(v => { if (v) entities = v; });
   });
 
   const appId = $derived($pageStore.params.appId);
@@ -19,9 +20,9 @@
 <div class="d-flex justify-content-center align-items-center h-100">
   <div class="text-center">
     <h3 class="text-muted">Select a table from the sidebar to view data</h3>
-    {#if $customEntities.length > 0}
+    {#if entities.length > 0}
       <div class="mt-4 d-flex flex-wrap justify-content-center gap-2">
-        {#each $customEntities.slice(0, 10) as entity (entity.id)}
+        {#each entities.slice(0, 10) as entity (entity.id)}
           <button
             class="btn btn-outline-primary"
             onclick={() => goToEntity(entity)}

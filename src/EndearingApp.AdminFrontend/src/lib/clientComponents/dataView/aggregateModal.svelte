@@ -7,6 +7,27 @@
     ModalFooter,
   } from "@sveltestrap/sveltestrap";
 
+  /**
+   * @typedef {Object} Props
+   * @property {boolean} show
+   * @property {any[]} relationships
+   * @property {any[]} fields
+   * @property {any[]} allEntities
+   * @property {any[]} aggregates
+   * @property {string} entityId
+   * @property {((aggs: any[]) => void) | null} onSave
+   * @property {(() => void) | null} onClose
+   */
+
+  /** @type {Record<string, string>} */
+  const AGGREGATE_FN_LABELS = {
+    sum: "Sum",
+    avg: "Average",
+    count: "Count",
+    min: "Min",
+    max: "Max",
+  };
+
   let {
     show = false,
     relationships = [],
@@ -100,9 +121,7 @@
     }
     if (!label) {
       const fnLabel =
-        { sum: "Sum", avg: "Average", count: "Count", min: "Min", max: "Max" }[
-          aggregateFn
-        ] || aggregateFn;
+        AGGREGATE_FN_LABELS[aggregateFn] || aggregateFn;
       label = `${fnLabel} of ${sourceField}`;
     }
     const newAgg = {
@@ -135,7 +154,7 @@
           bind:value={collectionNavProp}
         >
           <option value="">-- Select --</option>
-          {#each collectionOptions as opt}
+          {#each collectionOptions as opt (opt.navProp)}
             <option value={opt.navProp}>{opt.label}</option>
           {/each}
         </select>
@@ -146,7 +165,7 @@
           <label class="form-label" for="agg-field">Field to Aggregate</label>
           <select class="form-select" id="agg-field" bind:value={sourceField}>
             <option value="">-- Select --</option>
-            {#each childFieldOptions as f}
+            {#each childFieldOptions as f (f.name)}
               <option value={f.name}>{f.label}</option>
             {/each}
           </select>
@@ -180,7 +199,7 @@
     {/if}
   </ModalBody>
   <ModalFooter>
-    <Button color="primary" on:click={handleSave}>Add</Button>
-    <Button color="secondary" on:click={onClose}>Cancel</Button>
+    <Button color="primary" onclick={handleSave}>Add</Button>
+    <Button color="secondary" onclick={onClose}>Cancel</Button>
   </ModalFooter>
 </Modal>

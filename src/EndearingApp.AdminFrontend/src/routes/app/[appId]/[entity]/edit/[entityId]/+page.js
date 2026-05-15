@@ -1,6 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { ensureCustomEntities, ensureForms, forms, customEntities } from '../../../../../../stores/global';
-import { get } from 'svelte/store';
+import { getCustomEntities, getForms } from '@stores/global';
 
 const loadFormById = async (/** @type {string} */ formId) => {
   const { FormApi } = await import('@apiclients/src');
@@ -12,8 +11,7 @@ const loadFormById = async (/** @type {string} */ formId) => {
 };
 
 export const load = async (/** @type {{ params: {appId: string, entity: string, entityId: string}, url: URL}} */ { params, url }) => {
-  await ensureCustomEntities();
-  const entities = get(customEntities);
+  const entities = await getCustomEntities();
   const entity = entities.find((/** @type {any} */ e) => e.name === params.entity || e.id === params.entity);
   if (!entity) error(404, 'Entity not found');
 
@@ -25,8 +23,7 @@ export const load = async (/** @type {{ params: {appId: string, entity: string, 
   }
 
   if (!form) {
-    await ensureForms();
-    const allForms = get(forms);
+    const allForms = await getForms();
     const entityForms = allForms.filter((/** @type {any} */ f) => f.customEntityId === entity.id);
     form = entityForms.length > 0 ? entityForms[0] : null;
   }
@@ -37,7 +34,7 @@ export const load = async (/** @type {{ params: {appId: string, entity: string, 
   const { data: entityData, error: fetchError } = await fetchEntityById(entity.name, params.entityId);
   if (fetchError || !entityData) error(404, 'Entity data not found');
 
-  const allForms = get(forms);
+  const allForms = await getForms();
   const availableForms = allForms.filter((/** @type {any} */ f) => f.customEntityId === entity.id);
 
   return { form, entityData, entityName: entity.name, availableForms };

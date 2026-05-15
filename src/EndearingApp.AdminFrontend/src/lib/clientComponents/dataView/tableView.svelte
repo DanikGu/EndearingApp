@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from "svelte";
 
   /**
    * @typedef {Object} ColumnDef
@@ -234,10 +233,6 @@
 
     return { display: String(raw), href: null };
   }
-  onMount(() => {
-    console.log("Mounted");
-    console.table(columns);
-  });
 </script>
 
 <div class="overflow-x-auto">
@@ -271,9 +266,9 @@
           </td>
         </tr>
       {:else}
-        {#each data as row}
+        {#each data as row (row.id || row.Id)}
           <tr>
-            {#each columns as col}
+            {#each columns as col (col.id)}
               {@const cell = resolveCell(col, row)}
               <td>
                 {#if cell.href}

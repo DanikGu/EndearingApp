@@ -72,6 +72,7 @@
       /** @type {{ id: string, label: string, collectionNavProp: string, sourceField: string, fn: string }[]} */ ([]),
     ),
     onClose,
+    /** @type {() => void} */
     columnsChanged,
   } = $props();
 
@@ -363,7 +364,6 @@
 
   const handleSave = () => {
     columns = [...selectedColumns];
-    console.table(columns);
     columnsChanged?.();
     onClose?.();
   };
@@ -446,7 +446,7 @@
     </DndContext>
   </ModalBody>
   <ModalFooter>
-    <Button color="primary" on:click={handleSave}>Save</Button>
-    <Button color="secondary" on:click={handleClose}>Cancel</Button>
+    <Button color="primary" onclick={handleSave}>Save</Button>
+    <Button color="secondary" onclick={handleClose}>Cancel</Button>
   </ModalFooter>
 </Modal>

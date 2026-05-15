@@ -1,12 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { browser } from "$app/environment";
-  import {
-    customEntities as customEntitiesStore,
-    optionSets as optionSetsStore,
-    ensureCustomEntities,
-    ensureOptionSets,
-  } from "../../../stores/global";
+  import { getCustomEntities, getOptionSets } from "@stores/global";
   import {
     Button,
     Col,
@@ -40,9 +35,12 @@
   /** @type {string[]} */
   let selectedFieldNames = $state([]);
 
+  /** @type {any[]} */
+  let entities = $state([]);
+
   onMount(async () => {
-    await ensureCustomEntities();
-    await ensureOptionSets();
+    const [ents] = await Promise.all([getCustomEntities(), getOptionSets()]);
+    if (ents) entities = ents;
   });
 
   $effect(() => {
@@ -52,7 +50,7 @@
   });
 
   let selectedEntity = $derived(
-    $customEntitiesStore.find((x) => x.id === selectedEntityId),
+    entities.find((x) => x.id === selectedEntityId),
   );
 
   let allExpands = $derived.by(() => {
@@ -76,7 +74,7 @@
 
   let entityName = $derived(
     selectedEntityId
-      ? $customEntitiesStore.find((x) => x.id === selectedEntityId)?.name
+      ? entities.find((x) => x.id === selectedEntityId)?.name
       : "",
   );
 
@@ -161,7 +159,7 @@
   };
 
   let typesItems = $derived(
-    $customEntitiesStore.map((x) => ({ value: x.id, name: x.name })),
+    entities.map((x) => ({ value: x.id, name: x.name })),
   );
 </script>
 

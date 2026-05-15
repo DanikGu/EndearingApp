@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { getEntityByIdFromStore } from '$lib/api/metadata';
-import { ensureCustomEntities } from '../../../../../stores/global';
+import { getCustomEntities } from '@stores/global';
 
 const loadFormById = async (/** @type {string} */ formId) => {
   const { FormApi } = await import('@apiclients/src');
@@ -16,8 +16,8 @@ export const load = async (/** @type {{ params: {formid: string, entityId: strin
   if (!form) error(404, 'Not found');
 
   const { fetchEntityById } = await import('$lib/api/odata');
-  await ensureCustomEntities();
-  const entity = getEntityByIdFromStore(form.customEntityId);
+  await getCustomEntities();
+  const entity = await getEntityByIdFromStore(form.customEntityId);
   if (!entity) error(404, 'Entity not found');
 
   const { data: entityData, error: fetchError } = await fetchEntityById(entity.name, params.entityId);

@@ -1,8 +1,7 @@
 <script>
   import { Button, InputGroup, Icon } from "@sveltestrap/sveltestrap";
   import { Condition, Field } from "../logic/typeDefinitions";
-  import { getContext, onMount } from "svelte";
-  import { get } from "svelte/store";
+  import { getContext } from "svelte";
   import {
     CustomeEntityDTO,
     FieldDto,
@@ -12,9 +11,8 @@
   } from "@apiclients/src";
   import { getTypeId, getTypeName } from "@utils/fieldtypesutils";
   import { FILTER_OPERATORS } from "../logic/filterOperatorsMatrix";
-  import { customEntities as customEntitiesStore, optionSets as optionSetsStore } from "../../../../stores/global";
+  import { getCachedCustomEntities, getCachedOptionSets, getCustomEntities, getOptionSets, getTypeConfig } from "@stores/global";
 
-  import FieldSelector from "./FieldSelector.svelte";
   import OperatorSelector from "./OperatorSelector.svelte";
   import TextValue from "./valueComponents/TextValue.svelte";
   import NumberValue from "./valueComponents/NumberValue.svelte";
@@ -36,15 +34,29 @@
   let { condition = $bindable(), deleteCondition, fields } = $props();
 
   /** @type {CustomeEntityDTO[]} */
-  let customEntities = get(customEntitiesStore);
+  let storeEntities = $state(getCachedCustomEntities());
   /** @type {OptionSetDefinitionDTO[]} */
-  let optionSetDefinitions = get(optionSetsStore);
+  let storeOptionSets = $state(getCachedOptionSets());
+
+  $effect(() => {
+    getCustomEntities().then((v) => {
+      storeEntities = v;
+      if (condition.field) onFieldTypeChange(true);
+    });
+    getOptionSets().then((v) => {
+      storeOptionSets = v;
+    });
+  });
+
+  $effect(() => {
+    getTypeConfig();
+  });
+
   /** @type {FieldDto | undefined} */
   let fieldDefinition;
   /** @type {string | null | undefined} */
   let controlType = $state();
-  /** @type {string | null} */
-  let currEntityId = getContext("customEntityId");
+  let currEntityId = $state(getContext("customEntityId"));
   /** @type {OptionDTO[]} */
   let valueOptions = $state([]);
   /** @type {boolean} */
@@ -58,19 +70,11 @@
   /** @type {boolean} */
   let _forceUpdate = $state(false);
 
-  onMount(() => {
-    const unsub1 = customEntitiesStore.subscribe((v) => {
-      customEntities = v;
-      if (condition.field) onFieldTypeChange(true);
-    });
-    const unsub2 = optionSetsStore.subscribe((v) => {
-      optionSetDefinitions = v;
-    });
-    return () => {
-      unsub1();
-      unsub2();
-    };
-  });
+  /** @param {Event} e */
+  const onFieldChange = (e) => {
+    condition.field = /** @type {HTMLSelectElement} */ (e.target).value;
+    onFieldTypeChange(false);
+  };
 
   /** @type {Set<string>} */
   const multiValueOps = new Set(['in', 'any_in', 'all_in', 'allonly']);
@@ -92,13 +96,13 @@
    *  @returns {string | null} */
   const findLookupEntityName = (fieldDef) => {
     if (!fieldDef || !currEntityId) return null;
-    const currEntity = customEntities.find((x) => x.id == currEntityId);
+    const currEntity = storeEntities.find((x) => x.id === currEntityId);
     if (!currEntity || !currEntity.relationships) return null;
     const relationship = currEntity.relationships.find(
       (/** @type {RelationshipDTO} */ r) => r.sourceFieldId === fieldDef.id,
     );
     if (!relationship) return null;
-    const referencedEntity = customEntities.find(
+    const referencedEntity = storeEntities.find(
       (x) => x.id === relationship.referencedCustomEntityId,
     );
     return referencedEntity ? referencedEntity.name : null;
@@ -109,8 +113,8 @@
     if (!mount) {
       condition.value = null;
     }
-    const currEntity = customEntities.find((x) => x.id == currEntityId);
-    const fd = currEntity?.fields.find(
+    const currEntity = storeEntities.find((x) => x.id === currEntityId);
+    const fd = currEntity?.fields?.find(
       (/** @type {FieldDto} */ field) => field.name === condition.field,
     );
     fieldDefinition = fd;
@@ -165,8 +169,8 @@
     ) {
       isSelect = true;
       isLookup = false;
-      const optSetDefinition = optionSetDefinitions.find(
-        (x) => x.id == fd.optionSetDefinitionId,
+      const optSetDefinition = storeOptionSets.find(
+        (x) => x.id === fd.optionSetDefinitionId,
       );
       valueOptions = optSetDefinition ? optSetDefinition.options : [];
     } else {
@@ -183,11 +187,12 @@
 
 <InputGroup class="p-0 pt-1" data-qb-group="">
   <div style="flex: 1 1 0; min-width: 0; display: flex;">
-    <FieldSelector
-      fields={fields}
-      bind:value={condition.field}
-      onFieldChange={() => onFieldTypeChange(false)}
-    />
+    <select class="form-select" style="flex: 1; min-width: 0" onchange={(e) => onFieldChange(e)}>
+      <option value="">Select Field...</option>
+      {#each fields as field}
+        <option value={field.name}>{field.displayName}</option>
+      {/each}
+    </select>
   </div>
 
   <div style="flex: 1 1 0; min-width: 0; display: flex;">
@@ -221,7 +226,7 @@
   {/key}
   </div>
 
-  <Button color="danger" outline on:click={deleteCondition}>
+  <Button color="danger" outline onclick={deleteCondition}>
     <Icon name="trash"></Icon>
   </Button>
 </InputGroup>

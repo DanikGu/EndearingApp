@@ -1,4 +1,4 @@
-import { getTypeName as getTypeNameFromStore, getTypeId as getTypeIdFromStore, ensureTypeConfig as ensureTypeConfigFromStore, getTypesArray as getTypesArrayFromStore } from '../stores/global';
+import { getTypeName as getTypeNameFromStore, getTypeId as getTypeIdFromStore, ensureTypeConfig as ensureTypeConfigFromStore, getTypesArray as getTypesArrayFromStore } from '@stores/global';
 
 // Re-export store functions for backward compatibility
 export const getTypeName = getTypeNameFromStore;

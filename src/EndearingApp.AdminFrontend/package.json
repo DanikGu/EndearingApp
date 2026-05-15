@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
-    "test:golden": "node tests/golden-ticket.js"
+    "test:golden": "node tests/golden-ticket.js",
+    "test:grid": "node tests/data-grid-verify.js"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.4.0",

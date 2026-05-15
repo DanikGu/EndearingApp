@@ -1,12 +1,6 @@
 <script>
   import { page as pageStore } from "$app/stores";
-  import {
-    customEntities as customEntitiesStore,
-    ensureCustomEntities,
-    ensureOptionSets,
-    getView,
-    saveView,
-  } from "../../../../stores/global";
+  import { getCustomEntities, getView, saveView, getTypeConfig } from "@stores/global";
   import DataView from "$lib/clientComponents/dataView/dataView.svelte";
   import { fetchEntities } from "$lib/api/odata";
   import { convertToOdataFilter } from "$lib/clientComponents/queryBuilder/logic/queryToOdataUrlParams";
@@ -14,7 +8,7 @@
     ConditionGroup,
     Condition,
   } from "$lib/clientComponents/queryBuilder/logic/typeDefinitions";
-  import { get } from "svelte/store";
+  import { assignLoader } from "@utils/uiutils";
 
   /** @param {any} obj
    *  @param {any[]} [entityFields]
@@ -69,7 +63,6 @@
   let fieldNames = $state([]);
   /** @type {{ id: string, label: string, collectionNavProp: string, sourceField: string, fn: string }[]} */
   let aggregates = $state([]);
-  let loading = $state(false);
 
   let page = $state(1);
   let pageSize = $state(25);
@@ -80,6 +73,7 @@
   let rootQuery = $state(new ConditionGroup("and", []));
 
   let currentEntityName = $state("");
+  let initializingInProgress = false;
 
   $effect(() => {
     const entityName = /** @type {string} */ ($pageStore.params.entity);
@@ -90,13 +84,13 @@
   });
 
   async function initEntity(/** @type {string} */ entityName) {
-    await ensureCustomEntities();
-    await ensureOptionSets();
-    const entities = get(customEntitiesStore);
+    const entities = await getCustomEntities();
+    getTypeConfig();
     const found = entities.find(
       (/** @type {any} */ e) => e.name === entityName || e.id === entityName,
     );
     if (found) {
+      initializingInProgress = true;
       customEntity = found;
       data = [];
       expands = [];
@@ -121,52 +115,47 @@
           /* ignore */
         }
       }
+      initializingInProgress = false;
       loadData();
     }
   }
 
   async function loadData() {
     if (!customEntity) return;
-    loading = true;
-    try {
-      const opts =
-        /** @type {{ top: number, skip: number, orderBy: string, count: boolean, filter?: string, select?: string[], expand?: Record<string, { select: string[] }> }} */ ({
-          top: pageSize,
-          skip: pageSize * (page - 1),
-          orderBy,
-          count: true,
-        });
-      const filter = convertToOdataFilter(rootQuery);
-      if (filter) opts.filter = filter;
-      if (fieldNames.length > 0) {
-        if (!fieldNames.includes("Id")) fieldNames = [...fieldNames, "Id"];
-        opts.select = fieldNames;
+    const opts =
+      /** @type {{ top: number, skip: number, orderBy: string, count: boolean, filter?: string, select?: string[], expand?: Record<string, { select: string[] }> }} */ ({
+        top: pageSize,
+        skip: pageSize * (page - 1),
+        orderBy,
+        count: true,
+      });
+    const filter = convertToOdataFilter(rootQuery);
+    if (filter) opts.filter = filter;
+    if (fieldNames.length > 0) {
+      if (!fieldNames.includes("Id")) fieldNames = [...fieldNames, "Id"];
+      opts.select = fieldNames;
+    }
+    if (expands.length > 0) {
+      /** @type {Record<string, { select: string[] }>} */
+      const expandObj = {};
+      for (const ex of expands) {
+        expandObj[ex.navigationProp] = { select: ex.select };
       }
-      if (expands.length > 0) {
-        /** @type {Record<string, { select: string[] }>} */
-        const expandObj = {};
-        for (const ex of expands) {
-          expandObj[ex.navigationProp] = { select: ex.select };
-        }
-        opts.expand = expandObj;
-      }
-      const { data: result, error } = await fetchEntities(
-        customEntity.name,
-        opts,
-      );
-      if (error) {
-        console.error(error);
-        data = [];
-        totalCount = 0;
-      } else if (result) {
-        data = result.value || [];
-        totalCount =
-          result["@odata.count"] || result["@odata.count"]?.toString
-            ? Number(result["@odata.count"])
-            : (result.value || []).length;
-      }
-    } finally {
-      loading = false;
+      opts.expand = expandObj;
+    }
+    const promise = fetchEntities(customEntity.name, opts);
+    assignLoader(`Loading ${customEntity.displayName || customEntity.name}...`, promise);
+    const { data: result, error } = await promise;
+    if (error) {
+      console.error(error);
+      data = [];
+      totalCount = 0;
+    } else if (result) {
+      data = result.value || [];
+      totalCount =
+        result["@odata.count"] || result["@odata.count"]?.toString
+          ? Number(result["@odata.count"])
+          : (result.value || []).length;
     }
   }
 
@@ -197,7 +186,7 @@
   }
 
   $effect(() => {
-    if (customEntity) {
+    if (customEntity && customEntity.name === currentEntityName && !initializingInProgress) {
       saveView(customEntity.name, {
         orderBy,
         pageSize,
@@ -213,7 +202,9 @@
     const id = aggregates.map((/** @type {any} */ a) => a.id).join(",");
     if (customEntity && id !== prevAggId && currentEntityName) {
       prevAggId = id;
-      loadData();
+      if (!initializingInProgress) {
+        loadData();
+      }
     }
   });
 </script>
@@ -230,7 +221,6 @@
       bind:page
       bind:pageSize
       bind:totalCount
-      bind:loading
       bind:orderBy
       bind:aggregates
       onSortChange={handleSort}

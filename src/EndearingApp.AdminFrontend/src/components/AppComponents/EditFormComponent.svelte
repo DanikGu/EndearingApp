@@ -7,7 +7,7 @@
   } from "@apiclients/src";
   import { showBlockingLoader } from "@utils/uiutils";
   import { onMount } from "svelte";
-  import { customEntities, ensureCustomEntities } from "../../stores/global";
+  import { getCustomEntities } from "@stores/global";
   import { createEntity, updateEntity, deleteEntity, fetchEntityById } from "$lib/api/odata";
   /** @typedef {import('@formio/js').Form} Form */
 
@@ -181,8 +181,8 @@
     await import("@formio/js/dist/formio.full.min.css");
     await import("../AppComponents/styles/layout.css");
 
-    await ensureCustomEntities();
-    let found = $customEntities.find(ce => ce.id === form.customEntityId);
+    const allEntities = await getCustomEntities();
+    let found = allEntities.find(ce => ce.id === form.customEntityId);
     if (found) {
         customEntity = found;
     } else {

@@ -280,23 +280,42 @@ export async function ensureTypeConfig() {
   return await fetchTypeConfig();
 }
 
+export async function getCustomEntities() {
+  await ensureCustomEntities();
+  return /** @type {CustomEntity[]} */ (get(customEntities));
+}
+
+export async function getOptionSets() {
+  await ensureOptionSets();
+  return /** @type {OptionSetDefinition[]} */ (get(optionSets));
+}
+
+export async function getForms() {
+  await ensureForms();
+  return /** @type {FormDTO[]} */ (get(forms));
+}
+
+export async function getTypeConfig() {
+  await ensureTypeConfig();
+  return /** @type {TypeConfig | null} */ (get(typeConfig));
+}
+
+export function getCachedCustomEntities() {
+  return /** @type {CustomEntity[]} */ (get(customEntities));
+}
+
+export function getCachedOptionSets() {
+  return /** @type {OptionSetDefinition[]} */ (get(optionSets));
+}
+
 /**
  * @param {number} typeId
  * @returns {string}
  */
 export function getTypeName(typeId) {
-  /** @type {TypeConfig | null} */
-  let config = null;
-  const unsubscribe = typeConfig.subscribe(v => { config = v; });
-  unsubscribe();
-
-  if (!config) {
-    return `${typeId}`;
-  }
-
-  const configNotNull = /** @type {TypeConfig} */ (config);
-  /** @type {{Name: string, Description: string, IsSizeAplicable: boolean} | undefined} */
-  const typeInfo = configNotNull[`${typeId}`];
+  const config = get(typeConfig);
+  if (!config) return `${typeId}`;
+  const typeInfo = config[`${typeId}`];
   return typeInfo ? typeInfo.Name : `${typeId}`;
 }
 
@@ -305,15 +324,8 @@ export function getTypeName(typeId) {
  * @returns {number}
  */
 export function getTypeId(name) {
-  /** @type {TypeConfig | null} */
-  let config = null;
-  const unsubscribe = typeConfig.subscribe(v => { config = v; });
-  unsubscribe();
-
-  if (!config) {
-    return -1;
-  }
-
+  const config = get(typeConfig);
+  if (!config) return -1;
   const entry = Object.entries(config).find(([key, value]) => value.Name === name);
   return entry ? parseInt(entry[0]) : -1;
 }
@@ -322,19 +334,10 @@ export function getTypeId(name) {
  * @returns {{id: string, name: string, description: string, isSizeApplicable: boolean}[]}
  */
 export function getTypesArray() {
-  /** @type {TypeConfig | null} */
-  let config = null;
-  const unsubscribe = typeConfig.subscribe(v => { config = v; });
-  unsubscribe();
-
-  if (!config) {
-    return [];
-  }
-
-  const configNotNull = config;
-  return Object.keys(configNotNull).map(key => {
-    /** @type {{Name: string, Description: string, IsSizeAplicable: boolean}} */
-    const typeInfo = configNotNull[key];
+  const config = get(typeConfig);
+  if (!config) return [];
+  return Object.keys(config).map(key => {
+    const typeInfo = config[key];
     return {
       id: key,
       name: typeInfo.Name,

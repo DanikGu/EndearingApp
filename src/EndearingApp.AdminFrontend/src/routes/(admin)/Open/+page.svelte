@@ -4,7 +4,7 @@
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
   import { getFirstFormForEntity } from "$lib/api/metadata";
-  import { ensureCustomEntities } from "../../../stores/global";
+  import { getCustomEntities } from "@stores/global";
   import { Container, Row, Col } from "@sveltestrap/sveltestrap";
 
   const DEFAULT_APP_ID = "00000000-0000-0000-0000-000000000000";
@@ -13,8 +13,6 @@
 
   onMount(async () => {
     if (!browser) return;
-    await ensureCustomEntities();
-
     const params = new URLSearchParams(window.location.search);
     const entityName = params.get("entity");
     const entityId = params.get("id") || null;
@@ -26,9 +24,7 @@
       return;
     }
 
-    const { get } = await import("svelte/store");
-    const { customEntities } = await import("../../../stores/global");
-    const entities = get(customEntities);
+    const entities = await getCustomEntities();
     const entity = entities.find(
       (/** @type {any} */ e) =>
         e.name === entityName || e.displayName === entityName,

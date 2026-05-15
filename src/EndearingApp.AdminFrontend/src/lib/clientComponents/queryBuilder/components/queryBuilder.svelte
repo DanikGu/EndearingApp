@@ -1,14 +1,10 @@
 <script>
-  import { onMount, setContext } from "svelte";
+  import { setContext } from "svelte";
   import { ConditionGroup, Field } from "../logic/typeDefinitions";
   import { Col, Container, Row } from "@sveltestrap/sveltestrap";
   import ConditionGroupComponent from "./conditionGroupComponent.svelte";
   import { FieldDto } from "@apiclients/src";
-  import {
-    customEntities,
-    ensureCustomEntities,
-    ensureOptionSets,
-  } from "../../../../stores/global";
+  import { getCachedCustomEntities, getCachedOptionSets, getCustomEntities, getOptionSets } from "@stores/global";
 
   /**
    * @typedef {Object} Props
@@ -24,18 +20,27 @@
 
   setContext("customEntityId", customEntityId);
 
+  /** @type {import('@apiclients/src').CustomeEntityDTO[]} */
+  let customEntities = $state(getCachedCustomEntities());
+  /** @type {import('@apiclients/src').OptionSetDefinitionDTO[]} */
+  let optionSets = $state(getCachedOptionSets());
+
+  $effect(() => {
+    getCustomEntities().then((v) => {
+      customEntities = v;
+    });
+    getOptionSets().then((v) => {
+      optionSets = v;
+    });
+  });
+
   /** @type {Field[]} */
   let selectedTableFields = $state([]);
 
-  onMount(async () => {
-    await ensureCustomEntities();
-    await ensureOptionSets();
-  });
-
   $effect(() => {
     let newFields = [];
-    if (customEntityId && $customEntities && $customEntities.length > 0) {
-      const entity = $customEntities.find((x) => x.id == customEntityId);
+    if (customEntityId && customEntities.length > 0) {
+      const entity = customEntities.find((x) => x.id === customEntityId);
       if (entity && entity.fields) {
         newFields = entity.fields.map((/** @type {FieldDto} */ item) => {
           return {

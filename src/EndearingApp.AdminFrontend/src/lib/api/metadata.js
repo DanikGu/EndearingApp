@@ -1,6 +1,5 @@
 import { browser } from '$app/environment';
-import { get } from 'svelte/store';
-import { customEntities, optionSets, forms, ensureForms } from '../../stores/global';
+import { getCustomEntities, getOptionSets, getForms } from '@stores/global';
 import { fetchEntityById } from './odata';
 import { success, failure } from './result';
 
@@ -8,8 +7,7 @@ import { success, failure } from './result';
  *  @returns {Promise<import('./result').ApiResult<{ formId: string, formName: string } | null>>} */
 export async function getFirstFormForEntity(entityId) {
   if (!browser) return success(null);
-  await ensureForms();
-  const allForms = get(forms);
+  const allForms = await getForms();
   const entityForms = allForms.filter((/** @type {any} */ f) => f.customEntityId === entityId);
   if (entityForms.length === 0) return success(null);
   const form = entityForms[0];
@@ -20,32 +18,31 @@ export async function getFirstFormForEntity(entityId) {
  *  @returns {Promise<import('./result').ApiResult<any[]>>} */
 export async function getFormsForEntity(entityId) {
   if (!browser) return success([]);
-  await ensureForms();
-  const allForms = get(forms);
+  const allForms = await getForms();
   return success(allForms.filter((/** @type {any} */ f) => f.customEntityId === entityId));
 }
 
 /** @param {string} entityId
- *  @returns {string | null} */
-export function getEntityName(entityId) {
-  const entities = get(customEntities);
+ *  @returns {Promise<string | null>} */
+export async function getEntityName(entityId) {
+  const entities = await getCustomEntities();
   const entity = entities.find((/** @type {any} */ e) => e.id === entityId);
   return entity ? entity.name : null;
 }
 
 /** @param {string} entityId
- *  @returns {string | null} */
-export function getEntityDisplayName(entityId) {
-  const entities = get(customEntities);
+ *  @returns {Promise<string | null>} */
+export async function getEntityDisplayName(entityId) {
+  const entities = await getCustomEntities();
   const entity = entities.find((/** @type {any} */ e) => e.id === entityId);
   return entity ? (entity.displayName || entity.name) : null;
 }
 
 /** @param {string} entityId
  *  @param {string} fieldId
- *  @returns {{ entityName: string | null, navigationPropName: string | null, field: any | null }} */
-export function getLookupTargetForField(entityId, fieldId) {
-  const entities = get(customEntities);
+ *  @returns {Promise<{ entityName: string | null, navigationPropName: string | null, field: any | null }>} */
+export async function getLookupTargetForField(entityId, fieldId) {
+  const entities = await getCustomEntities();
   const entity = entities.find((/** @type {any} */ e) => e.id === entityId);
   if (!entity || !entity.relationships) return { entityName: null, navigationPropName: null, field: null };
 
@@ -64,9 +61,9 @@ export function getLookupTargetForField(entityId, fieldId) {
 }
 
 /** @param {string} entityId
- *  @returns {Array<{ sourceFieldId: string, targetEntityName: string | null, navigationPropName: string | null, targetFields: any[] }>} */
-export function getLookupRelationships(entityId) {
-  const entities = get(customEntities);
+ *  @returns {Promise<Array<{ sourceFieldId: string, targetEntityName: string | null, navigationPropName: string | null, targetFields: any[] }>>} */
+export async function getLookupRelationships(entityId) {
+  const entities = await getCustomEntities();
   const entity = entities.find((/** @type {any} */ e) => e.id === entityId);
   if (!entity || !entity.relationships) return [];
 
@@ -89,9 +86,9 @@ export function getLookupRelationships(entityId) {
 
 /** @param {string} optionSetDefId
  *  @param {number | string} value
- *  @returns {string | null} */
-export function getOptionSetName(optionSetDefId, value) {
-  const sets = get(optionSets);
+ *  @returns {Promise<string | null>} */
+export async function getOptionSetName(optionSetDefId, value) {
+  const sets = await getOptionSets();
   const def = sets.find((/** @type {any} */ s) => s.id === optionSetDefId);
   if (!def || !def.options) return null;
   const option = def.options.find((/** @type {any} */ o) => String(o.value) === String(value));
@@ -99,9 +96,9 @@ export function getOptionSetName(optionSetDefId, value) {
 }
 
 /** @param {string} entityId
- *  @returns {any | null} */
-export function getEntityByIdFromStore(entityId) {
-  const entities = get(customEntities);
+ *  @returns {Promise<any | null>} */
+export async function getEntityByIdFromStore(entityId) {
+  const entities = await getCustomEntities();
   return entities.find((/** @type {any} */ e) => e.id === entityId) || null;
 }
 

@@ -14,7 +14,7 @@
   import { alertError, alertSuccsess, assignLoader } from "@utils/uiutils";
   import { onMount } from "svelte";
   import fieldtypesutils, { getTypeId } from "@utils/fieldtypesutils";
-  import { customEntities as customEntitiesStore, optionSets as optionSetsStore, ensureCustomEntities, ensureOptionSets } from "../../../stores/global";
+  import { getCustomEntities, getOptionSets } from "@stores/global";
   import {
     Container,
     Row,
@@ -39,6 +39,10 @@
 
   /** @type {FormDTO[]} */
   let forms = $state([]);
+  /** @type {any[]} */
+  let entities = $state([]);
+  /** @type {any[]} */
+  let optionSetDefs = $state([]);
 
   /** @type {FormDTO | null} */
   let editedForm = $state(null);
@@ -54,14 +58,14 @@
 
   const updateBuilder = () => {
     console.log("Update builder called");
-    const customEntity = $customEntitiesStore.find(
+    const customEntity = entities.find(
       (x) => x.id == editedForm?.customEntityId,
     );
     if (!customEntity) {
       console.log("Update short curcuit");
       return;
     }
-    currentObj = convertToFormioComponents(customEntity, $optionSetsStore);
+    currentObj = convertToFormioComponents(customEntity, optionSetDefs);
     currentSchema = JSON.parse(editedForm?.jsonSchema ?? "{}");
     console.log("schema changed");
   };
@@ -169,7 +173,9 @@
 
   const reloadData = async () => {
     const formProm = getForms();
-    await Promise.all([ensureCustomEntities(), ensureOptionSets(), formProm]);
+    const [ents, optionSetDefsData] = await Promise.all([getCustomEntities(), getOptionSets(), formProm]);
+    if (ents) entities = ents;
+    if (optionSetDefsData) optionSetDefs = optionSetDefsData;
   };
   /**
    * @param {CustomEntity} customEntity
@@ -264,11 +270,11 @@
    * @returns {Object}
    */
   function createRelationshipComponent(relationship) {
-    let entityName = $customEntitiesStore.find(
+    let entityName = entities.find(
       (x) => x.id === relationship.referencedCustomEntityId,
     )?.name;
     /** @type { FieldDto | undefined } */
-    let field = $customEntitiesStore
+    let field = entities
       .find((x) => x.id === relationship.sourceCustomEntityId)
       ?.fields.find(
         (/** @type {FieldDto} */ x) => x.id === relationship.sourceFieldId,
@@ -355,8 +361,8 @@
     <Col md="3" class="p-0 d-flex flex-column border-end">
       <div class="flex-grow-1 overflow-auto">
         <Accordion stayOpen class="rounded-0">
-          {#key $customEntitiesStore}
-            {#each $customEntitiesStore as elem (elem.id)}
+          {#key entities}
+            {#each entities as elem (elem.id)}
               <AccordionItem
                 class="entity-accordion-item p-0"
                 header={elem.displayName}

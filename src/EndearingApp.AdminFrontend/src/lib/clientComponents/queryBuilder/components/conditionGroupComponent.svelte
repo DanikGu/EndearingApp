@@ -39,14 +39,14 @@
   <Row>
     <Col md="1"></Col>
     <Col md="11">
-      <Button color="success" outline on:click={() => addCondition(group)}>
+      <Button color="success" outline onclick={() => addCondition(group)}>
         <Icon name="plus"></Icon> Condition
       </Button>
-      <Button color="success" outline on:click={() => addGroup(group)}>
+      <Button color="success" outline onclick={() => addGroup(group)}>
         <Icon name="plus"></Icon> Group
       </Button>
       {#if deleteGroup}
-        <Button color="danger" outline on:click={() => deleteGroup(group)}>
+        <Button color="danger" outline onclick={() => deleteGroup(group)}>
           <Icon name="trash"></Icon>
         </Button>
       {/if}
@@ -63,7 +63,7 @@
       </Col>
     </Col>
     <Col md="11">
-      {#each group.children as child}
+      {#each group.children as child (child)}
         {#if child instanceof Condition}
           <ConditionComponent
             {fields}

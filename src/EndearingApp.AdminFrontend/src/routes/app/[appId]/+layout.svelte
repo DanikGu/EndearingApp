@@ -1,11 +1,13 @@
 <script>
-  import { onMount } from "svelte";
-  import { customEntities, ensureCustomEntities } from "../../../stores/global";
+  import { getCustomEntities } from "@stores/global";
   import { page as pageStore } from "$app/stores";
   import { goto } from "$app/navigation";
 
-  onMount(() => {
-    ensureCustomEntities();
+  /** @type {any[]} */
+  let loadedEntities = $state([]);
+
+  $effect(() => {
+    getCustomEntities().then(v => { if (v) loadedEntities = v; });
   });
 
   /** @type {string | null} */
@@ -44,7 +46,7 @@
       <h5 class="mb-0">EndearingApp</h5>
     </div>
     <div class="overflow-auto flex-grow-1">
-      {#each $customEntities as entity (entity.id)}
+      {#each loadedEntities as entity (entity.id)}
         <button
           class="btn btn-link text-start text-decoration-none w-100 rounded-0 px-3 py-2 border-0 {activeEntity ===
           entity.name

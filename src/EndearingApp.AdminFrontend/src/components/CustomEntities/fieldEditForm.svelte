@@ -4,7 +4,7 @@
 
   import { OptionSetDefinitionDTO } from "@apiclients";
   import { getTypesArray, getTypeId } from "@utils/fieldtypesutils";
-  import { optionSets, optionSetsLoading, optionSetsError, ensureOptionSets } from "../../stores/global";
+  import { getOptionSets } from "@stores/global";
   /** @typedef {import('../../apiclient/src/model/FieldDto').default} FieldEntity */
   import {
     InputGroup,
@@ -24,32 +24,44 @@
   /** @type {Props} */
   let { editedField = $bindable(), isNew = $bindable(false) } = $props();
 
-  onMount(() => {
-    ensureOptionSets();
-  });
-
-  let typesItems = getTypesArray().map((x) => ({
-    value: x.id.toString(),
-    name: x.name,
-  }));
-
-
+  /** @type {any[]} */
+  let optionSetsData = $state([]);
+  let optionSetsLoading = $state(true);
+  /** @type {Error | null} */
+  let optionSetsError = $state(null);
+  /** @type {any[]} */
+  let typesItems = $state([]);
   let isReadOnlyForm = $state(!!editedField.isSystemField);
-  // @ts-ignore
-  let isSizeApplicable = $state(
-    editedField.type
-      ? getTypesArray().find((x) => x.id == editedField.type)?.isSizeApplicable
-      : false,
-  );
+  let isSizeApplicable = $state(false);
+
+  onMount(async () => {
+    try {
+      const [typesArray] = await Promise.all([getTypesArray(), getOptionSets()]);
+      if (typesArray) {
+        typesItems = typesArray.map((x) => ({
+          value: x.id.toString(),
+          name: x.name,
+        }));
+        isSizeApplicable = editedField.type
+          ? typesArray.find((x) => x.id == editedField.type)?.isSizeApplicable ?? false
+          : false;
+      }
+    } catch (e) {
+      optionSetsError = /** @type {Error} */ (e);
+    } finally {
+      optionSetsLoading = false;
+    }
+  });
   /** @param {{ currentTarget: { value: string; }; }} event */
-  function handleTypeChange(event) {
+  async function handleTypeChange(event) {
     const newFieldTypeInt = parseInt(event.currentTarget.value);
     if (editedField.type !== newFieldTypeInt) {
       editedField.type = newFieldTypeInt;
     }
     fieldType = editedField.type;
+    const typesArray = await getTypesArray();
     isSizeApplicable = editedField.type
-      ? getTypesArray().find((x) => x.id == editedField.type)?.isSizeApplicable
+      ? typesArray.find((x) => x.id == editedField.type)?.isSizeApplicable ?? false
       : false;
   }
   let fieldType = $state();
@@ -112,11 +124,11 @@
       </FormGroup>
       {#key fieldType}
         {#if editedField.type == getTypeId("Option Set") || editedField.type == getTypeId("Option Set MultiSelect")}
-          {#if $optionSetsLoading}
+          {#if optionSetsLoading}
             <p>Loading option sets...</p>
-          {:else if $optionSetsError}
+          {:else if optionSetsError}
             <p class="text-danger">
-              Error loading option sets: {$optionSetsError.message || $optionSetsError}
+              Error loading option sets: {optionSetsError.message || optionSetsError}
             </p>
           {:else}
             <FormGroup>
@@ -127,8 +139,8 @@
                 bind:value={editedField.optionSetDefinitionId}
                 disabled={isReadOnlyForm}
               >
-                {#if $optionSets && $optionSets.length > 0}
-                  {#each $optionSets as os (os.id)}
+                {#if optionSetsData && optionSetsData.length > 0}
+                  {#each optionSetsData as os (os.id)}
                     <option value={os.id}>{os.name}</option>
                   {/each}
                 {:else}
