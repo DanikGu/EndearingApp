@@ -364,3 +364,4 @@ MigrationBackup/
 FodyWeavers.xsd
 src/EndearingApp.Web/log20241029.txt
 src/swagger-codegen
+/src/EndearingApp.AdminFrontend/.playwright-mcp

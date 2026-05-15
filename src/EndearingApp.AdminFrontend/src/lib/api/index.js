@@ -19,4 +19,5 @@ export {
   getOptionSetName,
   getEntityByIdFromStore,
   loadEntityWithName,
+  fetchCustomEntityById,
 } from './metadata';

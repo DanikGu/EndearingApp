@@ -1,0 +1,90 @@
+[
+  { "action": "addTable", "name": "Animal", "displayName": "Animal", "desc": "Zoo animals" },
+  { "action": "addTable", "name": "Species", "displayName": "Species", "desc": "Animal species catalog" },
+  { "action": "addTable", "name": "Habitat", "displayName": "Habitat", "desc": "Animal habitats" },
+  { "action": "addTable", "name": "Zookeeper", "displayName": "Zookeeper", "desc": "Staff members" },
+  { "action": "addTable", "name": "Enclosure", "displayName": "Enclosure", "desc": "Animal enclosures" },
+  { "action": "addTable", "name": "FeedingSchedule", "displayName": "Feeding Schedule", "desc": "Animal feeding times" },
+  { "action": "addTable", "name": "MedicalRecord", "displayName": "Medical Record", "desc": "Animal health records" },
+  { "action": "addTable", "name": "Visitor", "displayName": "Visitor", "desc": "Zoo visitors" },
+
+  { "action": "addField", "table": "Animal", "name": "Name", "displayName": "Name", "type": "Limited Text", "size": 200 },
+  { "action": "addField", "table": "Animal", "name": "Age", "displayName": "Age", "type": "Whole Number" },
+  { "action": "addField", "table": "Animal", "name": "Weight", "displayName": "Weight (kg)", "type": "Decimal Number" },
+  { "action": "addField", "table": "Animal", "name": "DateOfBirth", "displayName": "Date of Birth", "type": "Date" },
+  { "action": "addField", "table": "Animal", "name": "IsPredator", "displayName": "Is Predator", "type": "Yes/No" },
+  { "action": "addField", "table": "Animal", "name": "Notes", "displayName": "Notes", "type": "Unlimited Text" },
+
+  { "action": "addField", "table": "Species", "name": "Name", "displayName": "Name", "type": "Limited Text", "size": 200 },
+  { "action": "addField", "table": "Species", "name": "LatinName", "displayName": "Latin Name", "type": "Limited Text", "size": 200 },
+  { "action": "addField", "table": "Species", "name": "AverageLifespan", "displayName": "Average Lifespan", "type": "Whole Number" },
+
+  { "action": "addField", "table": "Habitat", "name": "Name", "displayName": "Name", "type": "Limited Text", "size": 200 },
+  { "action": "addField", "table": "Habitat", "name": "Climate", "displayName": "Climate", "type": "Limited Text", "size": 100 },
+  { "action": "addField", "table": "Habitat", "name": "Size", "displayName": "Size (sqm)", "type": "Decimal Number" },
+  { "action": "addField", "table": "Habitat", "name": "IsIndoor", "displayName": "Is Indoor", "type": "Yes/No" },
+
+  { "action": "addField", "table": "Zookeeper", "name": "Name", "displayName": "Name", "type": "Limited Text", "size": 200 },
+  { "action": "addField", "table": "Zookeeper", "name": "Specialization", "displayName": "Specialization", "type": "Limited Text", "size": 200 },
+  { "action": "addField", "table": "Zookeeper", "name": "YearsOfExperience", "displayName": "Years of Experience", "type": "Whole Number" },
+  { "action": "addField", "table": "Zookeeper", "name": "ShiftStart", "displayName": "Shift Start", "type": "Time" },
+
+  { "action": "addField", "table": "Enclosure", "name": "Name", "displayName": "Name", "type": "Limited Text", "size": 200 },
+  { "action": "addField", "table": "Enclosure", "name": "Capacity", "displayName": "Capacity", "type": "Whole Number" },
+  { "action": "addField", "table": "Enclosure", "name": "HabitatId", "displayName": "HabitatId", "type": "Unique Identifier" },
+
+  { "action": "addField", "table": "FeedingSchedule", "name": "Name", "displayName": "Name", "type": "Limited Text", "size": 200 },
+  { "action": "addField", "table": "FeedingSchedule", "name": "TimeOfDay", "displayName": "Time of Day", "type": "Time" },
+  { "action": "addField", "table": "FeedingSchedule", "name": "PortionSize", "displayName": "Portion Size (g)", "type": "Whole Number" },
+  { "action": "addField", "table": "FeedingSchedule", "name": "AnimalId", "displayName": "AnimalId", "type": "Unique Identifier" },
+
+  { "action": "addField", "table": "MedicalRecord", "name": "Name", "displayName": "Name", "type": "Limited Text", "size": 200 },
+  { "action": "addField", "table": "MedicalRecord", "name": "Diagnosis", "displayName": "Diagnosis", "type": "Unlimited Text" },
+  { "action": "addField", "table": "MedicalRecord", "name": "RecordDate", "displayName": "Record Date", "type": "Date" },
+  { "action": "addField", "table": "MedicalRecord", "name": "AnimalId", "displayName": "AnimalId", "type": "Unique Identifier" },
+  { "action": "addField", "table": "MedicalRecord", "name": "ZookeeperId", "displayName": "ZookeeperId", "type": "Unique Identifier" },
+
+  { "action": "addField", "table": "Visitor", "name": "Name", "displayName": "Name", "type": "Limited Text", "size": 200 },
+  { "action": "addField", "table": "Visitor", "name": "Age", "displayName": "Age", "type": "Whole Number" },
+  { "action": "addField", "table": "Visitor", "name": "TicketPrice", "displayName": "Ticket Price", "type": "Decimal Number" },
+  { "action": "addField", "table": "Visitor", "name": "VisitDate", "displayName": "Visit Date", "type": "Date" },
+  { "action": "addField", "table": "Visitor", "name": "IsMember", "displayName": "Is Member", "type": "Yes/No" },
+  { "action": "addField", "table": "Visitor", "name": "Notes", "displayName": "Notes", "type": "Unlimited Text" },
+  { "action": "addField", "table": "Visitor", "name": "FavoriteAnimalId", "displayName": "Favorite Animal", "type": "Unique Identifier" },
+
+  { "action": "addRelationship", "table": "Enclosure", "fkField": "HabitatId", "fkDisplay": "HabitatId", "target": "Habitat" },
+  { "action": "addRelationship", "table": "FeedingSchedule", "fkField": "AnimalId", "fkDisplay": "AnimalId", "target": "Animal" },
+  { "action": "addRelationship", "table": "MedicalRecord", "fkField": "AnimalId", "fkDisplay": "AnimalId", "target": "Animal" },
+  { "action": "addRelationship", "table": "MedicalRecord", "fkField": "ZookeeperId", "fkDisplay": "ZookeeperId", "target": "Zookeeper" },
+  { "action": "addRelationship", "table": "Visitor", "fkField": "FavoriteAnimalId", "fkDisplay": "Favorite Animal", "target": "Animal" },
+
+  { "action": "addOptionSet", "name": "ConservationStatus" },
+  { "action": "addOption", "optionSet": "ConservationStatus", "name": "Least Concern", "value": 1 },
+  { "action": "addOption", "optionSet": "ConservationStatus", "name": "Near Threatened", "value": 2 },
+  { "action": "addOption", "optionSet": "ConservationStatus", "name": "Vulnerable", "value": 3 },
+  { "action": "addOption", "optionSet": "ConservationStatus", "name": "Endangered", "value": 4 },
+  { "action": "addOption", "optionSet": "ConservationStatus", "name": "Critically Endangered", "value": 5 },
+
+  { "action": "addOptionSet", "name": "FoodType" },
+  { "action": "addOption", "optionSet": "FoodType", "name": "Carnivore", "value": 1 },
+  { "action": "addOption", "optionSet": "FoodType", "name": "Herbivore", "value": 2 },
+  { "action": "addOption", "optionSet": "FoodType", "name": "Omnivore", "value": 3 },
+  { "action": "addOption", "optionSet": "FoodType", "name": "Insectivore", "value": 4 },
+
+  { "action": "addOptionSet", "name": "TicketType" },
+  { "action": "addOption", "optionSet": "TicketType", "name": "Adult", "value": 1 },
+  { "action": "addOption", "optionSet": "TicketType", "name": "Child", "value": 2 },
+  { "action": "addOption", "optionSet": "TicketType", "name": "Senior", "value": 3 },
+  { "action": "addOption", "optionSet": "TicketType", "name": "Family", "value": 4 },
+
+  { "action": "addForm", "table": "Animal", "formName": "Animal Form", "formDesc": "Create and edit animals" },
+  { "action": "addForm", "table": "Species", "formName": "Species Form", "formDesc": "Species management" },
+  { "action": "addForm", "table": "Habitat", "formName": "Habitat Form", "formDesc": "Habitat management" },
+  { "action": "addForm", "table": "Zookeeper", "formName": "Zookeeper Form", "formDesc": "Zookeeper management" },
+  { "action": "addForm", "table": "Enclosure", "formName": "Enclosure Form", "formDesc": "Enclosure management" },
+  { "action": "addForm", "table": "FeedingSchedule", "formName": "Feeding Schedule Form", "formDesc": "Feeding schedule management" },
+  { "action": "addForm", "table": "MedicalRecord", "formName": "Medical Record Form", "formDesc": "Medical record management" },
+  { "action": "addForm", "table": "Visitor", "formName": "Visitor Form", "formDesc": "Visitor management" },
+
+  { "action": "applyToDB" }
+]

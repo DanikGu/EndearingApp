@@ -1,7 +1,7 @@
 <script>
   import { Button } from "@sveltestrap/sveltestrap";
 
-  let { onAddNew, onRefresh, onEditFilters, onManageColumns } = $props();
+  let { onAddNew, onRefresh, onEditFilters, onManageColumns, onAddAggregate } = $props();
 </script>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -12,5 +12,6 @@
   <div class="d-flex gap-2">
     <Button outline on:click={onEditFilters}>Edit Filters</Button>
     <Button outline on:click={onManageColumns}>Manage Columns</Button>
+    <Button outline on:click={onAddAggregate}>Add Aggregate</Button>
   </div>
 </div>

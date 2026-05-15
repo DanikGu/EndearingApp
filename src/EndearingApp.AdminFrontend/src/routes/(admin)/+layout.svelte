@@ -58,6 +58,9 @@
     <NavItem>
       <NavLink href="/QueryBuilder">Query Builder</NavLink>
     </NavItem>
+    <NavItem>
+      <NavLink href="/app/00000000-0000-0000-0000-000000000000">User App</NavLink>
+    </NavItem>
   </Nav>
   <ThemeToggler>
     {#if currentColorMode == "dark"}

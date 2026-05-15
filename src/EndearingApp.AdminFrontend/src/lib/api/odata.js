@@ -11,6 +11,8 @@ const API_BASE = '/api/odata';
  * @property {number} [top]
  * @property {number} [skip]
  * @property {string|string[]} [orderBy]
+ * @property {boolean} [count] - Include @odata.count in response
+ * @property {Object|Object[]} [transform] - OData $apply transform (aggregate, groupBy, filter)
  */
 
 /**
@@ -18,7 +20,7 @@ const API_BASE = '/api/odata';
  * @param {ODataQueryOptions} opts
  * @returns {string} Query string starting with '?' or empty string
  */
-function buildQueryString(opts) {
+function buildQueryString(/** @type {ODataQueryOptions} */ opts) {
   /** @type {Record<string, any>} */
   const queryObj = {};
 
@@ -28,6 +30,8 @@ function buildQueryString(opts) {
   if (opts.top != null) queryObj.top = opts.top;
   if (opts.skip != null) queryObj.skip = opts.skip;
   if (opts.orderBy) queryObj.orderBy = opts.orderBy;
+  if (opts.count) queryObj.count = true;
+  if (/** @type {any} */ (opts).transform) queryObj.transform = /** @type {any} */ (opts).transform;
 
   return buildQuery(queryObj);
 }

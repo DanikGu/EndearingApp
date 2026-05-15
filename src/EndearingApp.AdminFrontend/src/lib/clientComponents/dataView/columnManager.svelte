@@ -30,7 +30,7 @@
   /**
    * @typedef {Object} ColumnDef
    * @property {string} id
-   * @property {'field' | 'expand'} type
+   * @property {'field' | 'expand' | 'aggregate'} type
    * @property {string} label
    * @property {string} [fieldName]
    * @property {any} [field]
@@ -41,16 +41,20 @@
    * @property {string} [lookupNavProp]
    * @property {string} [optionSetDefId]
    * @property {boolean} [isSelect]
+   * @property {boolean} [isMultiSelect]
    * @property {boolean} [isDateTime]
    * @property {boolean} [isDateOnly]
    * @property {boolean} [isTimeOnly]
+   * @property {string} [collectionNavProp]
+   * @property {string} [sourceField]
+   * @property {string} [aggregateFn]
    */
 
   /**
    * @typedef {Object} AvailableItem
    * @property {string} id
    * @property {string} label
-   * @property {'field' | 'group' | 'expand'} type
+   * @property {'field' | 'group' | 'expand' | 'aggregate'} type
    * @property {any} [field]
    * @property {string} [groupLabel]
    * @property {string} [navigationProp]
@@ -64,7 +68,11 @@
     relationships = [],
     allEntities = [],
     columns = $bindable([]),
+    aggregates = $bindable(
+      /** @type {{ id: string, label: string, collectionNavProp: string, sourceField: string, fn: string }[]} */ ([]),
+    ),
     onClose,
+    columnsChanged,
   } = $props();
 
   /** @type {ColumnDef[]} */
@@ -105,6 +113,7 @@
       isSelect:
         field.type === getTypeId("Option Set") ||
         field.type === getTypeId("Option Set MultiSelect"),
+      isMultiSelect: field.type === getTypeId("Option Set MultiSelect"),
       isDateTime: field.type === dtId,
       isDateOnly: field.type === dId,
       isTimeOnly: field.type === tId,
@@ -201,6 +210,36 @@
       }
     }
 
+    if (aggregates.length > 0) {
+      const aggNotSelected = aggregates.filter(
+        (/** @type {any} */ a) => !selectedIds.has(a.id),
+      );
+      if (aggNotSelected.length > 0) {
+        items.push({
+          id: "__group_aggregates",
+          label: "Aggregates",
+          type: "group",
+          groupLabel: "Aggregates",
+        });
+        for (const a of aggNotSelected) {
+          items.push({
+            id: a.id,
+            label: a.label,
+            type: "aggregate",
+            colDef: /** @type {ColumnDef} */ ({
+              id: a.id,
+              type: "aggregate",
+              label: a.label,
+              fieldName: a.sourceField,
+              collectionNavProp: a.collectionNavProp,
+              sourceField: a.sourceField,
+              aggregateFn: a.fn,
+            }),
+          });
+        }
+      }
+    }
+
     return items;
   }
 
@@ -219,19 +258,21 @@
         field: item.field,
       });
     }
+    if (item.type === "aggregate" && item.colDef) {
+      return /** @type {ColumnDef} */ (item.colDef);
+    }
     return null;
   }
 
   /** @param {ColumnDef | AvailableItem} col */
   function moveToAvailable(col) {
-    let colDef =
-      "field" in col && col.type === "field"
-        ? buildFieldColumnDef(col.field)
-        : col.type === "expand"
-          ? buildColumnDefFromAvailable(col)
-          : null;
-    if (!colDef)
-      colDef = col.type === "field" ? buildFieldColumnDef(col) : null;
+    /** @type {ColumnDef | null} */
+    let colDef = null;
+    if ("colDef" in col && col.colDef) {
+      colDef = /** @type {ColumnDef} */ (col.colDef);
+    } else if ("field" in col && col.field && col.type === "field") {
+      colDef = buildFieldColumnDef(/** @type {any} */ (col.field));
+    }
     if (!colDef) return;
 
     selectedColumns = selectedColumns.filter((c) => c.id !== colDef.id);
@@ -322,6 +363,8 @@
 
   const handleSave = () => {
     columns = [...selectedColumns];
+    console.table(columns);
+    columnsChanged?.();
     onClose?.();
   };
 
@@ -352,7 +395,9 @@
               <div class="space-y-2">
                 {#each availableItems as item (item.id)}
                   {#if item.type === "group"}
-                    <div class="text-xs font-bold text-muted dark:text-gray-400 mt-3 mb-1 px-2">
+                    <div
+                      class="text-xs font-bold text-muted dark:text-gray-400 mt-3 mb-1 px-2"
+                    >
                       {item.groupLabel}
                     </div>
                   {:else}
@@ -390,7 +435,9 @@
               .map((i) => ({ id: i.id, label: i.label })),
           ].find((c) => c.id === activeId)}
           {#if activeCol}
-            <div class="p-2 border rounded-md bg-gray-200 dark:bg-gray-600 dark:text-white cursor-grabbing">
+            <div
+              class="p-2 border rounded-md bg-gray-200 dark:bg-gray-600 dark:text-white cursor-grabbing"
+            >
               {activeCol.label}
             </div>
           {/if}

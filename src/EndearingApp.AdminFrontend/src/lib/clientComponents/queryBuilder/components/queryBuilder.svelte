@@ -3,14 +3,9 @@
   import { ConditionGroup, Field } from "../logic/typeDefinitions";
   import { Col, Container, Row } from "@sveltestrap/sveltestrap";
   import ConditionGroupComponent from "./conditionGroupComponent.svelte";
-  import {
-    CustomeEntityDTO,
-    FieldDto,
-    OptionSetDefinitionDTO,
-  } from "@apiclients/src";
+  import { FieldDto } from "@apiclients/src";
   import {
     customEntities,
-    optionSets,
     ensureCustomEntities,
     ensureOptionSets,
   } from "../../../../stores/global";

@@ -74,7 +74,9 @@ import { ConditionGroup } from "../../lib/clientComponents/queryBuilder/logic/ty
 
   const openAddNew = () => {
     if (entityName) {
-      window.open(`/Open?entity=${entityName}`, '_blank');
+      const currentPath = window.location.pathname;
+      const appId = currentPath.split('/')[2] || '00000000-0000-0000-0000-000000000000';
+      window.location.href = `/app/${appId}/${entityName}/edit`;
     }
   };
 

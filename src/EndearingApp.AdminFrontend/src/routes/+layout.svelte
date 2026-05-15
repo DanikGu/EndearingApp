@@ -1,6 +1,7 @@
 <script>
   import { Theme } from "@sveltestrap/sveltestrap";
   import { onMount } from "svelte";
+  import "../app.css";
   /**
    * @typedef {Object} Props
    * @property {import('svelte').Snippet} [children]

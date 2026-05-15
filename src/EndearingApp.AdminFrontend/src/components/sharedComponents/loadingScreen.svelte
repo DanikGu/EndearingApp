@@ -1,6 +1,5 @@
 <script>
   import { run } from "svelte/legacy";
-
   import { Spinner } from "@sveltestrap/sveltestrap";
   import { onMount } from "svelte";
 

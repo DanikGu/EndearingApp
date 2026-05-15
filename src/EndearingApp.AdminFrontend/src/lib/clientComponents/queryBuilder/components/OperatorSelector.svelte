@@ -13,7 +13,14 @@
   let { availableOperators, value, onchange, disabled = false } = $props();
 </script>
 
-<select class="form-select" style="flex: 1; min-width: 0" value={value} disabled={disabled} onchange={(e) => onchange?.(/** @type {HTMLSelectElement} */ (e.target).value)}>
+<select
+  class="form-select"
+  style="flex: 1; min-width: 0"
+  {value}
+  {disabled}
+  onchange={(e) =>
+    onchange?.(/** @type {HTMLSelectElement} */ (e.target).value)}
+>
   <option value="">Select Operator...</option>
   {#each availableOperators as op}
     <option value={op}>{OPERATOR_LABELS[op] || op}</option>

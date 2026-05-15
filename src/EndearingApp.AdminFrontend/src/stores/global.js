@@ -343,3 +343,68 @@ export function getTypesArray() {
     };
   });
 }
+
+/**
+ * @typedef {Object} ViewDefinition
+ * @property {string} id
+ * @property {string} name
+ * @property {string} displayName
+ * @property {string} entityId
+ * @property {Object|null} filter
+ * @property {string} orderBy
+ * @property {string[]} columns
+ * @property {number} pageSize
+ * @property {{id: string, label: string, collectionNavProp: string, sourceField: string, fn: string}[]} aggregates
+ */
+
+/** @type {import('svelte/store').Writable<Record<string, ViewDefinition>>} */
+export const views = writable(/** @type {Record<string, ViewDefinition>} */({}));
+
+const VIEWS_STORAGE_KEY = 'endearing_views';
+
+if (browser) {
+  try {
+    const stored = localStorage.getItem(VIEWS_STORAGE_KEY);
+    if (stored) views.set(JSON.parse(stored));
+  } catch { /* ignore */ }
+  views.subscribe(val => {
+    try {
+      localStorage.setItem(VIEWS_STORAGE_KEY, JSON.stringify(val));
+    } catch { /* ignore */ }
+  });
+}
+
+const DEFAULT_VIEW_ID = '00000000-0000-0000-0000-000000000000';
+
+/** @param {string} entityName
+ *  @returns {ViewDefinition} */
+export function getDefaultView(entityName) {
+  return {
+    id: DEFAULT_VIEW_ID,
+    name: 'Default',
+    displayName: 'Default View',
+    entityId: entityName,
+    filter: null,
+    orderBy: 'createdon desc',
+    columns: [],
+    pageSize: 25,
+    aggregates: [],
+  };
+}
+
+/** @param {string} entityName
+ *  @returns {ViewDefinition} */
+export function getView(entityName) {
+  const current = get(views);
+  return current[entityName] || getDefaultView(entityName);
+}
+
+/** @param {string} entityName
+ *  @param {Partial<ViewDefinition>} updates */
+export function saveView(entityName, updates) {
+  views.update(current => {
+    const existing = current[entityName] || getDefaultView(entityName);
+    current[entityName] = { ...existing, ...updates };
+    return current;
+  });
+}

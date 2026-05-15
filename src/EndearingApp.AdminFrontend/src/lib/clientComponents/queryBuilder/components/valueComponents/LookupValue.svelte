@@ -1,5 +1,9 @@
 <script>
-  import { fetchEntityById, fullTextSearch, fetchEntities } from "$lib/api/odata";
+  import {
+    fetchEntityById,
+    fullTextSearch,
+    fetchEntities,
+  } from "$lib/api/odata";
 
   /** @typedef {{Id: string, Name: string}} SearchResult */
 
@@ -56,17 +60,25 @@
       return;
     }
     const { data, error } = query
-      ? await fullTextSearch(lookupEntityName, query, { select: ["Id", "Name"], top: 5 })
-      : await fetchEntities(lookupEntityName, { select: ["Id", "Name"], top: 5 });
+      ? await fullTextSearch(lookupEntityName, query, {
+          select: ["Id", "Name"],
+          top: 5,
+        })
+      : await fetchEntities(lookupEntityName, {
+          select: ["Id", "Name"],
+          top: 5,
+        });
     if (error || !data) {
       searchResults = [];
       showDropdown = false;
       return;
     }
-    searchResults = (data.value || []).map((/** @type {{Id: string, Name?: string, name?: string}} */ r) => ({
-      Id: r.Id,
-      Name: r.Name || r.name || r.Id,
-    }));
+    searchResults = (data.value || []).map(
+      (/** @type {{Id: string, Name?: string, name?: string}} */ r) => ({
+        Id: r.Id,
+        Name: r.Name || r.name || r.Id,
+      }),
+    );
     showDropdown = searchResults.length > 0;
   };
 
@@ -108,7 +120,10 @@
   };
 </script>
 
-<div class="lookup-container form-control p-0 position-relative d-flex align-items-center" style="flex: 1; min-width: 0">
+<div
+  class="lookup-container form-control p-0 position-relative d-flex align-items-center"
+  style="flex: 1; min-width: 0"
+>
   {#if selectedName && value}
     <div class="d-flex justify-content-between align-items-center w-100 px-2">
       <span class="text-truncate">{selectedName}</span>
@@ -146,7 +161,10 @@
     />
   {/if}
   {#if showDropdown}
-    <div class="lookup-dropdown list-group position-absolute w-100 z-3" style="top: 100%; left: 0;">
+    <div
+      class="lookup-dropdown list-group position-absolute w-100 z-3"
+      style="top: 100%; left: 0;"
+    >
       {#each searchResults as item (item.Id)}
         <button
           type="button"

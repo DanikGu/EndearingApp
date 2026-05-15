@@ -111,3 +111,18 @@ export function getEntityByIdFromStore(entityId) {
 export async function loadEntityWithName(entityName, id) {
   return fetchEntityById(entityName, id, { select: ['Id', 'Name'] });
 }
+
+/** @param {string} id
+ *  @returns {Promise<import('./result').ApiResult<any>>} */
+export async function fetchCustomEntityById(id) {
+  if (!browser) return success(null);
+  const { CustomEntitiesApi } = await import('@apiclients/src');
+  return new Promise((res) => {
+    const api = new CustomEntitiesApi();
+    const callback = (/** @type {any} */ err, /** @type {any} */ data) => {
+      if (err) res(failure(err));
+      else res(success(data));
+    };
+    api.apiCustomEntitiesIdGet(id, callback);
+  });
+}

@@ -48,12 +48,17 @@
         });
         if (!error && data?.value) {
           const resolvedMap = new Map(
-            data.value.map((/** @type {{Id: string, Name?: string, name?: string}} */ r) => [
-              r.Id,
-              r.Name || r.name || r.Id,
-            ]),
+            data.value.map(
+              (/** @type {{Id: string, Name?: string, name?: string}} */ r) => [
+                r.Id,
+                r.Name || r.name || r.Id,
+              ],
+            ),
           );
-          selectOptions = ids.map((id) => ({ Id: id, Name: resolvedMap.get(id) || id }));
+          selectOptions = ids.map((id) => ({
+            Id: id,
+            Name: resolvedMap.get(id) || id,
+          }));
         }
       } catch {
         selectOptions = ids.map((id) => ({ Id: id, Name: id }));
@@ -69,9 +74,13 @@
         const existing = new Set(selectOptions.map((o) => o.Id));
         const added = [];
         for (const r of data.value) {
-          const record = /** @type {{Id: string, Name?: string, name?: string}} */ (r);
+          const record =
+            /** @type {{Id: string, Name?: string, name?: string}} */ (r);
           if (!existing.has(record.Id)) {
-            added.push({ Id: record.Id, Name: record.Name || record.name || record.Id });
+            added.push({
+              Id: record.Id,
+              Name: record.Name || record.name || record.Id,
+            });
           }
         }
         if (added.length > 0) {
@@ -86,7 +95,9 @@
 
 <div class="form-control" style="flex: 1; min-width: 0">
   {#if loading}
-    <span class="text-muted px-2 d-flex align-items-center h-100">Loading...</span>
+    <span class="text-muted px-2 d-flex align-items-center h-100"
+      >Loading...</span
+    >
   {:else}
     <Svelecte
       options={selectOptions.map((x) => ({ value: x.Id, text: x.Name }))}
