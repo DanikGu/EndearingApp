@@ -132,8 +132,9 @@
     const filter = convertToOdataFilter(rootQuery);
     if (filter) opts.filter = filter;
     if (fieldNames.length > 0) {
-      if (!fieldNames.includes("Id")) fieldNames = [...fieldNames, "Id"];
-      opts.select = fieldNames;
+      let selectFields = [...fieldNames];
+      if (!selectFields.includes("Id")) selectFields = [...selectFields, "Id"];
+      opts.select = selectFields;
     }
     if (expands.length > 0) {
       /** @type {Record<string, { select: string[] }>} */
@@ -202,6 +203,17 @@
     const id = aggregates.map((/** @type {any} */ a) => a.id).join(",");
     if (customEntity && id !== prevAggId && currentEntityName) {
       prevAggId = id;
+      if (!initializingInProgress) {
+        loadData();
+      }
+    }
+  });
+
+  let prevExpandId = $state("");
+  $effect(() => {
+    const id = expands.map((/** @type {any} */ e) => e.navigationProp).join(",");
+    if (customEntity && id !== prevExpandId && currentEntityName) {
+      prevExpandId = id;
       if (!initializingInProgress) {
         loadData();
       }
