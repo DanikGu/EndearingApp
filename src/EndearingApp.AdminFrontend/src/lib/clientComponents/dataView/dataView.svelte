@@ -74,6 +74,7 @@
     aggregates = $bindable(
       /** @type {{ id: string, label: string, collectionNavProp: string, sourceField: string, fn: string }[]} */ ([]),
     ),
+    view = $bindable(new ViewDescription()),
   } = $props();
 
   let tableKey = $state(new Date().toString());
@@ -99,9 +100,6 @@
 
   /** @type {ColumnDef[]} */
   let orderedColumns = $state([]);
-
-  /** @type {ViewDescription} */
-  let view = $state(new ViewDescription());
 
   $effect(() => {
     if (customEntity?.id) {
@@ -248,11 +246,57 @@
   let aggLabel = $state("");
   let aggError = $state("");
 
+  let editingAggId = $state(/** @type {string | null} */ (null));
+
   $effect(() => {
     if (showAggregateModal) {
+      editingAggId = null;
       aggCollectionNavProp = ""; aggSourceField = ""; aggFunction = "avg"; aggLabel = ""; aggError = "";
     }
   });
+
+  function startAddAggregate() {
+    aggCollectionNavProp = ""; aggSourceField = ""; aggFunction = "avg"; aggLabel = ""; aggError = "";
+    editingAggId = "new";
+  }
+
+  function startEditAggregate(/** @type {{ id: string, label: string, collectionNavProp: string, sourceField: string, fn: string }} */ agg) {
+    aggCollectionNavProp = agg.collectionNavProp;
+    aggSourceField = agg.sourceField;
+    aggFunction = agg.fn;
+    aggLabel = agg.label;
+    aggError = "";
+    editingAggId = agg.id;
+  }
+
+  function saveAggregate() {
+    aggError = "";
+    if (!aggCollectionNavProp) { aggError = "Select a collection"; return; }
+    if (!aggSourceField) { aggError = "Select a field to aggregate"; return; }
+    if (!aggLabel) { const fnLabel = AGGREGATE_FN_LABELS[aggFunction] || aggFunction; aggLabel = `${fnLabel} of ${aggSourceField}`; }
+    const current = aggregates || [];
+    if (editingAggId === "new") {
+      const newAgg = { id: crypto.randomUUID(), label: aggLabel, collectionNavProp: aggCollectionNavProp, sourceField: aggSourceField, fn: aggFunction };
+      view = new ViewDescription({ ...view, aggregates: [...current, newAgg] });
+    } else {
+      view = new ViewDescription({ ...view, aggregates: current.map((/** @type {any} */ a) => a.id === editingAggId ? { ...a, label: aggLabel, collectionNavProp: aggCollectionNavProp, sourceField: aggSourceField, fn: aggFunction } : a) });
+    }
+    editingAggId = null;
+    handleViewChange(view);
+  }
+
+  function removeAggregate(/** @type {string} */ id) {
+    view = new ViewDescription({ ...view, aggregates: (aggregates || []).filter((/** @type {any} */ a) => a.id !== id) });
+    handleViewChange(view);
+  }
+
+  function cancelAggForm() {
+    editingAggId = null;
+  }
+
+  function getCollectionLabel(/** @type {string} */ navProp) {
+    return collectionOptions.find((/** @type {any} */ o) => o.navProp === navProp)?.label || navProp;
+  }
 
   let collectionOptions = $derived((() => {
     /** @type {Map<string, { navProp: string, label: string, sourceEntityFields: any[] }>} */
@@ -387,17 +431,6 @@
     handleViewChange(view);
   }
 
-  function handleAddAggregate() {
-    aggError = "";
-    if (!aggCollectionNavProp) { aggError = "Select a collection"; return; }
-    if (!aggSourceField) { aggError = "Select a field to aggregate"; return; }
-    if (!aggLabel) { const fnLabel = AGGREGATE_FN_LABELS[aggFunction] || aggFunction; aggLabel = `${fnLabel} of ${aggSourceField}`; }
-    const newAgg = { id: crypto.randomUUID(), label: aggLabel, collectionNavProp: aggCollectionNavProp, sourceField: aggSourceField, fn: aggFunction };
-    view = new ViewDescription({ ...view, aggregates: [...(view.aggregates || []), newAgg] });
-    showAggregateModal = false;
-    handleViewChange(view);
-  }
-
   let fields_derived = $derived(customEntity?.fields || []);
   let relationships_derived = $derived(customEntity?.relationships || []);
 
@@ -407,9 +440,11 @@
   $effect(() => { const parts = orderBy?.split(" ") || []; sortField = parts[0] || ""; sortDir = parts[1] || "asc"; });
 
   function handleSort(/** @type {any} */ col) {
-    if (col.type !== "field" || !col.fieldName || col.isMultiSelect) return;
-    if (sortField === col.fieldName) sortDir = sortDir === "asc" ? "desc" : "asc";
-    else { sortField = col.fieldName; sortDir = "asc"; }
+    const sortId = col.type === "aggregate" ? col.id : col.fieldName;
+    if (!sortId) return;
+    if (col.type === "field" && (col.isMultiSelect || !col.fieldName)) return;
+    if (sortField === sortId) sortDir = sortDir === "asc" ? "desc" : "asc";
+    else { sortField = sortId; sortDir = "asc"; }
     onSortChange?.(`${sortField} ${sortDir}`);
   }
 
@@ -491,7 +526,7 @@
   <div class="d-flex gap-2">
     <Button outline onclick={() => (showColumnManager = true)}>Manage Columns</Button>
     <Button outline onclick={() => (showFilterModal = true)}>Edit Filters</Button>
-    <Button outline onclick={() => (showAggregateModal = true)}>Add Aggregate</Button>
+    <Button outline onclick={() => (showAggregateModal = true)}>Manage Aggregates</Button>
   </div>
 </div>
 
@@ -557,45 +592,72 @@
   </ModalFooter>
 </Modal>
 
-<!-- ═══ ADD AGGREGATE MODAL ═══ -->
+<!-- ═══ MANAGE AGGREGATES MODAL ═══ -->
 <Modal isOpen={showAggregateModal} toggle={() => (showAggregateModal = false)} size="md">
-  <ModalHeader toggle={() => (showAggregateModal = false)}>Add Aggregate Column</ModalHeader>
+  <ModalHeader toggle={() => (showAggregateModal = false)}>Manage Aggregate Columns</ModalHeader>
   <ModalBody>
-    {#if collectionOptions.length === 0}
-      <div class="alert alert-info">No collection (one-to-many) relationships available for this entity. Add relationships first.</div>
-    {:else}
-      <div class="mb-3">
-        <label class="form-label" for="agg-collection">Collection (Child Entity)</label>
-        <select class="form-select" id="agg-collection" bind:value={aggCollectionNavProp}>
-          <option value="">-- Select --</option>
-          {#each collectionOptions as opt (opt.navProp)}<option value={opt.navProp}>{opt.label}</option>{/each}
-        </select>
-      </div>
-      {#if aggCollectionNavProp}
+    {#if editingAggId !== null}
+      {#if collectionOptions.length === 0}
+        <div class="alert alert-info">No collection (one-to-many) relationships available for this entity.</div>
+      {:else}
         <div class="mb-3">
-          <label class="form-label" for="agg-field">Field to Aggregate</label>
-          <select class="form-select" id="agg-field" bind:value={aggSourceField}>
+          <label class="form-label" for="agg-collection">Collection (Child Entity)</label>
+          <select class="form-select" id="agg-collection" bind:value={aggCollectionNavProp}>
             <option value="">-- Select --</option>
-            {#each childFieldOptions as f (f.name)}<option value={f.name}>{f.label}</option>{/each}
+            {#each collectionOptions as opt (opt.navProp)}<option value={opt.navProp}>{opt.label}</option>{/each}
           </select>
         </div>
-        <div class="mb-3">
-          <label class="form-label" for="agg-fn">Function</label>
-          <select class="form-select" id="agg-fn" bind:value={aggFunction}>
-            <option value="sum">Sum</option><option value="avg">Average</option><option value="count">Count</option><option value="min">Min</option><option value="max">Max</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label class="form-label" for="agg-label">Column Label</label>
-          <input class="form-control" id="agg-label" bind:value={aggLabel} placeholder="Auto-generated if empty" />
-        </div>
+        {#if aggCollectionNavProp}
+          <div class="mb-3">
+            <label class="form-label" for="agg-field">Field to Aggregate</label>
+            <select class="form-select" id="agg-field" bind:value={aggSourceField}>
+              <option value="">-- Select --</option>
+              {#each childFieldOptions as f (f.name)}<option value={f.name}>{f.label}</option>{/each}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="agg-fn">Function</label>
+            <select class="form-select" id="agg-fn" bind:value={aggFunction}>
+              <option value="sum">Sum</option><option value="avg">Average</option><option value="count">Count</option><option value="min">Min</option><option value="max">Max</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="agg-label">Column Label</label>
+            <input class="form-control" id="agg-label" bind:value={aggLabel} placeholder="Auto-generated if empty" />
+          </div>
+        {/if}
+        {#if aggError}<div class="alert alert-danger">{aggError}</div>{/if}
       {/if}
-      {#if aggError}<div class="alert alert-danger">{aggError}</div>{/if}
+      <div class="d-flex gap-2 mt-3">
+        <Button color="primary" onclick={saveAggregate}>{editingAggId === "new" ? "Add" : "Update"}</Button>
+        <Button color="secondary" onclick={cancelAggForm}>Cancel</Button>
+      </div>
+    {:else}
+      {#if !aggregates || aggregates.length === 0}
+        <div class="text-muted mb-3">No aggregate columns defined.</div>
+      {:else}
+        {#each aggregates as agg (agg.id)}
+          <div class="d-flex justify-content-between align-items-center p-3 border rounded mb-2">
+            <div>
+              <div class="fw-bold">{agg.label}</div>
+              <div class="small text-muted">
+                {getCollectionLabel(agg.collectionNavProp)} → {agg.sourceField} ({agg.fn})
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              <Button size="sm" outline onclick={() => startEditAggregate(agg)}>Edit</Button>
+              <Button size="sm" outline color="danger" onclick={() => removeAggregate(agg.id)}>Remove</Button>
+            </div>
+          </div>
+        {/each}
+      {/if}
+      {#if collectionOptions.length > 0}
+        <Button outline onclick={startAddAggregate}>+ Add Aggregate</Button>
+      {/if}
     {/if}
   </ModalBody>
   <ModalFooter>
-    <Button color="primary" onclick={handleAddAggregate}>Add</Button>
-    <Button color="secondary" onclick={() => (showAggregateModal = false)}>Cancel</Button>
+    <Button color="secondary" onclick={() => (showAggregateModal = false)}>Done</Button>
   </ModalFooter>
 </Modal>
 
@@ -607,10 +669,10 @@
         <tr>
           {#each orderedColumns as col (col.id)}
             <th class="whitespace-nowrap" title={col.id}>
-              {#if col.type === "field" && col.fieldName && !col.isMultiSelect}
+              {#if (col.type === "field" && col.fieldName && !col.isMultiSelect) || col.type === "aggregate"}
                 <button class="btn btn-link btn-sm p-0 text-decoration-none fw-bold" onclick={() => handleSort(col)}>
                   {col.label}
-                  {#if sortField === col.fieldName}<span class="ms-1">{sortDir === "asc" ? "▲" : "▼"}</span>{/if}
+                  {#if sortField === (col.type === "aggregate" ? col.id : col.fieldName)}<span class="ms-1">{sortDir === "asc" ? "▲" : "▼"}</span>{/if}
                 </button>
               {:else}
                 {col.label}

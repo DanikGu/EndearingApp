@@ -77,6 +77,51 @@ describe('ViewDescription', () => {
     expect(child0.field).toBe('Age');
   });
 
+  it('round-trips full view through JSON for localStorage caching', () => {
+    const vd = new ViewDescription({
+      entityId: 'Animal',
+      columns: [
+        { id: '6e95f14d-...', type: 'field', label: 'Name', fieldName: 'Name', isNameField: true },
+        { id: 'a3fc8c72-...', type: 'expand', label: 'Visitor.Name', fieldName: 'Name', navigationProp: 'VisitorId_Etn', targetEntityName: 'Visitor' },
+        { id: 'agg-1', type: 'aggregate', label: 'Count of TicketPrice', fieldName: 'TicketPrice', collectionNavProp: 'FK_Visitor_Animal_EtnColl', sourceField: 'TicketPrice', aggregateFn: 'count' },
+      ],
+      aggregates: [
+        { id: 'agg-1', label: 'Count of TicketPrice', collectionNavProp: 'FK_Visitor_Animal_EtnColl', sourceField: 'TicketPrice', fn: 'count' },
+      ],
+      filter: { operator: 'and', children: [] },
+      orderBy: 'agg-1 desc',
+      pageSize: 50,
+    });
+
+    const json = vd.toJSON();
+    const restored = ViewDescription.fromJSON(json);
+
+    expect(restored.entityId).toBe('Animal');
+    expect(restored.columns).toHaveLength(3);
+    expect(restored.columns[0].isNameField).toBe(true);
+    expect(restored.columns[1].navigationProp).toBe('VisitorId_Etn');
+    expect(restored.columns[2].aggregateFn).toBe('count');
+    expect(restored.aggregates).toHaveLength(1);
+    expect(restored.aggregates[0].fn).toBe('count');
+    expect(restored.orderBy).toBe('agg-1 desc');
+    expect(restored.pageSize).toBe(50);
+    const v = restored.validate();
+    expect(v.valid).toBe(true);
+  });
+
+  it('round-trips with null filter', () => {
+    const vd = new ViewDescription({
+      entityId: 'EmptyEntity',
+      columns: [{ id: 'c1', type: 'field', label: 'Id', fieldName: 'Id' }],
+      orderBy: 'createdon asc',
+    });
+
+    const json = vd.toJSON();
+    expect(json.filter).toBeNull();
+    const restored = ViewDescription.fromJSON(json);
+    expect(restored.filter).toBeNull();
+  });
+
   describe('validate', () => {
     it('returns valid for empty but valid view', () => {
       const vd = new ViewDescription({ entityId: 'abc' });

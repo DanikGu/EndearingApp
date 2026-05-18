@@ -34,23 +34,14 @@
     });
   });
 
-  /** @type {Field[]} */
-  let selectedTableFields = $state([]);
-
-  $effect(() => {
-    let newFields = [];
-    if (customEntityId && customEntities.length > 0) {
-      const entity = customEntities.find((x) => x.id === customEntityId);
-      if (entity && entity.fields) {
-        newFields = entity.fields.map((/** @type {FieldDto} */ item) => {
-          return {
-            name: item.name,
-            displayName: item.displayName,
-          };
-        });
-      }
-    }
-    selectedTableFields = newFields;
+  let selectedTableFields = $derived.by(() => {
+    if (!customEntityId || customEntities.length === 0) return [];
+    const entity = customEntities.find((x) => x.id === customEntityId);
+    if (!entity || !entity.fields) return [];
+    return entity.fields.map((/** @type {FieldDto} */ item) => ({
+      name: item.name,
+      displayName: item.displayName,
+    }));
   });
 </script>
 

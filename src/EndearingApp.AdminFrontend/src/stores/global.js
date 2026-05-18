@@ -2,6 +2,7 @@ import { writable, get } from 'svelte/store';
 import { browser } from '$app/environment';
 import { CustomEntitiesApi, OptionSetDefinitionsApi, SettingsApi, FormApi } from '@apiclients';
 import { alertError } from '@utils/uiutils';
+import ViewDescription from '$lib/clientComponents/dataView/viewDescription';
 
 /** @typedef {import('../apiclient/src/model/CustomeEntityDTO').default} CustomEntity */
 /** @typedef {import('../apiclient/src/model/OptionSetDefinitionDTO').default} OptionSetDefinition */
@@ -347,21 +348,8 @@ export function getTypesArray() {
   });
 }
 
-/**
- * @typedef {Object} ViewDefinition
- * @property {string} id
- * @property {string} name
- * @property {string} displayName
- * @property {string} entityId
- * @property {Object|null} filter
- * @property {string} orderBy
- * @property {string[]} columns
- * @property {number} pageSize
- * @property {{id: string, label: string, collectionNavProp: string, sourceField: string, fn: string}[]} aggregates
- */
-
-/** @type {import('svelte/store').Writable<Record<string, ViewDefinition>>} */
-export const views = writable(/** @type {Record<string, ViewDefinition>} */({}));
+/** @type {import('svelte/store').Writable<Record<string, any>>} */
+export const views = writable(/** @type {Record<string, any>} */({}));
 
 const VIEWS_STORAGE_KEY = 'endearing_views';
 
@@ -377,37 +365,21 @@ if (browser) {
   });
 }
 
-const DEFAULT_VIEW_ID = '00000000-0000-0000-0000-000000000000';
-
 /** @param {string} entityName
- *  @returns {ViewDefinition} */
-export function getDefaultView(entityName) {
-  return {
-    id: DEFAULT_VIEW_ID,
-    name: 'Default',
-    displayName: 'Default View',
-    entityId: entityName,
-    filter: null,
-    orderBy: 'createdon desc',
-    columns: [],
-    pageSize: 25,
-    aggregates: [],
-  };
-}
-
-/** @param {string} entityName
- *  @returns {ViewDefinition} */
+ *  @returns {ViewDescription} */
 export function getView(entityName) {
   const current = get(views);
-  return current[entityName] || getDefaultView(entityName);
+  const stored = current[entityName];
+  if (stored) return ViewDescription.fromJSON(stored);
+  return new ViewDescription({ entityId: entityName });
 }
 
 /** @param {string} entityName
- *  @param {Partial<ViewDefinition>} updates */
-export function saveView(entityName, updates) {
+ *  @param {ViewDescription} viewDescription */
+export function saveView(entityName, viewDescription) {
+  const json = typeof viewDescription.toJSON === 'function' ? viewDescription.toJSON() : viewDescription;
   views.update(current => {
-    const existing = current[entityName] || getDefaultView(entityName);
-    current[entityName] = { ...existing, ...updates };
+    current[entityName] = json;
     return current;
   });
 }

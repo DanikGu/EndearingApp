@@ -2,6 +2,7 @@
   import { page as pageStore } from "$app/stores";
   import { getCustomEntities, getView, saveView, getTypeConfig } from "@stores/global";
   import DataView from "$lib/clientComponents/dataView/dataView.svelte";
+  import ViewDescription from "$lib/clientComponents/dataView/viewDescription";
   import { fetchEntities } from "$lib/api/odata";
   import { convertToOdataFilter } from "$lib/clientComponents/queryBuilder/logic/queryToOdataUrlParams";
   import {
@@ -72,6 +73,9 @@
   /** @type {ConditionGroup} */
   let rootQuery = $state(new ConditionGroup("and", []));
 
+  /** @type {ViewDescription} */
+  let viewDescription = $state(new ViewDescription());
+
   let currentEntityName = $state("");
   let initializingInProgress = false;
 
@@ -103,10 +107,11 @@
       const view = getView(found.name);
       if (view.orderBy) orderBy = view.orderBy;
       if (view.pageSize) pageSize = view.pageSize;
-      if (view.columns?.length)
-        fieldNames = view.columns.filter(
-          (/** @type {string} */ c) => c !== "Id",
-        );
+      if (view.columns?.length) {
+        fieldNames = view.columns
+          .filter((/** @type {any} */ c) => c.type === "field" && c.fieldName && c.fieldName !== "Id")
+          .map((/** @type {any} */ c) => c.fieldName);
+      }
       if (view.aggregates?.length) aggregates = view.aggregates;
       if (view.filter) {
         try {
@@ -120,15 +125,32 @@
     }
   }
 
+  /** @param {any} row @param {any} agg */
+  function computeAggregateValue(row, agg) {
+    const children = row[agg.collectionNavProp];
+    if (!children || !Array.isArray(children) || children.length === 0) return 0;
+    const values = children.map((/** @type {any} */ c) => Number(c[agg.sourceField])).filter((/** @type {any} */ v) => !isNaN(v));
+    if (values.length === 0) return 0;
+    switch (agg.fn) {
+      case "sum": return values.reduce((/** @type {number} */ a, /** @type {number} */ b) => a + b, 0);
+      case "avg": return values.reduce((/** @type {number} */ a, /** @type {number} */ b) => a + b, 0) / values.length;
+      case "count": return values.length;
+      case "min": return Math.min(...values);
+      case "max": return Math.max(...values);
+      default: return 0;
+    }
+  }
+
   async function loadData() {
     if (!customEntity) return;
+    const isAggOrder = aggregates.some((/** @type {any} */ a) => a.id === orderBy.split(" ")[0]);
     const opts =
-      /** @type {{ top: number, skip: number, orderBy: string, count: boolean, filter?: string, select?: string[], expand?: Record<string, { select: string[] }> }} */ ({
+      /** @type {{ top: number, skip: number, orderBy?: string, count: boolean, filter?: string, select?: string[], expand?: Record<string, { select: string[] }> }} */ ({
         top: pageSize,
         skip: pageSize * (page - 1),
-        orderBy,
         count: true,
       });
+    if (!isAggOrder) opts.orderBy = orderBy;
     const filter = convertToOdataFilter(rootQuery);
     if (filter) opts.filter = filter;
     if (fieldNames.length > 0) {
@@ -157,44 +179,37 @@
         result["@odata.count"] || result["@odata.count"]?.toString
           ? Number(result["@odata.count"])
           : (result.value || []).length;
+      if (isAggOrder) {
+        const [sortField, sortDir] = orderBy.split(" ");
+        const agg = aggregates.find((/** @type {any} */ a) => a.id === sortField);
+        if (agg) {
+          const multiplier = sortDir === "desc" ? -1 : 1;
+          data = [...data].sort((/** @type {any} */ a, /** @type {any} */ b) => {
+            return (computeAggregateValue(a, agg) - computeAggregateValue(b, agg)) * multiplier;
+          });
+        }
+      }
     }
   }
 
   function handleSort(/** @type {string} */ newOrderBy) {
     orderBy = newOrderBy;
     page = 1;
-    saveView(customEntity?.name || "", { orderBy, pageSize });
     loadData();
   }
 
   function handleRefresh() {
-    saveView(customEntity?.name || "", {
-      orderBy,
-      pageSize,
-      filter: rootQuery ? JSON.parse(JSON.stringify(rootQuery)) : null,
-    });
     loadData();
   }
 
   function handleFiltersDone() {
-    saveView(customEntity?.name || "", {
-      orderBy,
-      pageSize,
-      filter: rootQuery ? JSON.parse(JSON.stringify(rootQuery)) : null,
-    });
     page = 1;
     loadData();
   }
 
   $effect(() => {
     if (customEntity && customEntity.name === currentEntityName && !initializingInProgress) {
-      saveView(customEntity.name, {
-        orderBy,
-        pageSize,
-        columns: fieldNames,
-        aggregates,
-        filter: rootQuery ? JSON.parse(JSON.stringify(rootQuery)) : null,
-      });
+      saveView(customEntity.name, viewDescription);
     }
   });
 
@@ -235,6 +250,7 @@
       bind:totalCount
       bind:orderBy
       bind:aggregates
+      bind:view={viewDescription}
       onSortChange={handleSort}
       onRefresh={handleRefresh}
       onFiltersDone={handleFiltersDone}

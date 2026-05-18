@@ -123,54 +123,163 @@ async function main() {
     assert(aft.length === bef.length, `Col count changed: ${bef.length} -> ${aft.length}`);
     log('  ✓ Save preserves columns');
 
-    // ── Phase 4: Aggregate ──
-    log('\n--- Aggregate ---');
+    // ── Phase 4: Aggregate CRUD ──
+    log('\n--- Aggregate CRUD ---');
     const aggBef = (await page.locator('table thead th').allTextContents()).map(h=>h.trim());
 
-    await page.getByRole('button', { name: /Add Aggregate/i }).click();
+    // 4a. Open Manage Aggregates modal
+    await page.getByRole('button', { name: /Manage Aggregates/i }).click();
     await sleep(600);
     await page.waitForSelector('.modal.show', { timeout: 3000 }).catch(()=>{});
     await sleep(300);
 
-    // Select collection
     const aggModal = page.locator('.modal.show');
-    const sel0 = aggModal.locator('select#agg-collection');
-    if (await sel0.isVisible({timeout:2000}).catch(()=>false)) {
-      const cOpts = await sel0.locator('option').evaluateAll(els => els.map(el => el.getAttribute('value')));
-      const valid = cOpts.filter(v => v && v.trim());
-      if (valid.length > 0) {
-        await sel0.selectOption(valid[0]); await sleep(800);
 
-        const sel1 = aggModal.locator('select#agg-field');
-        await sel1.waitFor({ state: 'attached', timeout: 3000 }).catch(()=>{});
-        await sleep(500);
+    // 4b. Check for empty state list (no aggregates yet)
+    const noAggMsg = await aggModal.locator('text=No aggregate columns defined').isVisible({timeout:2000}).catch(()=>false);
+    if (noAggMsg) log('  ✓ Empty state shown');
+    else log('  (aggregates may exist from previous test data)');
 
-        const fOpts = await sel1.locator('option').evaluateAll(els => els.map(el => el.getAttribute('value')));
-        const validF = fOpts.filter(v => v && v.trim());
-        if (validF.length > 0) {
-          await sel1.selectOption(validF[0]); await sleep(300);
+    // 4c. Click "+ Add Aggregate" to add form
+    const addBtn = aggModal.locator('button:has-text("+ Add Aggregate")');
+    if (await addBtn.isVisible({timeout:2000}).catch(()=>false)) {
+      await addBtn.click(); await sleep(600);
+
+      const sel0 = aggModal.locator('select#agg-collection');
+      if (await sel0.isVisible({timeout:2000}).catch(()=>false)) {
+        const cOpts = await sel0.locator('option').evaluateAll(els => els.map(el => el.getAttribute('value')));
+        const valid = cOpts.filter(v => v && v.trim());
+        if (valid.length > 0) {
+          await sel0.selectOption(valid[0]); await sleep(800);
+
+          const sel1 = aggModal.locator('select#agg-field');
+          await sel1.waitFor({ state: 'attached', timeout: 3000 }).catch(()=>{});
+          await sleep(500);
+
+          const fOpts = await sel1.locator('option').evaluateAll(els => els.map(el => el.getAttribute('value')));
+          const validF = fOpts.filter(v => v && v.trim());
+          if (validF.length > 0) {
+            await sel1.selectOption(validF[0]); await sleep(300);
+          }
+
+          const sel2 = aggModal.locator('select#agg-fn');
+          if (await sel2.isVisible({timeout:1000}).catch(()=>false)) {
+            await sel2.selectOption('count'); await sleep(100);
+          }
+
+          // Fill label
+          const lblInput = aggModal.locator('input#agg-label');
+          if (await lblInput.isVisible({timeout:1000}).catch(()=>false)) {
+            await lblInput.fill('TestCount'); await sleep(100);
+          }
+
+          // Click Add
+          await aggModal.locator('button:has-text("Add")').click();
+          await sleep(800);
+
+          // Should be back in list view - check the new aggregate is shown
+          const listItems = await aggModal.locator('.fw-bold').allTextContents();
+          if (listItems.some(t => t.includes('TestCount'))) {
+            log('  ✓ Added aggregate appears in list');
+          } else {
+            log('  ! Aggregate not in list after add');
+          }
         }
+      }
+    }
 
-        const sel2 = aggModal.locator('select#agg-fn');
-        if (await sel2.isVisible({timeout:1000}).catch(()=>false)) {
-          await sel2.selectOption('count'); await sleep(100);
-        }
+    // 4d. Edit the aggregate - change label
+    const editBtn = aggModal.locator('button:has-text("Edit")').first();
+    if (await editBtn.isVisible({timeout:2000}).catch(()=>false)) {
+      await editBtn.click(); await sleep(600);
 
-        await aggModal.locator('button:has-text("Add")').click();
-        await sleep(2500);
+      const lblInput = aggModal.locator('input#agg-label');
+      if (await lblInput.isVisible({timeout:1000}).catch(()=>false)) {
+        await lblInput.fill('EditedCount'); await sleep(100);
+      }
 
-        const aggAft = (await page.locator('table thead th').allTextContents()).map(h=>h.trim());
-        log(`  After: ${aggAft.length} cols`);
-        const newCols = aggAft.filter(h => !aggBef.includes(h));
-        if (newCols.length > 0) {
-          log(`  ✓ Aggregate columns added: ${newCols.join(', ')}`);
-        } else if (aggAft.length > aggBef.length) {
-          log('  ✓ Aggregate column added');
-        } else {
-          log('  ! No new column');
-        }
+      await aggModal.locator('button:has-text("Update")').click();
+      await sleep(600);
+
+      const listItems = await aggModal.locator('.fw-bold').allTextContents();
+      if (listItems.some(t => t.includes('EditedCount'))) {
+        log('  ✓ Edit reflected in list');
       } else {
-        log('  No collection options');
+        log('  ! Edit not reflected');
+      }
+    }
+
+    // 4e. Remove the aggregate
+    const removeBtn = aggModal.locator('button:has-text("Remove")').first();
+    if (await removeBtn.isVisible({timeout:2000}).catch(()=>false)) {
+      await removeBtn.click(); await sleep(800);
+
+      const noAggAfterRemove = await aggModal.locator('text=No aggregate columns defined').isVisible({timeout:2000}).catch(()=>false);
+      if (noAggAfterRemove) {
+        log('  ✓ Remove removes aggregate from list');
+      } else {
+        log('  ! Aggregate still in list after remove');
+      }
+    }
+
+    // 4f. Add aggregate back and verify in table
+    const addBtn2 = aggModal.locator('button:has-text("+ Add Aggregate")');
+    if (await addBtn2.isVisible({timeout:2000}).catch(()=>false)) {
+      await addBtn2.click(); await sleep(600);
+      const sel0 = aggModal.locator('select#agg-collection');
+      if (await sel0.isVisible({timeout:2000}).catch(()=>false)) {
+        const cOpts = await sel0.locator('option').evaluateAll(els => els.map(el => el.getAttribute('value')));
+        const valid = cOpts.filter(v => v && v.trim());
+        if (valid.length > 0) {
+          await sel0.selectOption(valid[0]); await sleep(800);
+          const sel1 = aggModal.locator('select#agg-field');
+          await sel1.waitFor({ state: 'attached', timeout: 3000 }).catch(()=>{});
+          await sleep(500);
+          const fOpts = await sel1.locator('option').evaluateAll(els => els.map(el => el.getAttribute('value')));
+          const validF = fOpts.filter(v => v && v.trim());
+          if (validF.length > 0) await sel1.selectOption(validF[0]);
+          await aggModal.locator('input#agg-label').fill('SortTest'); await sleep(100);
+          await aggModal.locator('button:has-text("Add")').click();
+          await sleep(800);
+        }
+      }
+    }
+
+    // Close modal
+    await aggModal.locator('.modal-footer button:has-text("Done")').click();
+    await sleep(1500);
+
+    // 4g. Verify aggregate column in table
+    const aggAft = (await page.locator('table thead th').allTextContents()).map(h=>h.trim());
+    const newCols = aggAft.filter(h => !aggBef.includes(h));
+    if (newCols.length > 0) {
+      log(`  ✓ Aggregate columns in table: ${newCols.join(', ')}`);
+    } else {
+      log('  ! No new column in table');
+    }
+
+    // 4h. Test aggregate column sorting
+    const sortColIdx = aggAft.findIndex(h => h.includes('SortTest') || h.includes('Count'));
+    if (sortColIdx >= 0) {
+      log('  Testing aggregate sort...');
+      const sortBtn = page.locator(`table thead th`).nth(sortColIdx).locator('button');
+      if (await sortBtn.isVisible({timeout:2000}).catch(()=>false)) {
+        // Get initial values
+        const getVals = async () => {
+          const cells = await page.locator(`table tbody tr td:nth-child(${sortColIdx + 1})`).allTextContents();
+          return cells.map(c => c.trim()).filter(c => c);
+        };
+        const v1 = await getVals();
+
+        // Click to sort
+        await sortBtn.click(); await sleep(2000);
+        const v2 = await getVals();
+
+        if (v1.length > 0 && v2.length > 0 && v1.join() !== v2.join()) {
+          log('  ✓ Aggregate sort changed row order');
+        } else if (v1.length > 0) {
+          log('  (sort may not have changed order if values are identical)');
+        }
       }
     }
 

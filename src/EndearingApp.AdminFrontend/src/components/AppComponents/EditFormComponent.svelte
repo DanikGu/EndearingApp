@@ -17,6 +17,8 @@
    * @property {FormDTO} form
    * @property {Function | null} [onAfterSave]
    * @property {Function | null} [onAfterDelete]
+   * @property {Function | null} [onSaveAndClose]
+   * @property {(() => void) | null} [triggerSaveAndClose]
    */
 
   /** @type {Props} */
@@ -25,7 +27,11 @@
     form = $bindable(),
     onAfterSave = null,
     onAfterDelete = null,
+    onSaveAndClose = null,
+    triggerSaveAndClose = $bindable(/** @type {(() => void) | null} */ (null)),
   } = $props();
+
+  let willCloseAfterSave = false;
 
   /** @type {HTMLElement | undefined} */
   let formElem = $state();
@@ -204,6 +210,10 @@
         // @ts-ignore
         formioForm.nosubmit = true;
       }
+      triggerSaveAndClose = () => {
+        willCloseAfterSave = true;
+        formioForm?.emit("EntitySave");
+      };
       // @ts-ignore
       formioForm?.on("EntityDelete", async function (eventData) {
         await delteCurrentEntity();
@@ -247,6 +257,10 @@
             }
             if (onAfterSave) {
               onAfterSave(entityData);
+            }
+            if (willCloseAfterSave) {
+              willCloseAfterSave = false;
+              onSaveAndClose?.();
             }
           } catch (ex) {
             console.log(ex);

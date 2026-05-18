@@ -21,13 +21,20 @@
       `/app/${appIdParam}/${entityParam}/edit/${entityIdParam}?form=${newFormId}`,
     );
   };
+
+  let saveAndCloseFn = $state(/** @type {(() => void) | null} */ (null));
 </script>
 
 <div class="p-3">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <button class="btn btn-outline-secondary" onclick={goBack}>
-      ← Back to {entityParam}
-    </button>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary" onclick={goBack}>
+        ← Back to {entityParam}
+      </button>
+      <button class="btn btn-primary" disabled={!saveAndCloseFn} onclick={() => saveAndCloseFn?.()}>
+        Save &amp; Close
+      </button>
+    </div>
     {#if forms.length > 1}
       <div class="d-flex align-items-center gap-2">
         <span class="small text-muted">Form:</span>
@@ -48,7 +55,8 @@
   <EditFormComponent
     bind:form={data.form}
     bind:entityData={data.entityData}
-    onAfterSave={() => goBack()}
     onAfterDelete={() => goBack()}
+    onSaveAndClose={() => goBack()}
+    bind:triggerSaveAndClose={saveAndCloseFn}
   />
 </div>

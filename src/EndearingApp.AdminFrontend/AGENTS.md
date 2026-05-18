@@ -13,6 +13,13 @@
 - Use stores in `stores/global.js` for metadata (custom entities, option sets, forms, type config)
 - Ensure cached data with `ensure*()` functions before using
 - Pass store values via `$storeName` auto-subscription or `get(storeName)`
+- View state is cached in `stores/global.js` via ViewDescription serialization (toJSON/fromJSON)
+
+## Metadata in Stores
+- Metadata (custom entities, option sets, forms, type config) lives in stores — not passed as props between components
+- Components read metadata from stores directly (via `get*` helpers or `$` auto-subscription)
+- Do NOT pass full `customEntity`, `allEntities`, `optionSetDefs` arrays as props — each component fetches from the store
+- Exception: ViewDescription is passed as a prop-sized object containing only view state, not full metadata
 
 ## OData
 - Use `odata-query` library (`buildQuery` from `odata-query`) for filter construction
