@@ -187,7 +187,7 @@
 
 <InputGroup class="p-0 pt-1" data-qb-group="">
   <div style="flex: 1 1 0; min-width: 0; display: flex;">
-    <select class="form-select" style="flex: 1; min-width: 0" onchange={(e) => onFieldChange(e)}>
+    <select class="form-select" style="flex: 1; min-width: 0" value={condition.field} onchange={(e) => onFieldChange(e)}>
       <option value="">Select Field...</option>
       {#each fields as field}
         <option value={field.name}>{field.displayName}</option>

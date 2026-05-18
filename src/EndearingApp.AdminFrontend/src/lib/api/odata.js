@@ -12,7 +12,7 @@ const API_BASE = '/api/odata';
  * @property {number} [skip]
  * @property {string|string[]} [orderBy]
  * @property {boolean} [count] - Include @odata.count in response
- * @property {Object|Object[]} [transform] - OData $apply transform (aggregate, groupBy, filter)
+ * @property {Object|Object[]} [transform] - OData $apply transform (aggregate, groupBy, filter, compute)
  */
 
 /**

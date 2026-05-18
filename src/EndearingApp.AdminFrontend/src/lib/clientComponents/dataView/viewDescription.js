@@ -1,4 +1,5 @@
-import { ConditionGroup } from '../queryBuilder/logic/typeDefinitions';
+import { ConditionGroup, Condition } from '../queryBuilder/logic/typeDefinitions';
+import { convertToOdataFilter } from '../queryBuilder/logic/queryToOdataUrlParams';
 
 /**
  * @typedef {'field' | 'expand' | 'aggregate'} ColumnType
@@ -94,6 +95,48 @@ export class ViewDescription {
   }
 
   /**
+   * Build OData query options from this view descriptor.
+   * @param {number} page - Current page number (1-based)
+   * @returns {{ top: number, skip: number, orderBy?: string, count: boolean, filter?: string, select?: string[], expand?: Record<string, { select: string[] }> }}
+   */
+  buildQueryOptions(page) {
+    /** @type {{ top: number, skip: number, orderBy?: string, count: boolean, filter?: string, select?: string[], expand?: Record<string, { select: string[] }> }} */
+    const opts = {
+      top: this.pageSize,
+      skip: this.pageSize * (page - 1),
+      count: true,
+      orderBy: this.orderBy,
+    };
+
+    const revivedFilter = reviveConditionGroup(this.filter);
+    const filterStr = convertToOdataFilter(revivedFilter);
+    if (filterStr) opts.filter = filterStr;
+
+    const selectFields = (this.columns || [])
+      .filter(/** @type {any} */(c) => c.type === 'field' && c.fieldName)
+      .map(/** @type {any} */(c) => /** @type {string} */(c.fieldName));
+    if (selectFields.length > 0) {
+      if (!selectFields.includes('Id')) selectFields.push('Id');
+      opts.select = selectFields;
+    }
+
+    const expandObj = buildExpandsFromColumns(this.columns || [], this.aggregates || []);
+    if (Object.keys(expandObj).length > 0) opts.expand = expandObj;
+
+    return opts;
+  }
+
+  /**
+   * Derive field names from columns.
+   * @returns {string[]}
+   */
+  get fieldNames() {
+    return (this.columns || [])
+      .filter(/** @type {any} */(c) => c.type === 'field' && c.fieldName)
+      .map(/** @type {any} */(c) => /** @type {string} */(c.fieldName));
+  }
+
+  /**
    * Validate the view description.
    * @returns {{ valid: boolean, errors: string[] }}
    */
@@ -148,6 +191,54 @@ export class ViewDescription {
       if (!node.operation) errors.push(`Filter condition on "${node.field}" missing operation`);
     }
   }
+}
+
+/** @param {any} obj @returns {ConditionGroup} */
+function reviveConditionGroup(obj) {
+  if (!obj || typeof obj !== "object") return new ConditionGroup("and", []);
+  if (obj.children && Array.isArray(obj.children) && (obj.operator === "and" || obj.operator === "or")) {
+    const group = new ConditionGroup(obj.operator, []);
+    group.children = obj.children.map((/** @type {any} */ child) => {
+      if (child && child.children && Array.isArray(child.children) && (child.operator === "and" || child.operator === "or")) {
+        return reviveConditionGroup(child);
+      }
+      if (child && typeof child.field === "string" && typeof child.operation === "string") {
+        return new Condition(child.field, child.operation, child.value, child.fieldDto || null);
+      }
+      return child;
+    });
+    return group;
+  }
+  return new ConditionGroup("and", []);
+}
+
+/**
+ * @param {import('./viewDescription.js').ColumnDef[]} columns
+ * @param {import('./viewDescription.js').AggregateDef[]} aggregates
+ * @returns {Record<string, { select: string[] }>}
+ */
+function buildExpandsFromColumns(columns, aggregates) {
+  /** @type {Record<string, { navigationProp: string, select: string[] }>} */
+  const expandMap = {};
+  for (const col of columns) {
+    if (col.type === "expand" && col.navigationProp && col.fieldName) {
+      if (!expandMap[col.navigationProp]) expandMap[col.navigationProp] = { navigationProp: col.navigationProp, select: [] };
+      if (!expandMap[col.navigationProp].select.includes(col.fieldName)) expandMap[col.navigationProp].select.push(col.fieldName);
+    }
+    if (col.type === "field" && col.lookupNavProp) {
+      if (!expandMap[col.lookupNavProp]) expandMap[col.lookupNavProp] = { navigationProp: col.lookupNavProp, select: ["Id", "Name"] };
+    }
+    if (col.type === "aggregate" && col.collectionNavProp && col.sourceField) {
+      if (!expandMap[col.collectionNavProp]) expandMap[col.collectionNavProp] = { navigationProp: col.collectionNavProp, select: [] };
+      if (!expandMap[col.collectionNavProp].select.includes(col.sourceField)) expandMap[col.collectionNavProp].select.push(col.sourceField);
+    }
+  }
+  /** @type {Record<string, { select: string[] }>} */
+  const result = {};
+  for (const ex of Object.values(expandMap)) {
+    result[ex.navigationProp] = { select: ex.select };
+  }
+  return result;
 }
 
 export default ViewDescription;

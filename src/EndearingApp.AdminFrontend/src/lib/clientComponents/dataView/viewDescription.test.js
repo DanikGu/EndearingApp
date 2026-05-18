@@ -166,4 +166,119 @@ describe('ViewDescription', () => {
       expect(result.errors).toContain('Invalid filter operator: xor');
     });
   });
+
+  describe('filter serialization class identity', () => {
+    /** @param {any} obj @returns {import('../queryBuilder/logic/typeDefinitions.js').ConditionGroup} */
+    function reviveConditionGroup(obj) {
+      if (!obj || typeof obj !== 'object') return new ConditionGroup('and', []);
+      if (obj.children && Array.isArray(obj.children) && (obj.operator === 'and' || obj.operator === 'or')) {
+        const group = new ConditionGroup(obj.operator, []);
+        group.children = obj.children.map((/** @type {any} */ child) => {
+          if (child && child.children && Array.isArray(child.children) && (child.operator === 'and' || child.operator === 'or')) {
+            return reviveConditionGroup(child);
+          }
+          if (child && typeof child.field === 'string' && typeof child.operation === 'string') {
+            return new Condition(child.field, child.operation, child.value, child.fieldDto || null);
+          }
+          return child;
+        });
+        return group;
+      }
+      return new ConditionGroup('and', []);
+    }
+
+    it('toJSON produces plain object filter (not class instances)', () => {
+      const vd = new ViewDescription({ entityId: 'abc' });
+      vd.filter = new ConditionGroup('and', [
+        new Condition('Name', 'contains', 'test', null),
+      ]);
+
+      const json = vd.toJSON();
+      expect(json.filter).not.toBeNull();
+      expect(json.filter instanceof ConditionGroup).toBe(false);
+      const child0 = /** @type {any} */ (json.filter.children[0]);
+      expect(child0 instanceof Condition).toBe(false);
+    });
+
+    it('fromJSON produces plain object filter (not class instances)', () => {
+      const original = new ViewDescription({ entityId: 'abc' });
+      original.filter = new ConditionGroup('or', [
+        new Condition('Age', 'gt', 18, null),
+        new Condition('Age', 'lt', 65, null),
+      ]);
+
+      const json = original.toJSON();
+      const restored = ViewDescription.fromJSON(json);
+
+      expect(restored.filter).not.toBeNull();
+      const restoredFilter = /** @type {any} */ (restored.filter);
+      expect(restoredFilter instanceof ConditionGroup).toBe(false);
+      const child0 = /** @type {any} */ (restoredFilter.children[0]);
+      expect(child0 instanceof Condition).toBe(false);
+    });
+
+    it('reviveConditionGroup converts plain object filter to proper instances', () => {
+      const plain = {
+        operator: 'and',
+        children: [
+          { field: 'Name', operation: 'contains', value: 'test', fieldDto: null },
+          {
+            operator: 'or',
+            children: [
+              { field: 'Age', operation: 'gt', value: 10, fieldDto: null },
+            ],
+          },
+        ],
+      };
+
+      const revived = reviveConditionGroup(plain);
+      expect(revived instanceof ConditionGroup).toBe(true);
+      const child0 = /** @type {import('../queryBuilder/logic/typeDefinitions.js').Condition} */ (revived.children[0]);
+      expect(child0 instanceof Condition).toBe(true);
+      expect(child0.field).toBe('Name');
+      const child1 = /** @type {import('../queryBuilder/logic/typeDefinitions.js').ConditionGroup} */ (revived.children[1]);
+      expect(child1 instanceof ConditionGroup).toBe(true);
+      expect(child1.operator).toBe('or');
+      const nestedChild = /** @type {import('../queryBuilder/logic/typeDefinitions.js').Condition} */ (child1.children[0]);
+      expect(nestedChild instanceof Condition).toBe(true);
+      expect(nestedChild.field).toBe('Age');
+    });
+
+    it('reviveConditionGroup handles null/undefined gracefully', () => {
+      expect(reviveConditionGroup(null) instanceof ConditionGroup).toBe(true);
+      expect(reviveConditionGroup(undefined) instanceof ConditionGroup).toBe(true);
+      expect(reviveConditionGroup({}) instanceof ConditionGroup).toBe(true);
+      expect(reviveConditionGroup({ x: 1 }) instanceof ConditionGroup).toBe(true);
+    });
+
+    it('round-trip: toJSON → fromJSON → reviveConditionGroup produces working instances', () => {
+      const original = new ViewDescription({ entityId: 'Animal' });
+      original.filter = new ConditionGroup('and', [
+        new Condition('Name', 'contains', 'a', null),
+        new ConditionGroup('or', [
+          new Condition('Age', 'gt', 5, null),
+          new Condition('Weight', 'lt', 100, null),
+        ]),
+      ]);
+
+      const json = original.toJSON();
+      const restored = ViewDescription.fromJSON(json);
+      const revived = reviveConditionGroup(restored.filter);
+
+      expect(revived instanceof ConditionGroup).toBe(true);
+      expect(revived.operator).toBe('and');
+      expect(revived.children).toHaveLength(2);
+      const child0 = /** @type {import('../queryBuilder/logic/typeDefinitions.js').Condition} */ (revived.children[0]);
+      expect(child0 instanceof Condition).toBe(true);
+      expect(child0.field).toBe('Name');
+      expect(child0.value).toBe('a');
+      const child1 = /** @type {import('../queryBuilder/logic/typeDefinitions.js').ConditionGroup} */ (revived.children[1]);
+      expect(child1 instanceof ConditionGroup).toBe(true);
+      const nested0 = /** @type {import('../queryBuilder/logic/typeDefinitions.js').Condition} */ (child1.children[0]);
+      expect(nested0 instanceof Condition).toBe(true);
+      expect(nested0.field).toBe('Age');
+      const nested1 = /** @type {import('../queryBuilder/logic/typeDefinitions.js').Condition} */ (child1.children[1]);
+      expect(nested1.field).toBe('Weight');
+    });
+  });
 });

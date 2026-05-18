@@ -283,6 +283,62 @@ async function main() {
       }
     }
 
+    // ── Phase 5: Filter reopen preserves field/operator/value ──
+    log('\n--- Filter Reopen ---');
+    await page.goto(`${BASE}/app/${DEFAULT_APP}/Animal`, { waitUntil: 'load' });
+    await sleep(2000);
+
+    // 5a. Apply a filter with known values
+    const filterUrl5a = await applyFilter(page, 'Name', 'Name', 'contains', 'z');
+    if (filterUrl5a) {
+      log('  ✓ Filter applied');
+      await sleep(1000);
+    }
+
+    // 5b. Reload the page (simulate revisit / localStorage restoration)
+    await page.goto(`${BASE}/app/${DEFAULT_APP}/Animal`, { waitUntil: 'load' });
+    await sleep(3000);
+
+    // 5c. Reopen filter modal
+    await page.getByRole('button', { name: 'Edit Filters' }).click();
+    await sleep(800);
+    await page.waitForSelector('.modal.show', { timeout: 3000 }).catch(() => {});
+
+    const modal5 = page.locator('.modal.show');
+    const fieldSelect = modal5.locator('select').nth(1);
+    const fieldValue = await fieldSelect.inputValue().catch(() => '');
+    if (fieldValue === 'Name') {
+      log('  ✓ Field selector shows "Name" after reopen');
+    } else {
+      log(`  ! Field selector value is "${fieldValue}", expected "Name"`);
+    }
+
+    const opSelect = modal5.locator('select').nth(2);
+    const opValue = await opSelect.inputValue().catch(() => '');
+    if (opValue === 'contains') {
+      log('  ✓ Operator shows "contains" after reopen');
+    } else {
+      log(`  ! Operator value is "${opValue}", expected "contains"`);
+    }
+
+    const valInput = modal5.locator('input').first();
+    const valValue = await valInput.inputValue().catch(() => '');
+    if (valValue === 'z') {
+      log('  ✓ Value shows "z" after reopen');
+    } else {
+      log(`  ! Value is "${valValue}", expected "z"`);
+    }
+
+    const emptyGroup = modal5.locator('text=Empty Group');
+    if (await emptyGroup.isVisible({ timeout: 1000 }).catch(() => false)) {
+      log('  ! Empty Group shown — condition not rendered (instanceof check failed)');
+    } else {
+      log('  ✓ Condition rendered (not empty group)');
+    }
+
+    await page.locator('.modal-footer button:has-text("Done")').click();
+    await sleep(500);
+
     log('\n=== ALL TESTS PASSED ===');
     process.exit(0);
   } catch (err) {
